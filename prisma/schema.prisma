@@ -15,14 +15,13 @@ enum Role {
   PET_OWNER
 }
 
-// ADMIN inherits CLINIC_OWNER
 // ADMIN is capable of everything
 
 // CLINIC_OWNER inherits from PET_OWNER
 // CLINIC_OWNER is capable of administrate clinic and is also a pet owner
 
-// VETERINARIAN is capable of take appointments and is also a pet owner
 // VETERINARIAN inherits from PET_OWNER
+// VETERINARIAN is capable of take appointments and is also a pet owner
 
 // PET_OWNER is capable of using the mobile app and make appointments
 // PET_OWNER is default role
