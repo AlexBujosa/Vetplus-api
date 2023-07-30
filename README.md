@@ -8,6 +8,16 @@ The Vetplus backend was made with [Nest.js](https://github.com/nestjs/nest) fram
 $ npm install
 ```
 
+## Setting up Prisma
+
+```bash
+# generate types for @prisma/client
+$ npx prisma generate
+
+# push changes to prisma db
+$ npx prisma db push
+```
+
 ## Running the app
 
 ```bash
@@ -19,16 +29,6 @@ $ npm run start:dev
 
 # production mode
 $ npm run start:prod
-```
-
-## Setting up Prisma
-
-```bash
-# generate types for @prisma/client
-$ npx prisma generate
-
-# push changes to prisma db
-$ npx prisma db push
 ```
 
 ## Graphql Playground
