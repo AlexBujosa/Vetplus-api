@@ -2,23 +2,18 @@
 
 The Vetplus backend was made with [Nest.js](https://github.com/nestjs/nest) framework
 
-## Installation
+# Installation
 
 ```bash
 $ npm install
 ```
 
-## Setting up Prisma
+## Setup Prisma
 
 ```bash
 # generate types for @prisma/client
 $ npx prisma generate
-
-# push changes to prisma db
-$ npx prisma db push
 ```
-
-## Running the app
 
 ```bash
 # development
@@ -36,4 +31,13 @@ $ npm run start:prod
 ```bash
 # run app in development mode
 $ localhost:3000/graphql
+```
+
+# Push changes to prisma db
+
+First create your ```DATABASE_URL``` inside your .env file
+
+```bash
+# push changes to the db
+$ npx prisma db push
 ```
