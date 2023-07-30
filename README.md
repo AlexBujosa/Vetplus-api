@@ -30,3 +30,10 @@ $ npx prisma generate
 # push changes to prisma db
 $ npx prisma db push
 ```
+
+## Graphql Playground
+
+```bash
+# run app in development mode
+$ localhost:3000/graphql
+```
