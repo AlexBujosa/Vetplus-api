@@ -1,0 +1,217 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator nestgraphql {
+  provider = "node node_modules/prisma-nestjs-graphql"
+  // for yarn monorepos
+  // provider = "prisma-nestjs-graphql"
+  output   = "../src/@generated"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+enum Role {
+  ADMIN
+  VETERINARIAN
+  PET_OWNER
+  CLINIC_OWNER
+}
+
+enum Sex {
+  M
+  F
+}
+
+enum NotificationCategory {
+  APPOINTMENT
+  HISTORY_ACCESS
+}
+
+enum AppointmentState {
+  PENDING
+  IN_PROGRESS
+  FINISHED
+  CANCELLED
+}
+
+enum AppointmentType {
+  SURGERY
+  DENTAL
+  ROUTINE
+}
+
+model Person {
+  id String @id @default(uuid())
+
+  email    String
+  password String
+
+  names            String
+  surnames         String
+  document         String?
+  address          String?
+  telephone_number String?
+  image            String?
+
+  role Role @default(PET_OWNER)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+
+  Pet                     Pet[]
+  Notification            Notification[]
+  Clinic                  Clinic[]
+  AppointmentOwner        Appointment[]  @relation("owner")
+  AppointmentVeterinarian Appointment[]  @relation("veterinarian")
+}
+
+model Pet {
+  id String @id @default(uuid())
+
+  id_owner  String
+  id_specie String
+  id_breed  String
+
+  owner  Person @relation(fields: [id_owner], references: [id])
+  specie Specie @relation(fields: [id_specie], references: [id])
+  breed  Breed  @relation(fields: [id_breed], references: [id])
+
+  name         String
+  image        String
+  gender       Sex
+  castrated    Boolean
+  dob          DateTime @db.Date
+  observations String   @db.Text
+
+  // vaccines
+  // desparasitants
+  // treatments
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+
+  Appointment Appointment[]
+}
+
+model Specie {
+  id String @id @default(uuid())
+
+  name String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+
+  Pet   Pet[]
+  Breed Breed[]
+}
+
+model Breed {
+  id        String @id @default(uuid())
+  id_specie String
+
+  specie Specie @relation(fields: [id_specie], references: [id])
+
+  name String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+
+  Pet Pet[]
+}
+
+model Notification {
+  id String @id @default(uuid())
+
+  id_user String
+
+  user Person @relation(fields: [id_user], references: [id])
+
+  title    String
+  subtitle String
+  category NotificationCategory
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+}
+
+model Appointment {
+  id String @id @default(uuid())
+
+  id_owner        String
+  id_veterinarian String
+  id_pet          String
+  id_service      String
+  id_clinic       String
+
+  owner        Person  @relation("owner", fields: [id_owner], references: [id])
+  veterinarian Person  @relation("veterinarian", fields: [id_veterinarian], references: [id])
+  pet          Pet     @relation(fields: [id_pet], references: [id])
+  service      Service @relation(fields: [id_service], references: [id])
+  clinic       Clinic  @relation(fields: [id_clinic], references: [id])
+
+  start_at     DateTime
+  end_at       DateTime
+  observations String           @db.Text
+  state        AppointmentState @default(PENDING)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+}
+
+model Clinic {
+  id String @id @default(uuid())
+
+  id_owner String
+
+  owner Person @relation(fields: [id_owner], references: [id])
+
+  name             String
+  telephone_number String
+  google_maps_url  String
+  address          String
+
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @updatedAt
+  status         Boolean          @default(true)
+  Appointment    Appointment[]
+  Clinic_Service Clinic_Service[]
+}
+
+model Clinic_Service {
+  id_clinic  String
+  id_service String
+
+  clinic  Clinic  @relation(fields: [id_clinic], references: [id])
+  service Service @relation(fields: [id_service], references: [id])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+
+  @@id([id_clinic, id_service])
+}
+
+model Service {
+  id String @id @default(uuid())
+
+  name        String
+  description String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+
+  Appointment    Appointment[]
+  Clinic_Service Clinic_Service[]
+}
