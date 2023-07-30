@@ -21,22 +21,24 @@ type Auth {
 
 type Query {
   findAll: [Person!]!
+  signInWithEmail(signInAuthInput: SignInInput!): [Auth!]!
+  signInWithFacebook(signInAuthInput: SignInInput!): [Auth!]!
+  signInWithGoogle(signInAuthInput: SignInInput!): [Auth!]!
+}
+
+input SignInInput {
+  email: String!
+  password: String!
 }
 
 type Mutation {
   createPerson(createPersonInput: CreatePersonInput!): Person!
   signUp(registerAuthInput: CreatePersonInput!): Auth!
-  signIn(signInAuthInput: SignInInput!): [Auth!]!
 }
 
 input CreatePersonInput {
   names: String!
   surnames: String!
-  email: String!
-  password: String!
-}
-
-input SignInInput {
   email: String!
   password: String!
 }

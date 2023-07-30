@@ -10,10 +10,22 @@ datasource db {
 
 enum Role {
   ADMIN
+  CLINIC_OWNER
   VETERINARIAN
   PET_OWNER
-  CLINIC_OWNER
 }
+
+// ADMIN inherits CLINIC_OWNER
+// ADMIN is capable of everything
+
+// CLINIC_OWNER inherits from PET_OWNER
+// CLINIC_OWNER is capable of administrate clinic and is also a pet owner
+
+// VETERINARIAN is capable of take appointments and is also a pet owner
+// VETERINARIAN inherits from PET_OWNER
+
+// PET_OWNER is capable of using the mobile app and make appointments
+// PET_OWNER is default role
 
 enum Sex {
   M
@@ -23,12 +35,14 @@ enum Sex {
 enum NotificationCategory {
   APPOINTMENT
   HISTORY_ACCESS
+  AUTHENTICATION
 }
 
 enum AppointmentState {
   PENDING
   IN_PROGRESS
   FINISHED
+  DELAYED
   CANCELLED
 }
 
@@ -36,6 +50,37 @@ enum AppointmentType {
   SURGERY
   DENTAL
   ROUTINE
+}
+
+enum AuthProvider {
+  FACEBOOK
+  GOOGLE
+  EMAIL
+}
+
+model User {
+  id       String       @id @default(uuid())
+  email    String
+  provider AuthProvider @default(EMAIL)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+
+  Credentials Credentials[]
+}
+
+model Credentials {
+  id_user  String @id
+  password String
+
+  user User @relation(fields: [id_user], references: [id])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+
+  @@index([id_user])
 }
 
 model Person {
@@ -82,15 +127,18 @@ model Pet {
   dob          DateTime @db.Date
   observations String   @db.Text
 
-  // vaccines
-  // desparasitants
-  // treatments
+  // TODO: Relacionar las vacunas y/o sus desparasitantes
+  // TODO: Relacionar los tratamientos (lavado, corte de pelo, etc...)
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
 
   Appointment Appointment[]
+
+  @@index([id_owner])
+  @@index([id_specie])
+  @@index([id_breed])
 }
 
 model Specie {
@@ -119,6 +167,8 @@ model Breed {
   status     Boolean  @default(true)
 
   Pet Pet[]
+
+  @@index([id_specie])
 }
 
 model Notification {
@@ -135,6 +185,8 @@ model Notification {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
+
+  @@index([id_user])
 }
 
 model Appointment {
@@ -160,6 +212,12 @@ model Appointment {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
+
+  @@index([id_owner])
+  @@index([id_veterinarian])
+  @@index([id_service])
+  @@index([id_pet])
+  @@index([id_clinic])
 }
 
 model Clinic {
@@ -171,14 +229,20 @@ model Clinic {
 
   name             String
   telephone_number String
-  google_maps_url  String
+  google_maps_url  String?
   address          String
 
-  created_at     DateTime         @default(now())
-  updated_at     DateTime         @updatedAt
-  status         Boolean          @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+
   Appointment    Appointment[]
   Clinic_Service Clinic_Service[]
+
+  // TODO: Read google maps map url
+  // TODO: Add Clinic Schedule tables for Days and Hours
+
+  @@index([id_owner])
 }
 
 model Clinic_Service {
@@ -193,6 +257,8 @@ model Clinic_Service {
   status     Boolean  @default(true)
 
   @@id([id_clinic, id_service])
+  @@index([id_clinic])
+  @@index([id_service])
 }
 
 model Service {
