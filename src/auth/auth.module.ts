@@ -1,11 +1,11 @@
-import { BcryptService } from '@/bcrypt/bcrypt.service';
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
-import { PersonService } from '@/person/person.service';
+import { PersonModule } from '@/person/person.module';
+import { BcryptModule } from '@/bcrypt/bcrypt.module';
 
 @Module({
-  imports: [BcryptService, PersonService],
+  imports: [PersonModule, BcryptModule],
   providers: [AuthService, AuthResolver],
 })
 export class AuthModule {}

@@ -14,17 +14,29 @@ type Person {
   image: String
 }
 
+type Auth {
+  email: String!
+  password: String!
+}
+
 type Query {
-  person: [Person!]!
+  findAll: [Person!]!
 }
 
 type Mutation {
   createPerson(createPersonInput: CreatePersonInput!): Person!
+  signUp(registerAuthInput: CreatePersonInput!): Auth!
+  signIn(signInAuthInput: SignInInput!): [Auth!]!
 }
 
 input CreatePersonInput {
   names: String!
   surnames: String!
+  email: String!
+  password: String!
+}
+
+input SignInInput {
   email: String!
   password: String!
 }
