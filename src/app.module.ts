@@ -7,6 +7,9 @@ import { join } from 'path';
 import { PersonModule } from './person/person.module';
 import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
+import { BcryptService } from './bcrypt/bcrypt.service';
+import { BcryptModule } from './bcrypt/bcrypt.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,8 +19,10 @@ import { PrismaModule } from './prisma/prisma.module';
     }),
     PersonModule,
     PrismaModule,
+    BcryptModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [AppService, PrismaService, BcryptService],
 })
 export class AppModule {}

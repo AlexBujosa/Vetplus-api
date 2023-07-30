@@ -4,5 +4,6 @@ import { PersonResolver } from './person.resolver';
 
 @Module({
   providers: [PersonResolver, PersonService],
+  exports: [PersonService],
 })
 export class PersonModule {}

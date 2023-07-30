@@ -1,4 +1,4 @@
-import { CreatePersonInput } from './create-person.input';
+import { CreatePersonInput } from '../dto/create-person.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 
 @InputType()
