@@ -8,6 +8,7 @@ trigger:
 
 pool:
   vmImage: ubuntu-22.04
+  name: Azure Pipelines
 
 steps:
   - task: NodeTool@0
