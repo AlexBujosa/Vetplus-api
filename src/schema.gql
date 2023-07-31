@@ -3,9 +3,7 @@
 # ------------------------------------------------------
 
 type Person {
-  id: String
-  email: String!
-  password: String!
+  id_person: String!
   names: String!
   surnames: String!
   document: String
@@ -14,16 +12,38 @@ type Person {
   image: String
 }
 
+type User {
+  id: String!
+  email: String!
+  Provider: String!
+  Status: Boolean!
+}
+
+type Credentials {
+  id_user: String!
+  password: String!
+  Status: Boolean!
+}
+
+type CreatePersonResponse {
+  user: User!
+  credentials: Credentials!
+  person: Person!
+}
+
 type Auth {
   email: String!
   password: String!
 }
 
 type Query {
+  findPersonById: Person!
   findAll: [Person!]!
   signInWithEmail(signInAuthInput: SignInInput!): [Auth!]!
   signInWithFacebook(signInAuthInput: SignInInput!): [Auth!]!
   signInWithGoogle(signInAuthInput: SignInInput!): [Auth!]!
+  findUserById: User!
+  findCredentialsById: Credentials!
 }
 
 input SignInInput {
@@ -32,7 +52,7 @@ input SignInInput {
 }
 
 type Mutation {
-  createPerson(createPersonInput: CreatePersonInput!): Person!
+  createPerson(createPersonInput: CreatePersonInput!): CreatePersonResponse!
   signUp(registerAuthInput: CreatePersonInput!): Auth!
 }
 

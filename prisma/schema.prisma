@@ -67,6 +67,7 @@ model User {
   status     Boolean  @default(true)
 
   Credentials Credentials[]
+  Person Person[]
 }
 
 model Credentials {
@@ -83,10 +84,7 @@ model Credentials {
 }
 
 model Person {
-  id String @id @default(uuid())
-
-  email    String
-  password String
+  id_person String @id
 
   names            String
   surnames         String
@@ -95,6 +93,7 @@ model Person {
   telephone_number String?
   image            String?
 
+  user User @relation(fields: [id_person], references: [id])
   role Role @default(PET_OWNER)
 
   created_at DateTime @default(now())
@@ -106,6 +105,8 @@ model Person {
   Clinic                  Clinic[]
   AppointmentOwner        Appointment[]  @relation("owner")
   AppointmentVeterinarian Appointment[]  @relation("veterinarian")
+
+   @@index([id_person])
 }
 
 model Pet {
@@ -115,7 +116,7 @@ model Pet {
   id_specie String
   id_breed  String
 
-  owner  Person @relation(fields: [id_owner], references: [id])
+  owner  Person @relation(fields: [id_owner], references: [id_person])
   specie Specie @relation(fields: [id_specie], references: [id])
   breed  Breed  @relation(fields: [id_breed], references: [id])
 
@@ -175,7 +176,7 @@ model Notification {
 
   id_user String
 
-  user Person @relation(fields: [id_user], references: [id])
+  user Person @relation(fields: [id_user], references: [id_person])
 
   title    String
   subtitle String
@@ -197,8 +198,8 @@ model Appointment {
   id_service      String
   id_clinic       String
 
-  owner        Person  @relation("owner", fields: [id_owner], references: [id])
-  veterinarian Person  @relation("veterinarian", fields: [id_veterinarian], references: [id])
+  owner        Person  @relation("owner", fields: [id_owner], references: [id_person])
+  veterinarian Person  @relation("veterinarian", fields: [id_veterinarian], references: [id_person])
   pet          Pet     @relation(fields: [id_pet], references: [id])
   service      Service @relation(fields: [id_service], references: [id])
   clinic       Clinic  @relation(fields: [id_clinic], references: [id])
@@ -224,7 +225,7 @@ model Clinic {
 
   id_owner String
 
-  owner Person @relation(fields: [id_owner], references: [id])
+  owner Person @relation(fields: [id_owner], references: [id_person])
 
   name             String
   telephone_number String

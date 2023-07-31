@@ -10,6 +10,10 @@ import { PrismaModule } from './prisma/prisma.module';
 import { BcryptService } from './bcrypt/bcrypt.service';
 import { BcryptModule } from './bcrypt/bcrypt.module';
 import { AuthModule } from './auth/auth.module';
+import { CredentialsModule } from './credentials/credentials.module';
+import { UserModule } from './user/user.module';
+import { UserService } from './user/user.service';
+import { CredentialsService } from './credentials/credentials.service';
 
 @Module({
   imports: [
@@ -21,8 +25,16 @@ import { AuthModule } from './auth/auth.module';
     PrismaModule,
     BcryptModule,
     AuthModule,
+    UserModule,
+    CredentialsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, BcryptService],
+  providers: [
+    AppService,
+    PrismaService,
+    BcryptService,
+    UserService,
+    CredentialsService,
+  ],
 })
 export class AppModule {}
