@@ -1,20 +1,51 @@
 import { Injectable } from '@nestjs/common';
-// import { UpdatePersonInput } from './dto/update-person.input';
 import { PrismaService } from '@/prisma/prisma.service';
-import { CreateUserInput } from './dto/create-user.input';
+import { CreateUserInput } from './graphql/input/create-user.input';
+import { CredentialsService } from '@/credentials/credentials.service';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { CreateUserResult } from './constant/constants';
+import { CreatedUserResponse } from './graphql/types/created-user-response.type';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private credentialsService: CredentialsService,
+  ) {}
 
-  async create(createUserInput: CreateUserInput) {
-    return await this.prisma.user.create({
-      data: { ...createUserInput },
-    });
+  async create(createUserInput: CreateUserInput): Promise<CreatedUserResponse> {
+    try {
+      return await this.prismaService.$transaction(async (tx) => {
+        const { email, password, names, surnames } = createUserInput;
+        const createUser = { email, names, surnames };
+        const userCreated = await tx.user.create({
+          data: {
+            ...createUser,
+          },
+        });
+        const { id } = userCreated;
+
+        const createCredentials = { id_user: id, password };
+        await this.credentialsService.create(createCredentials);
+
+        return {
+          result: CreateUserResult.COMPLETED,
+        };
+      });
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code == 'P2002'
+      ) {
+        return {
+          result: CreateUserResult.EMAIL_ALREADY_EXIST,
+        };
+      }
+    }
   }
 
   async findById(id: string) {
-    return await this.prisma.user.findUnique({
+    return await this.prismaService.user.findUnique({
       where: {
         id,
       },
@@ -22,7 +53,7 @@ export class UserService {
   }
 
   async findAll() {
-    return await this.prisma.user.findMany();
+    return await this.prismaService.user.findMany();
   }
 
   // findOne(id: number) {

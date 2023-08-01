@@ -2,21 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Person {
-  id_person: String!
-  names: String!
-  surnames: String!
-  document: String
-  address: String
-  telephone_number: String
-  image: String
+type CreatedUserResponse {
+  result: String!
 }
 
-type User {
-  id: String!
-  email: String!
-  Provider: String!
-  Status: Boolean!
+type Auth {
+  result: String!
 }
 
 type Credentials {
@@ -25,23 +16,22 @@ type Credentials {
   Status: Boolean!
 }
 
-type CreatePersonResponse {
-  user: User!
-  credentials: Credentials!
-  person: Person!
-}
-
-type Auth {
+type User {
+  id: String!
+  names: String!
+  surnames: String!
   email: String!
-  password: String!
+  Provider: String!
+  document: String
+  address: String
+  telephone_number: String
+  image: String
+  Status: Boolean!
 }
 
 type Query {
-  findPersonById: Person!
-  findAll: [Person!]!
   signInWithEmail(signInAuthInput: SignInInput!): [Auth!]!
-  signInWithFacebook(signInAuthInput: SignInInput!): [Auth!]!
-  signInWithGoogle(signInAuthInput: SignInInput!): [Auth!]!
+  socialLogin(signInAuthInput: SignInInput!): [Auth!]!
   findUserById: User!
   findCredentialsById: Credentials!
 }
@@ -52,11 +42,18 @@ input SignInInput {
 }
 
 type Mutation {
-  createPerson(createPersonInput: CreatePersonInput!): CreatePersonResponse!
-  signUp(registerAuthInput: CreatePersonInput!): Auth!
+  signUp(signUpInput: SignUpInput!): Auth!
+  createUser(createUserInput: CreateUserInput!): CreatedUserResponse!
 }
 
-input CreatePersonInput {
+input SignUpInput {
+  names: String!
+  surnames: String!
+  email: String!
+  password: String!
+}
+
+input CreateUserInput {
   names: String!
   surnames: String!
   email: String!

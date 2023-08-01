@@ -59,15 +59,25 @@ enum AuthProvider {
 
 model User {
   id       String       @id @default(uuid())
-  email    String
+  email    String       @unique
   provider AuthProvider @default(EMAIL)
-
+  names            String
+  surnames         String
+  document         String?
+  address          String?
+  telephone_number String?
+  image            String?
+  role Role @default(PET_OWNER)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
 
   Credentials Credentials[]
-  Person Person[]
+  Pet                     Pet[]
+  Notification            Notification[]
+  Clinic                  Clinic[]
+  AppointmentOwner        Appointment[]  @relation("owner")
+  AppointmentVeterinarian Appointment[]  @relation("veterinarian")
 }
 
 model Credentials {
@@ -83,32 +93,6 @@ model Credentials {
   @@index([id_user])
 }
 
-model Person {
-  id_person String @id
-
-  names            String
-  surnames         String
-  document         String?
-  address          String?
-  telephone_number String?
-  image            String?
-
-  user User @relation(fields: [id_person], references: [id])
-  role Role @default(PET_OWNER)
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  status     Boolean  @default(true)
-
-  Pet                     Pet[]
-  Notification            Notification[]
-  Clinic                  Clinic[]
-  AppointmentOwner        Appointment[]  @relation("owner")
-  AppointmentVeterinarian Appointment[]  @relation("veterinarian")
-
-   @@index([id_person])
-}
-
 model Pet {
   id String @id @default(uuid())
 
@@ -116,7 +100,7 @@ model Pet {
   id_specie String
   id_breed  String
 
-  owner  Person @relation(fields: [id_owner], references: [id_person])
+  owner  User @relation(fields: [id_owner], references: [id])
   specie Specie @relation(fields: [id_specie], references: [id])
   breed  Breed  @relation(fields: [id_breed], references: [id])
 
@@ -176,7 +160,7 @@ model Notification {
 
   id_user String
 
-  user Person @relation(fields: [id_user], references: [id_person])
+  user User @relation(fields: [id_user], references: [id])
 
   title    String
   subtitle String
@@ -198,8 +182,8 @@ model Appointment {
   id_service      String
   id_clinic       String
 
-  owner        Person  @relation("owner", fields: [id_owner], references: [id_person])
-  veterinarian Person  @relation("veterinarian", fields: [id_veterinarian], references: [id_person])
+  owner        User  @relation("owner", fields: [id_owner], references: [id])
+  veterinarian User  @relation("veterinarian", fields: [id_veterinarian], references: [id])
   pet          Pet     @relation(fields: [id_pet], references: [id])
   service      Service @relation(fields: [id_service], references: [id])
   clinic       Clinic  @relation(fields: [id_clinic], references: [id])
@@ -225,7 +209,7 @@ model Clinic {
 
   id_owner String
 
-  owner Person @relation(fields: [id_owner], references: [id_person])
+  owner User @relation(fields: [id_owner], references: [id])
 
   name             String
   telephone_number String

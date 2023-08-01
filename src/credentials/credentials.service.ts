@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 // import { UpdatePersonInput } from './dto/update-person.input';
 import { PrismaService } from '@/prisma/prisma.service';
-import { CreateCredentialsInput } from './dto/create-credentials.input';
+import { CreateCredentialsInput } from './graphql/input/create-credentials.input';
 
 @Injectable()
 export class CredentialsService {

@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthResolver } from './auth.resolver';
-import { PersonModule } from '@/person/person.module';
+import { AuthResolver } from './graphql/resolvers/auth.resolver';
 import { BcryptModule } from '@/bcrypt/bcrypt.module';
+import { UserService } from '@/user/user.service';
+import { CredentialsService } from '@/credentials/credentials.service';
 
 @Module({
-  imports: [PersonModule, BcryptModule],
-  providers: [AuthService, AuthResolver],
+  imports: [BcryptModule],
+  providers: [AuthService, AuthResolver, UserService, CredentialsService],
 })
 export class AuthModule {}

@@ -1,6 +1,6 @@
 import { Resolver, Query } from '@nestjs/graphql';
-import { CredentialsService } from './credentials.service';
-import { Credentials } from './entities/credentials.entity';
+import { CredentialsService } from '../../credentials.service';
+import { Credentials } from '../types/credentials.type';
 
 @Resolver(() => Credentials)
 export class CredentialsResolver {

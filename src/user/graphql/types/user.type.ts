@@ -1,15 +1,22 @@
 import { ObjectType, Field } from '@nestjs/graphql';
+import { AuthProvider } from '@prisma/client';
 
 @ObjectType()
-export class Person {
+export class User {
   @Field()
-  id_person: string;
+  id: string;
 
   @Field()
   names: string;
 
   @Field()
   surnames: string;
+
+  @Field()
+  email: string;
+
+  @Field()
+  Provider: AuthProvider;
 
   @Field({ nullable: true })
   document: string;
@@ -22,4 +29,7 @@ export class Person {
 
   @Field({ nullable: true })
   image: string;
+
+  @Field()
+  Status: boolean;
 }

@@ -1,24 +1,23 @@
-import { PersonService } from '@/person/person.service';
 import { Injectable } from '@nestjs/common';
-import { RegisterInput } from './dto/register.input';
 import { BcryptService } from '@/bcrypt/bcrypt.service';
-import { SignInInput } from './dto/sign-in.input';
+import { SignInInput } from './graphql/inputs/sign-in.input';
+import { UserService } from '@/user/user.service';
+import { SignUpInput } from './graphql/inputs/sign-up.input';
 
 @Injectable()
 export class AuthService {
-  constructor(private person: PersonService, private bcrypt: BcryptService) {}
+  constructor(
+    private userService: UserService,
+    private bcryptService: BcryptService,
+  ) {}
 
-  async register(dto: RegisterInput) {
-    const hash = this.bcrypt.hashPassword(dto.password);
-
-    // TODO: CREATE USER IN DB WITH USER SERVICE
-
-    // return await this.person.create({
-    //   data: { ...createPersonInput },
-    // });
+  async register(signUpInput: SignUpInput) {
+    const hash = await this.bcryptService.hashPassword(signUpInput.password);
+    signUpInput.password = hash;
+    return await this.userService.create(signUpInput);
   }
 
-  async login(dto: SignInInput) {
+  async login(signInInput: SignInInput) {
     // TODO
     // return await this.person.findMany();
   }
