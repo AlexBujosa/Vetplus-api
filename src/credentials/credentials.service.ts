@@ -2,15 +2,20 @@ import { Injectable } from '@nestjs/common';
 // import { UpdatePersonInput } from './dto/update-person.input';
 import { PrismaService } from '@/prisma/prisma.service';
 import { CreateCredentialsInput } from './graphql/input/create-credentials.input';
+import { customError } from '@/user/constant/constants';
 
 @Injectable()
 export class CredentialsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createCredentialsInput: CreateCredentialsInput) {
-    return await this.prisma.credentials.create({
-      data: { ...createCredentialsInput },
-    });
+    try {
+      return await this.prisma.credentials.create({
+        data: { ...createCredentialsInput },
+      });
+    } catch (error) {
+      customError.FAILED_CREATE_CREDENTIALS();
+    }
   }
 
   async findById(id_user: string) {

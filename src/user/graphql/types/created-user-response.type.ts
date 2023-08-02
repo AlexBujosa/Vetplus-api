@@ -5,4 +5,6 @@ import { Field, ObjectType } from '@nestjs/graphql';
 export class CreatedUserResponse {
   @Field(() => String)
   result: CreateUserResult;
+  @Field(() => String)
+  message: string;
 }

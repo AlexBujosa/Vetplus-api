@@ -4,10 +4,12 @@
 
 type CreatedUserResponse {
   result: String!
+  message: String!
 }
 
 type Auth {
   result: String!
+  message: String!
 }
 
 type Credentials {
