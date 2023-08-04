@@ -3,8 +3,8 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { CreateUserInput } from './graphql/input/create-user.input';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import {
-  customErrorMessage,
-  signUpCustomError,
+  customException,
+  signUpCustomException,
 } from '../global/constant/constants';
 import { User } from './graphql/types/user.type';
 
@@ -26,7 +26,7 @@ export class UserService {
         error instanceof PrismaClientKnownRequestError &&
         error.code == 'P2002'
       ) {
-        throw signUpCustomError.EMAIL_ALREADY_EXIST();
+        throw signUpCustomException.EMAIL_ALREADY_EXIST();
       }
     }
   }
@@ -36,7 +36,7 @@ export class UserService {
         email,
       },
     });
-    if (!result) throw customErrorMessage.EMAIL_NOT_FOUND();
+    if (!result) throw customException.EMAIL_NOT_FOUND();
     return result;
   }
 

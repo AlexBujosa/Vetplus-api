@@ -1,6 +1,6 @@
-import { CustomError } from '../error/custom-error';
+import { CustomException } from '../error/custom-exception';
 
-export enum SignUpCustomErrorMessage {
+export enum SignUpCustomExceptionMessage {
   EMAIL_EXIST = 'EMAIL_EXIST',
   PASSWORD_WEAK = 'PASSWORD_WEAK',
   TRANSACTION_FAILED = 'TRANSACTION_FAILED',
@@ -8,25 +8,26 @@ export enum SignUpCustomErrorMessage {
 }
 
 const { EMAIL_EXIST, PASSWORD_WEAK, FAILED_CREATE_CREDENTIALS } =
-  SignUpCustomErrorMessage;
+  SignUpCustomExceptionMessage;
 
-export const signUpCustomError = {
-  EMAIL_ALREADY_EXIST: () => new CustomError(EMAIL_EXIST),
-  PASSWORD_WEAK: () => new CustomError(PASSWORD_WEAK),
-  FAILED_CREATE_CREDENTIALS: () => new CustomError(FAILED_CREATE_CREDENTIALS),
+export const signUpCustomException = {
+  EMAIL_ALREADY_EXIST: () => new CustomException(EMAIL_EXIST, 200),
+  PASSWORD_WEAK: () => new CustomException(PASSWORD_WEAK, 200),
+  FAILED_CREATE_CREDENTIALS: () =>
+    new CustomException(FAILED_CREATE_CREDENTIALS, 200),
 };
 
-export enum SignInCustomErrorMessage {
+export enum SignInCustomExceptionMessage {
   WRONG_PROVIDER = 'WRONG_PROVIDER',
 }
 
-const { WRONG_PROVIDER } = SignInCustomErrorMessage;
+const { WRONG_PROVIDER } = SignInCustomExceptionMessage;
 
-export const signInCustomError = {
-  WRONG_PROVIDER: () => new CustomError(WRONG_PROVIDER),
+export const signInCustomException = {
+  WRONG_PROVIDER: () => new CustomException(WRONG_PROVIDER, 200),
 };
 
-export enum CustomErrorMessage {
+export enum CustomExceptionMessage {
   EMAIL_NOT_FOUND = 'EMAIL_NOT_FOUND',
   CREDENTIALS_NOT_FOUND = 'CREDENTIALS_NOT_FOUND',
   SOMETHING_WRONG_FIND_EMAIL = 'SOMETHING_WRONG_TRYING_TO_FIND_EMAIL',
@@ -38,12 +39,13 @@ const {
   CREDENTIALS_NOT_FOUND,
   SOMETHING_WRONG_FIND_EMAIL,
   SOMETHING_WRONG_FIND_CREDENTIALS,
-} = CustomErrorMessage;
+} = CustomExceptionMessage;
 
-export const customErrorMessage = {
-  EMAIL_NOT_FOUND: () => new CustomError(EMAIL_NOT_FOUND),
-  CREDENTIALS_NOT_FOUND: () => new CustomError(CREDENTIALS_NOT_FOUND),
-  SOMETHING_WRONG_FIND_EMAIL: () => new CustomError(SOMETHING_WRONG_FIND_EMAIL),
+export const customException = {
+  EMAIL_NOT_FOUND: () => new CustomException(EMAIL_NOT_FOUND, 200),
+  CREDENTIALS_NOT_FOUND: () => new CustomException(CREDENTIALS_NOT_FOUND, 200),
+  SOMETHING_WRONG_FIND_EMAIL: () =>
+    new CustomException(SOMETHING_WRONG_FIND_EMAIL, 200),
   SOMETHING_WRONG_FIND_CREDENTIALS: () =>
-    new CustomError(SOMETHING_WRONG_FIND_CREDENTIALS),
+    new CustomException(SOMETHING_WRONG_FIND_CREDENTIALS, 200),
 };

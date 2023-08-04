@@ -7,11 +7,8 @@ import { CredentialsService } from '@/credentials/credentials.service';
 import { PrismaService } from '@/prisma/prisma.service';
 import { SignUpMessage, SignUpResult } from './constant/contants';
 import {
-  CustomErrorMessage,
-  SignInCustomErrorMessage,
-  SignUpCustomErrorMessage,
-  customErrorMessage,
-  signInCustomError,
+  signInCustomException,
+  customException,
 } from '@/global/constant/constants';
 import { AuthProvider, User } from '@prisma/client';
 import { SignInResponse } from './graphql/types/sign-in-result.type';
@@ -28,41 +25,28 @@ export class AuthService {
   ) {}
 
   async register(signUpInput: SignUpInput) {
-    const { FAILED, COMPLETED } = SignUpResult;
+    const { COMPLETED } = SignUpResult;
     const { USER_CREATED } = SignUpMessage;
-    try {
-      await this.prismaService.$transaction(async () => {
-        const hash = await this.bcryptService.hashPassword(
-          signUpInput.password,
-        );
-        const userCreated = await this.userService.create(signUpInput);
-        const { id } = userCreated;
-        const createCredentials = { id_user: id, password: hash };
-        await this.credentialsService.create(createCredentials);
-      });
+    await this.prismaService.$transaction(async () => {
+      const hash = await this.bcryptService.hashPassword(signUpInput.password);
+      const userCreated = await this.userService.create(signUpInput);
+      const { id } = userCreated;
+      const createCredentials = { id_user: id, password: hash };
+      await this.credentialsService.create(createCredentials);
+    });
 
-      return { result: COMPLETED, message: USER_CREATED };
-    } catch (error) {
-      const { EMAIL_EXIST, FAILED_CREATE_CREDENTIALS, TRANSACTION_FAILED } =
-        SignUpCustomErrorMessage;
-
-      if (error.message == EMAIL_EXIST) {
-        return { result: FAILED, message: EMAIL_EXIST };
-      } else if (error.message == FAILED_CREATE_CREDENTIALS) {
-        return { result: FAILED, message: FAILED_CREATE_CREDENTIALS };
-      } else {
-        return { result: FAILED, message: TRANSACTION_FAILED };
-      }
-    }
+    return { result: COMPLETED, message: USER_CREATED };
   }
   async validateUser(email: string, password: string): Promise<User> {
+    console.log('antes de email not found');
     const user = await this.userService.findByEmail(email);
     const { id, provider } = user;
+    console.log('despues de email not found');
     if (provider != AuthProvider.EMAIL)
-      throw signInCustomError.WRONG_PROVIDER();
+      throw signInCustomException.WRONG_PROVIDER();
 
     const result = await this.credentialsService.findById(id);
-    if (!result) throw customErrorMessage.CREDENTIALS_NOT_FOUND();
+    if (!result) throw customException.CREDENTIALS_NOT_FOUND();
     const { password: hash } = result;
 
     const coincidence = await this.bcryptService.decryptPassword(
@@ -74,7 +58,7 @@ export class AuthService {
   }
   async login(user: User): Promise<SignInResponse> {
     return {
-      access_token: this.jwtService.sign({
+      access_token: await this.jwtService.sign({
         username: user.email,
         sub: user.id,
       }),

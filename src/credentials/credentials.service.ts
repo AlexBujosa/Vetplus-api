@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
 import { CreateCredentialsInput } from './graphql/input/create-credentials.input';
 import {
-  customErrorMessage,
-  signUpCustomError,
+  customException,
+  signUpCustomException,
 } from '@/global/constant/constants';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class CredentialsService {
         data: { ...createCredentialsInput },
       });
     } catch (error) {
-      throw signUpCustomError.FAILED_CREATE_CREDENTIALS();
+      throw signUpCustomException.FAILED_CREATE_CREDENTIALS();
     }
   }
 
@@ -28,7 +28,7 @@ export class CredentialsService {
         },
       });
     } catch (error) {
-      throw customErrorMessage.SOMETHING_WRONG_FIND_CREDENTIALS();
+      throw customException.SOMETHING_WRONG_FIND_CREDENTIALS();
     }
   }
 

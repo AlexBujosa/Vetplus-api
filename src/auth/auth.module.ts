@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthResolver } from './graphql/resolvers/auth.resolver';
 import { BcryptModule } from '@/bcrypt/bcrypt.module';
-import { UserService } from '@/user/user.service';
 import { CredentialsService } from '@/credentials/credentials.service';
 import { PrismaService } from '@/prisma/prisma.service';
 import { LocalStrategy } from './local.strategy';
