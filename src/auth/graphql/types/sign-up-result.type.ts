@@ -2,4 +2,4 @@ import { CreatedUserResponse } from '@/user/graphql/types/created-user-response.
 import { ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class Auth extends CreatedUserResponse {}
+export class SignUpResponse extends CreatedUserResponse {}

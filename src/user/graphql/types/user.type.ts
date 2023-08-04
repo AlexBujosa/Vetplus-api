@@ -1,3 +1,4 @@
+import { Role } from '@/global/constant/role';
 import { ObjectType, Field } from '@nestjs/graphql';
 import { AuthProvider } from '@prisma/client';
 
@@ -16,7 +17,7 @@ export class User {
   email: string;
 
   @Field()
-  Provider: AuthProvider;
+  provider: AuthProvider;
 
   @Field({ nullable: true })
   document: string;
@@ -31,5 +32,14 @@ export class User {
   image: string;
 
   @Field()
-  Status: boolean;
+  role: Role;
+
+  @Field()
+  created_at: Date;
+
+  @Field()
+  updated_at: Date;
+
+  @Field()
+  status: boolean;
 }

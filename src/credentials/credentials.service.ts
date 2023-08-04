@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-// import { UpdatePersonInput } from './dto/update-person.input';
 import { PrismaService } from '@/prisma/prisma.service';
 import { CreateCredentialsInput } from './graphql/input/create-credentials.input';
-import { customError } from '@/user/constant/constants';
+import {
+  customErrorMessage,
+  signUpCustomError,
+} from '@/global/constant/constants';
 
 @Injectable()
 export class CredentialsService {
@@ -14,16 +16,20 @@ export class CredentialsService {
         data: { ...createCredentialsInput },
       });
     } catch (error) {
-      customError.FAILED_CREATE_CREDENTIALS();
+      throw signUpCustomError.FAILED_CREATE_CREDENTIALS();
     }
   }
 
   async findById(id_user: string) {
-    return await this.prisma.credentials.findUnique({
-      where: {
-        id_user,
-      },
-    });
+    try {
+      return await this.prisma.credentials.findUnique({
+        where: {
+          id_user,
+        },
+      });
+    } catch (error) {
+      throw customErrorMessage.SOMETHING_WRONG_FIND_CREDENTIALS();
+    }
   }
 
   async findAll() {

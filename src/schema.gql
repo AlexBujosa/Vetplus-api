@@ -7,15 +7,13 @@ type CreatedUserResponse {
   message: String!
 }
 
-type Auth {
+type SignUpResponse {
   result: String!
   message: String!
 }
 
-type Credentials {
-  id_user: String!
-  password: String!
-  Status: Boolean!
+type SignInResponse {
+  access_token: String
 }
 
 type User {
@@ -23,18 +21,32 @@ type User {
   names: String!
   surnames: String!
   email: String!
-  Provider: String!
+  provider: String!
   document: String
   address: String
   telephone_number: String
   image: String
+  role: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Credentials {
+  id_user: String!
+  password: String!
   Status: Boolean!
 }
 
 type Query {
-  signInWithEmail(signInAuthInput: SignInInput!): [Auth!]!
-  socialLogin(signInAuthInput: SignInInput!): [Auth!]!
+  signInWithEmail(signInInput: SignInInput!): SignInResponse!
   findUserById: User!
+  findAll: [User!]!
   findCredentialsById: Credentials!
 }
 
@@ -44,7 +56,7 @@ input SignInInput {
 }
 
 type Mutation {
-  signUp(signUpInput: SignUpInput!): Auth!
+  signUp(signUpInput: SignUpInput!): SignUpResponse!
   createUser(createUserInput: CreateUserInput!): CreatedUserResponse!
 }
 

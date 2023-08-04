@@ -1,0 +1,49 @@
+import { CustomError } from '../error/custom-error';
+
+export enum SignUpCustomErrorMessage {
+  EMAIL_EXIST = 'EMAIL_EXIST',
+  PASSWORD_WEAK = 'PASSWORD_WEAK',
+  TRANSACTION_FAILED = 'TRANSACTION_FAILED',
+  FAILED_CREATE_CREDENTIALS = 'FAILED_CREATE_CREDENTIALS',
+}
+
+const { EMAIL_EXIST, PASSWORD_WEAK, FAILED_CREATE_CREDENTIALS } =
+  SignUpCustomErrorMessage;
+
+export const signUpCustomError = {
+  EMAIL_ALREADY_EXIST: () => new CustomError(EMAIL_EXIST),
+  PASSWORD_WEAK: () => new CustomError(PASSWORD_WEAK),
+  FAILED_CREATE_CREDENTIALS: () => new CustomError(FAILED_CREATE_CREDENTIALS),
+};
+
+export enum SignInCustomErrorMessage {
+  WRONG_PROVIDER = 'WRONG_PROVIDER',
+}
+
+const { WRONG_PROVIDER } = SignInCustomErrorMessage;
+
+export const signInCustomError = {
+  WRONG_PROVIDER: () => new CustomError(WRONG_PROVIDER),
+};
+
+export enum CustomErrorMessage {
+  EMAIL_NOT_FOUND = 'EMAIL_NOT_FOUND',
+  CREDENTIALS_NOT_FOUND = 'CREDENTIALS_NOT_FOUND',
+  SOMETHING_WRONG_FIND_EMAIL = 'SOMETHING_WRONG_TRYING_TO_FIND_EMAIL',
+  SOMETHING_WRONG_FIND_CREDENTIALS = 'SOMETHING_WRONG_TRYING_TO_FIND_CREDENTIALS',
+}
+
+const {
+  EMAIL_NOT_FOUND,
+  CREDENTIALS_NOT_FOUND,
+  SOMETHING_WRONG_FIND_EMAIL,
+  SOMETHING_WRONG_FIND_CREDENTIALS,
+} = CustomErrorMessage;
+
+export const customErrorMessage = {
+  EMAIL_NOT_FOUND: () => new CustomError(EMAIL_NOT_FOUND),
+  CREDENTIALS_NOT_FOUND: () => new CustomError(CREDENTIALS_NOT_FOUND),
+  SOMETHING_WRONG_FIND_EMAIL: () => new CustomError(SOMETHING_WRONG_FIND_EMAIL),
+  SOMETHING_WRONG_FIND_CREDENTIALS: () =>
+    new CustomError(SOMETHING_WRONG_FIND_CREDENTIALS),
+};

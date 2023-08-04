@@ -1,10 +1,10 @@
-import { CreateUserResult } from '@/user/constant/constants';
+import { SignUpResult } from '@/auth/constant/contants';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class CreatedUserResponse {
   @Field(() => String)
-  result: CreateUserResult;
+  result: SignUpResult;
   @Field(() => String)
   message: string;
 }
