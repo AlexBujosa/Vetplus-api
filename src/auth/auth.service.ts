@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { BcryptService } from '@/bcrypt/bcrypt.service';
-import { SignInInput } from './graphql/inputs/sign-in.input';
 import { UserService } from '@/user/user.service';
 import { SignUpInput } from './graphql/inputs/sign-up.input';
 import { CredentialsService } from '@/credentials/credentials.service';
@@ -38,10 +37,8 @@ export class AuthService {
     return { result: COMPLETED, message: USER_CREATED };
   }
   async validateUser(email: string, password: string): Promise<User> {
-    console.log('antes de email not found');
     const user = await this.userService.findByEmail(email);
     const { id, provider } = user;
-    console.log('despues de email not found');
     if (provider != AuthProvider.EMAIL)
       throw signInCustomException.WRONG_PROVIDER();
 
@@ -56,11 +53,12 @@ export class AuthService {
 
     return coincidence ? user : null;
   }
-  async login(user: User): Promise<SignInResponse> {
+  login(user: User): SignInResponse {
     return {
-      access_token: await this.jwtService.sign({
+      access_token: this.jwtService.sign({
         username: user.email,
         sub: user.id,
+        role: user.role,
       }),
     };
   }

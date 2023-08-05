@@ -8,8 +8,8 @@ import { LocalStrategy } from './local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { UserModule } from '@/user/user.module';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstant } from '@/jwt/constant/constant';
-import { JwtStrategy } from '@/jwt/jwt.strategy';
+import { JwtStrategy } from '@/auth/jwt.strategy';
+import { jwtConstant } from './constant/contants';
 
 @Module({
   imports: [
@@ -29,6 +29,6 @@ import { JwtStrategy } from '@/jwt/jwt.strategy';
     LocalStrategy,
     JwtStrategy,
   ],
-  exports: [AuthService],
+  exports: [AuthService, JwtStrategy],
 })
 export class AuthModule {}

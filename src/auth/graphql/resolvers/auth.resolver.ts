@@ -18,11 +18,11 @@ export class AuthResolver {
 
   @Query(() => SignInResponse)
   @UseGuards(GqlAuthGuard)
-  async signInWithEmail(
+  signInWithEmail(
     @Args('signInInput') signInInput: SignInInput,
-    @Context() Context,
+    @Context() context,
   ) {
-    return await this.authService.login(Context.user);
+    return this.authService.login(context.user);
   }
   /*
   @Query(() => SignUpResponse)
