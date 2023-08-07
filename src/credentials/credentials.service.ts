@@ -32,19 +32,11 @@ export class CredentialsService {
     }
   }
 
-  async findAll() {
-    return await this.prisma.user.findMany();
+  validatePassword(password: string): boolean {
+    const regexStr =
+      '^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%^&+=!¡?¿*()])(?!.*\\s).{12,}$';
+    const regex = new RegExp(regexStr);
+
+    return regex.test(password);
   }
-
-  // findOne(id: number) {
-  //   return await this.prisma.person.find
-  // }
-
-  // update(id: number, updatePersonInput: UpdatePersonInput) {
-  //   return await this.prisma.person.
-  // }
-
-  // remove(id: number) {
-  //   return await this.prisma.person.
-  // }
 }

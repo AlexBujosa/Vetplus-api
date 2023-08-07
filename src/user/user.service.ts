@@ -27,6 +27,8 @@ export class UserService {
         error.code == 'P2002'
       ) {
         throw signUpCustomException.EMAIL_ALREADY_EXIST();
+      } else {
+        throw signUpCustomException.TRANSACTION_FAILED();
       }
     }
   }

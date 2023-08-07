@@ -8,6 +8,7 @@ import { SignUpMessage, SignUpResult } from './constant/contants';
 import {
   signInCustomException,
   customException,
+  signUpCustomException,
 } from '@/global/constant/constants';
 import { AuthProvider, User } from '@prisma/client';
 import { SignInResponse } from './graphql/types/sign-in-result.type';
@@ -26,6 +27,12 @@ export class AuthService {
   async register(signUpInput: SignUpInput) {
     const { COMPLETED } = SignUpResult;
     const { USER_CREATED } = SignUpMessage;
+
+    const strongPassword = this.credentialsService.validatePassword(
+      signUpInput.password,
+    );
+    if (!strongPassword) throw signUpCustomException.PASSWORD_WEAK();
+
     await this.prismaService.$transaction(async () => {
       const hash = await this.bcryptService.hashPassword(signUpInput.password);
       const userCreated = await this.userService.create(signUpInput);
