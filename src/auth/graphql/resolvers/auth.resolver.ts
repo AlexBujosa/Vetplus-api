@@ -5,12 +5,16 @@ import { SignUpResponse } from '../types/sign-up-result.type';
 import { SignUpInput } from '../inputs/sign-up.input';
 import { SignInResponse } from '../types/sign-in-result.type';
 import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '@/auth/gql-auth.guard';
-import { FirebaseAuthGuard } from '@/auth/firebase-auth.guard';
+import { GoogleAuthGuard } from '@/auth/guard/google-auth.guard';
+import { GoogleAuthService } from '@/auth/google-auth/google-auth.service';
+import { GqlAuthGuard } from '@/auth/guard/gql-auth.guard';
 
 @Resolver(() => SignUpResponse)
 export class AuthResolver {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly googleAuthService: GoogleAuthService,
+  ) {}
 
   @Mutation(() => SignUpResponse)
   signUp(@Args('signUpInput') signUpInput: SignUpInput) {
@@ -27,8 +31,14 @@ export class AuthResolver {
   }
 
   @Query(() => SignInResponse)
-  @UseGuards(FirebaseAuthGuard)
-  socialLogin(@Context() context) {
-    return this.authService.login(context.user);
+  @UseGuards(GoogleAuthGuard)
+  googleLogin(@Context() context) {
+    return this.authService.login(context.req.user);
+  }
+
+  @Mutation(() => SignInResponse)
+  @UseGuards(GoogleAuthGuard)
+  googleRegister(@Args('signUpInput') signUpInput: SignUpInput) {
+    return this.googleAuthService.socialRegister(signUpInput);
   }
 }

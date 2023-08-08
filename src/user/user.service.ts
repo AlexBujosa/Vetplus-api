@@ -14,8 +14,8 @@ export class UserService {
 
   async create(createUserInput: CreateUserInput): Promise<User> {
     try {
-      const { email, names, surnames } = createUserInput;
-      const createUser = { email, names, surnames };
+      const { email, names, surnames, provider } = createUserInput;
+      const createUser = { email, names, surnames, provider };
       return await this.prismaService.user.create({
         data: {
           ...createUser,

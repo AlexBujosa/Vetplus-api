@@ -1,13 +1,13 @@
-import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UserService } from '../../user.service';
 import { User } from '../types/user.type';
 import { CreatedUserResponse } from '../types/created-user-response.type';
 import { CreateUserInput } from '../input/create-user.input';
 import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 import { RolesGuard } from '@/global/guard/roles.guard';
 import { Roles } from '@/global/decorator/roles.decorator';
 import { Role } from '@prisma/client';
+import { JwtAuthGuard } from '@/global/guard/jwt-auth.guard';
 
 @Resolver(() => User)
 export class UserResolver {
