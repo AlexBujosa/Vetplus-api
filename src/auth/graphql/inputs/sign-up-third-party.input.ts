@@ -1,8 +1,7 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { AuthProvider } from '@prisma/client';
 
 @InputType()
-export class CreateUserInput {
+export class SignUpThirdPartyInput {
   @Field(() => String)
   names: string;
 
@@ -11,10 +10,4 @@ export class CreateUserInput {
 
   @Field(() => String)
   email: string;
-
-  @Field({ nullable: true })
-  password: string;
-
-  @Field({ nullable: true })
-  provider: AuthProvider;
 }
