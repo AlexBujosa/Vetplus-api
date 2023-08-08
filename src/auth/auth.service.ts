@@ -43,6 +43,7 @@ export class AuthService {
 
     return { result: COMPLETED, message: USER_CREATED };
   }
+
   async validateUser(email: string, password: string): Promise<User> {
     const user = await this.userService.findByEmail(email);
     const { id, provider } = user;
@@ -60,6 +61,7 @@ export class AuthService {
 
     return coincidence ? user : null;
   }
+
   login(user: User): SignInResponse {
     return {
       access_token: this.jwtService.sign({

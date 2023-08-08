@@ -10,6 +10,7 @@ import { UserModule } from '@/user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from '@/auth/jwt.strategy';
 import { jwtConstant } from './constant/contants';
+import { FirebaseAuthStrategy } from './firebase-auth.strategy';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { jwtConstant } from './constant/contants';
     PrismaService,
     LocalStrategy,
     JwtStrategy,
+    FirebaseAuthStrategy,
   ],
   exports: [AuthService, JwtStrategy],
 })
