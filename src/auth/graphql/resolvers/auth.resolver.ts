@@ -6,6 +6,7 @@ import { SignUpInput } from '../inputs/sign-up.input';
 import { SignInResponse } from '../types/sign-in-result.type';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '@/auth/gql-auth.guard';
+import { FirebaseAuthGuard } from '@/auth/firebase-auth.guard';
 
 @Resolver(() => SignUpResponse)
 export class AuthResolver {
@@ -24,9 +25,10 @@ export class AuthResolver {
   ) {
     return this.authService.login(context.user);
   }
-  /*
-  @Query(() => SignUpResponse)
-  socialLogin(@Args('signInAuthInput') signInAuthInput: SignInInput) {
-    return this.authService.login(signInAuthInput);
-  }*/
+
+  @Query(() => SignInResponse)
+  @UseGuards(FirebaseAuthGuard)
+  socialLogin(@Context() context) {
+    return this.authService.login(context.user);
+  }
 }
