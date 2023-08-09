@@ -53,6 +53,7 @@ export class GoogleAuthService {
       throw error;
     }
   }
+
   async socialRegister(signUpInput: SignUpInput): Promise<SignInResponse> {
     signUpInput.provider = this.provider;
     const result = await this.userService.create(signUpInput);

@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { UserService } from '../../user.service';
 import { User } from '../types/user.type';
 import { CreatedUserResponse } from '../types/created-user-response.type';
@@ -12,14 +12,23 @@ import { JwtAuthGuard } from '@/global/guard/jwt-auth.guard';
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
+
   @Mutation(() => CreatedUserResponse)
   createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.userService.create(createUserInput);
   }
+
   @Query(() => User)
   findUserById(id: string) {
     return this.userService.findById(id);
   }
+
+  @Query(() => User)
+  @UseGuards(JwtAuthGuard)
+  getMyProfile(@Context() context) {
+    return this.userService.findById(context.req.user.sub);
+  }
+
   @Query(() => [User])
   @Roles(Role.CLINIC_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
