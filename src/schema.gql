@@ -47,6 +47,7 @@ type Query {
   signInWithEmail(signInInput: SignInInput!): SignInResponse!
   googleLogin: SignInResponse!
   findUserById: User!
+  getMyProfile: User!
   findAll: [User!]!
   findCredentialsById: Credentials!
 }
