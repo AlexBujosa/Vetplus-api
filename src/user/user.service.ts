@@ -32,13 +32,16 @@ export class UserService {
       }
     }
   }
+
   async findByEmail(email: string): Promise<User> {
     const result = await this.prismaService.user.findUnique({
       where: {
         email,
       },
     });
+
     if (!result) throw customException.EMAIL_NOT_FOUND();
+
     return result;
   }
 
