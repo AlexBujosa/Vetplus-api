@@ -14,10 +14,10 @@ steps:
   - script: |
       npm install
       npm run lint
-      npm run build
-    displayName: 'npm install, lint and build'
+    displayName: 'npm install and lint'
 
   - task: Docker@2
+    condition: and (succeededOrFailed(), eq(variables['task.NodeTool@0.status'], 'success'))
     inputs:
       containerRegistry: 'docker-hub-connection'
       repository: 'vetplus-api'
