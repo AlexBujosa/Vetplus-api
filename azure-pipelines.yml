@@ -17,7 +17,7 @@ steps:
     displayName: 'npm install and lint'
 
   - task: Docker@2
-    condition: and (succeededOrFailed(), eq(variables['task.NodeTool@0.status'], 'success'))
+    condition: and (succeeded(), eq(variables['task.NodeTool@0.status'], 'success'))
     inputs:
       containerRegistry: 'docker-hub-connection'
       repository: 'vetplus-api'
