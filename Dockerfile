@@ -1,26 +1,26 @@
-FROM node:20-alpine as development
+FROM node:20.5-alpine3.18
 
-WORKDIR /app
+ENV NODE_ENV=production
 
-COPY tsconfig*.json ./
-COPY package*.json ./
+ENV DATABASE_URL='mysql://utk57dfoylwc1mncpb0k:pscale_pw_1y38Hmw6ka5H4WFCDe6sDdtU0EqFLxnx1sTdoq3O2s8@aws.connect.psdb.cloud/vetplus?sslaccept=strict'
 
-RUN npm ci
+ENV GOOGLE_CLIENT_ID="442731666407-br1qi3k402j7b7c1v95scvo90ceg00u5.apps.googleusercontent.com"
 
-COPY src/ src/
+WORKDIR /usr/src/app
 
+COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
+
+RUN npm install --production --silent && mv node_modules ../
+
+COPY . .
+
+RUN npm run prisma:g
 RUN npm run build
-
-FROM node:20-alpine as production
-
-WORKDIR /app
-
-COPY package*.json ./
-
-RUN npm ci --omit=dev
-
-COPY --from=development /app/dist/ ./dist/
 
 EXPOSE 3000
 
-CMD [ "node", "dist/main.js" ]
+RUN chown -R node /usr/src/app
+
+USER node
+
+CMD ["node", "dist/main.js"]
