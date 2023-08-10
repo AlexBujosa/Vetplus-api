@@ -15,6 +15,7 @@
     "start:prod": "node dist/main",
     "prisma:g": "prisma generate",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "docs:generate": "magidoc generate",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -22,6 +23,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@magidoc/cli": "^4.0.0",
     "@nestjs/apollo": "^12.0.7",
     "@nestjs/cli": "^10.1.11",
     "@nestjs/common": "^10.0.0",
