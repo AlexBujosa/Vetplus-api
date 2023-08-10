@@ -36,3 +36,4 @@ steps:
         npm run docs:generate
         netlify deploy --prod
     displayName: 'Deploy to netlify'
+    timeoutInMinutes: 5
