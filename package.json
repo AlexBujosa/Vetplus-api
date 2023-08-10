@@ -37,6 +37,7 @@
     "class-transformer": "^0.5.1",
     "firebase-admin": "^11.10.1",
     "google-auth-library": "^9.0.0",
+    "netlify-cli": "^16.0.1",
     "passport": "^0.6.0",
     "passport-firebase-jwt": "^1.2.1",
     "passport-google-token": "^0.1.2",
