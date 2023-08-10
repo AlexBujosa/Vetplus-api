@@ -24,3 +24,15 @@ steps:
       command: 'buildAndPush'
       Dockerfile: '**/Dockerfile'
       tags: 'alpha'
+
+  - task: Bash@3
+    inputs:
+      targetType: 'inline'
+      script: |
+        echo 'Deploying website to netlify...'
+
+        export NETLIFY_AUTH_TOKEN="${{ NETLIFY_AUTH_TOKEN }}"
+
+        netlify login
+        npm run docs:generate
+        netlify deploy --prod
