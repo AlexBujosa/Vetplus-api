@@ -31,7 +31,7 @@ steps:
       script: |
         echo 'Deploying website to netlify...'
 
-        export NETLIFY_AUTH_TOKEN="${{ NETLIFY_AUTH_TOKEN }}"
+        export NETLIFY_AUTH_TOKEN="$(NETLIFY_AUTH_TOKEN)"
 
         netlify login
         npm run docs:generate
