@@ -2,6 +2,9 @@
 .env
 .env.*
 
+# graphql doc website
+/docs
+
 # compiled output
 /dist
 /node_modules
