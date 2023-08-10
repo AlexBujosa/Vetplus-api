@@ -32,8 +32,8 @@ steps:
       script: |
         export NETLIFY_AUTH_TOKEN="$(NETLIFY_AUTH_TOKEN)"
         netlify login
-        pwd
         npm run docs:generate
+        ls
         netlify deploy --prod
     displayName: 'Deploy to netlify'
     timeoutInMinutes: 5
