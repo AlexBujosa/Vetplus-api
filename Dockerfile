@@ -14,7 +14,6 @@ RUN npm install --production --silent && mv node_modules ../
 
 COPY . .
 
-RUN npm run prisma:g
 RUN npm run build
 
 EXPOSE 3000
