@@ -17,9 +17,10 @@ steps:
       npm run build
     displayName: 'npm install, lint and build'
 
-  - task: Docker@2
-    inputs:
-      containerRegistry: 'docker-hub-connection'
-      repository: 'vetplus-api'
-      command: 'buildAndPush'
-      Dockerfile: '**/Dockerfile'
+- task: Docker@2
+  inputs:
+    containerRegistry: 'docker-hub-connection'
+    repository: 'vetplus-api'
+    command: 'buildAndPush'
+    Dockerfile: '**/Dockerfile'
+    tags: 'alpha'
