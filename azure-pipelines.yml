@@ -26,14 +26,21 @@ steps:
       tags: 'alpha'
     displayName: 'Build and Push Docker image'
 
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: '$(System.DefaultWorkingDirectory)/docs'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
   - task: Bash@3
     inputs:
       targetType: 'inline'
       script: |
-        export NETLIFY_AUTH_TOKEN="$(NETLIFY_AUTH_TOKEN)"
+        npm install -g netlify-cli
         netlify login
         npm run docs:generate
-        ls
-        netlify deploy --dir=docs --prod
-    displayName: 'Deploy to netlify'
+        netlify deploy --prod --dir '$(Build.ArtifactStagingDirectory)'
+    displayName: 'Deploy docs website to netlify'
     timeoutInMinutes: 5
+    env:
+      NETLIFY_AUTH_TOKEN: $(NETLIFY_AUTH_TOKEN)
+      NETLIFY_SITE_ID: $(NETLIFY_SITE_ID)
