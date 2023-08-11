@@ -34,6 +34,6 @@ steps:
         netlify login
         npm run docs:generate
         ls
-        netlify deploy --prod -d docs/
+        netlify deploy --dir=docs --prod
     displayName: 'Deploy to netlify'
     timeoutInMinutes: 5
