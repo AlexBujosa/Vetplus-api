@@ -5,6 +5,5 @@ export default {
   },
   website: {
     template: 'carbon-multi-page',
-    output: '/docs',
   },
 };
