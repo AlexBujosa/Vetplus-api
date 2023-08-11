@@ -15,6 +15,7 @@ steps:
       npm install
       npm run lint
       npm run build
+      npm run docs:g
     displayName: 'npm install, lint and build'
 
   - task: Docker@2
@@ -37,7 +38,6 @@ steps:
       script: |
         npm install -g netlify-cli
         netlify login
-        npm run docs:generate
         netlify deploy --prod --dir '$(Build.ArtifactStagingDirectory)'
     displayName: 'Deploy docs website to netlify'
     timeoutInMinutes: 5
