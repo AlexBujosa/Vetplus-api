@@ -14,6 +14,7 @@ import { CredentialsService } from './credentials/credentials.service';
 import { PetModule } from './pet/pet.module';
 import { SpecieModule } from './specie/specie.module';
 import { BreedModule } from './breed/breed.module';
+import { AwsS3Module } from './aws_s3/aws_s3.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { BreedModule } from './breed/breed.module';
     PetModule,
     SpecieModule,
     BreedModule,
+    AwsS3Module,
   ],
   providers: [PrismaService, BcryptService, UserService, CredentialsService],
 })
