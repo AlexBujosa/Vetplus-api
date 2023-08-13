@@ -12,6 +12,7 @@ import { UserModule } from './user/user.module';
 import { UserService } from './user/user.service';
 import { CredentialsService } from './credentials/credentials.service';
 import { PetModule } from './pet/pet.module';
+import { SpecieModule } from './specie/specie.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { PetModule } from './pet/pet.module';
     UserModule,
     CredentialsModule,
     PetModule,
+    SpecieModule,
   ],
   providers: [PrismaService, BcryptService, UserService, CredentialsService],
 })
