@@ -105,11 +105,11 @@ model Pet {
   breed  Breed  @relation(fields: [id_breed], references: [id])
 
   name         String
-  image        String
+  image        String?
   gender       Sex
   castrated    Boolean
-  dob          DateTime @db.Date
-  observations String   @db.Text
+  dob          DateTime? @db.Date
+  observations String?   @db.Text
 
   // TODO: Relacionar las vacunas y/o sus desparasitantes
   // TODO: Relacionar los tratamientos (lavado, corte de pelo, etc...)
