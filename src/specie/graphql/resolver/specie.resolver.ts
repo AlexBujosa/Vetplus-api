@@ -10,7 +10,7 @@ import { SpecieResult } from '@/specie/constant/contant';
 import { AddSpecieResponse } from '../types/add-specie-response.type';
 
 @Resolver()
-@Roles(Role.ADMIN, Role.PET_OWNER)
+@Roles(Role.ADMIN)
 export class SpecieResolver {
   constructor(private readonly specieService: SpecieService) {}
 
