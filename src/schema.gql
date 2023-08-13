@@ -43,6 +43,38 @@ type Credentials {
   Status: Boolean!
 }
 
+type AddPetResponse {
+  result: String!
+}
+
+type UpdatePetResponse {
+  result: String!
+}
+
+type DeletePetResponse {
+  result: String!
+}
+
+type Pet {
+  id: String!
+  id_owner: String!
+  id_specie: Int!
+  id_breed: Int!
+  name: String!
+  image: String
+  gender: String!
+  castrated: Boolean!
+  dob: DateTime
+  observations: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+type AddSpecieResponse {
+  result: String!
+}
+
 type Query {
   signInWithEmail(signInInput: SignInInput!): SignInResponse!
   googleLogin: SignInResponse!
@@ -50,6 +82,7 @@ type Query {
   getMyProfile: User!
   findAll: [User!]!
   findCredentialsById: Credentials!
+  findAllPet: [Pet!]!
 }
 
 input SignInInput {
@@ -61,6 +94,10 @@ type Mutation {
   signUp(signUpInput: SignUpInput!): SignUpResponse!
   googleRegister(signUpInput: SignUpInput!): SignInResponse!
   createUser(createUserInput: CreateUserInput!): CreatedUserResponse!
+  registerPet(addPetInput: AddPetInput!): AddPetResponse!
+  updatePet(updatePetInput: UpdatePetInput!): UpdatePetResponse!
+  deletePet(deletePetInput: DeletePetInput!): DeletePetResponse!
+  registerSpecie(addPetInput: AddSpecieInput!): AddSpecieResponse!
 }
 
 input SignUpInput {
@@ -77,4 +114,38 @@ input CreateUserInput {
   email: String!
   password: String
   provider: String
+}
+
+input AddPetInput {
+  id_owner: String!
+  id_specie: Int!
+  id_breed: Int!
+  name: String!
+  image: String
+  gender: String!
+  castrated: Boolean!
+  dob: DateTime
+  observations: String
+}
+
+input UpdatePetInput {
+  id: String!
+  id_owner: String!
+  id_specie: Int!
+  id_breed: Int!
+  name: String!
+  image: String
+  gender: String!
+  castrated: Boolean!
+  dob: DateTime
+  observations: String
+}
+
+input DeletePetInput {
+  id: String!
+  status: Boolean!
+}
+
+input AddSpecieInput {
+  name: String!
 }

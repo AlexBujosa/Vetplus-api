@@ -97,8 +97,8 @@ model Pet {
   id String @id @default(uuid())
 
   id_owner  String
-  id_specie String
-  id_breed  String
+  id_specie Int
+  id_breed  Int
 
   owner  User @relation(fields: [id_owner], references: [id])
   specie Specie @relation(fields: [id_specie], references: [id])
@@ -126,7 +126,7 @@ model Pet {
 }
 
 model Specie {
-  id String @id @default(uuid())
+  id Int @id @default(autoincrement())
 
   name String
 
@@ -139,8 +139,8 @@ model Specie {
 }
 
 model Breed {
-  id        String @id @default(uuid())
-  id_specie String
+  id        Int @id @default(autoincrement())
+  id_specie Int
 
   specie Specie @relation(fields: [id_specie], references: [id])
 
