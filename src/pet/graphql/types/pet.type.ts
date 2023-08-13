@@ -1,4 +1,4 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Sex } from '@prisma/client';
 
 @ObjectType()
@@ -9,11 +9,11 @@ export class Pet {
   @Field(() => String)
   id_owner: string;
 
-  @Field(() => String)
-  id_specie: string;
+  @Field(() => Int)
+  id_specie: number;
 
-  @Field(() => String)
-  id_breed: string;
+  @Field(() => Int)
+  id_breed: number;
 
   @Field(() => String)
   name: string;
@@ -21,7 +21,7 @@ export class Pet {
   @Field({ nullable: true })
   image: string;
 
-  @Field(() => Sex)
+  @Field()
   gender: Sex;
 
   @Field(() => Boolean)
