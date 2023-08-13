@@ -9,7 +9,7 @@ import { GoogleAuthGuard } from '@/auth/guard/google-auth.guard';
 import { GoogleAuthService } from '@/auth/google-auth/google-auth.service';
 import { GqlAuthGuard } from '@/auth/guard/gql-auth.guard';
 
-@Resolver(() => SignUpResponse)
+@Resolver()
 export class AuthResolver {
   constructor(
     private readonly authService: AuthService,
