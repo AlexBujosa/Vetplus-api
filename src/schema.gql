@@ -75,6 +75,10 @@ type AddSpecieResponse {
   result: String!
 }
 
+type AddBreedResponse {
+  result: String!
+}
+
 type Query {
   signInWithEmail(signInInput: SignInInput!): SignInResponse!
   googleLogin: SignInResponse!
@@ -98,6 +102,7 @@ type Mutation {
   updatePet(updatePetInput: UpdatePetInput!): UpdatePetResponse!
   deletePet(deletePetInput: DeletePetInput!): DeletePetResponse!
   registerSpecie(addPetInput: AddSpecieInput!): AddSpecieResponse!
+  registerBreed(addBreedInput: AddBreedInput!): AddBreedResponse!
 }
 
 input SignUpInput {
@@ -117,7 +122,6 @@ input CreateUserInput {
 }
 
 input AddPetInput {
-  id_owner: String!
   id_specie: Int!
   id_breed: Int!
   name: String!
@@ -130,7 +134,6 @@ input AddPetInput {
 
 input UpdatePetInput {
   id: String!
-  id_owner: String!
   id_specie: Int!
   id_breed: Int!
   name: String!
@@ -147,5 +150,10 @@ input DeletePetInput {
 }
 
 input AddSpecieInput {
+  name: String!
+}
+
+input AddBreedInput {
+  id_specie: Int!
   name: String!
 }

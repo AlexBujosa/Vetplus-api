@@ -6,9 +6,6 @@ export class UpdatePetInput {
   @Field(() => String)
   id: string;
 
-  @Field(() => String)
-  id_owner: string;
-
   @Field(() => Int)
   id_specie: number;
 

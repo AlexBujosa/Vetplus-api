@@ -23,8 +23,12 @@ export class PetResolver {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async registerPet(
     @Args('addPetInput') addPetInput: AddPetInput,
+    @Context() context,
   ): Promise<AddPetResponse> {
-    const result = await this.petService.createPet(addPetInput);
+    const result = await this.petService.createPet(
+      addPetInput,
+      context.req.user.sub,
+    );
 
     if (!result)
       return {
@@ -41,8 +45,12 @@ export class PetResolver {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updatePet(
     @Args('updatePetInput') updatePetInput: UpdatePetInput,
+    @Context() context,
   ): Promise<UpdatePetResponse> {
-    const result = await this.petService.updatePet(updatePetInput);
+    const result = await this.petService.updatePet(
+      updatePetInput,
+      context.req.user.sub,
+    );
 
     if (!result)
       return {

@@ -8,17 +8,24 @@ import { Pet } from '@prisma/client';
 @Injectable()
 export class PetService {
   constructor(private readonly prismaService: PrismaService) {}
-  async createPet(addPetInput: AddPetInput): Promise<boolean> {
+  async createPet(
+    addPetInput: AddPetInput,
+    id_owner: string,
+  ): Promise<boolean> {
     const result = await this.prismaService.pet.create({
       data: {
         ...addPetInput,
+        id_owner,
       },
     });
     if (!result) return false;
     return true;
   }
 
-  async updatePet(updatePetInput: UpdatePetInput): Promise<boolean> {
+  async updatePet(
+    updatePetInput: UpdatePetInput,
+    id_owner: string,
+  ): Promise<boolean> {
     const { id, ...data } = updatePetInput;
     const result = await this.prismaService.pet.update({
       where: {
@@ -26,6 +33,7 @@ export class PetService {
       },
       data: {
         ...data,
+        id_owner,
       },
     });
 
