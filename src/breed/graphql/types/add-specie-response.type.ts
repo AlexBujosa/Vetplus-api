@@ -1,4 +1,4 @@
-import { BreedResult } from '@/breed/constant/contant';
+import { BreedResult } from '@/breed/constant';
 import { ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType()

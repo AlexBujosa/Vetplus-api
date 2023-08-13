@@ -6,7 +6,7 @@ import { Roles } from '@/global/decorator/roles.decorator';
 import { Role } from '@prisma/client';
 import { AddBreedInput } from '../input/add-breed.input';
 import { BreedService } from '@/breed/breed.service';
-import { BreedResult } from '@/breed/constant/contant';
+import { BreedResult } from '@/breed/constant';
 import { AddBreedResponse } from '../types/add-specie-response.type';
 
 @Resolver()
