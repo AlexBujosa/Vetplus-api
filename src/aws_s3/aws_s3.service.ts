@@ -15,7 +15,7 @@ export class AwsS3Service {
     const uploadedImage = await s3
       .upload({
         Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: file.filename,
+        Key: `pets/${file.filename}`,
         Body: blob,
       })
       .promise();

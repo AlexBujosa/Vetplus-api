@@ -13,10 +13,14 @@ import { UpdatePetResponse } from '../types/update-pet-response.type';
 import { DeletePetInput } from '../input/delete-pet.input';
 import { DeletePetResponse } from '../types/delete-pet-response,type';
 import { Pet } from '../types/pet.type';
+import { AwsS3Service } from '@/aws_s3/aws_s3.service';
 
 @Resolver()
 export class PetResolver {
-  constructor(private readonly petService: PetService) {}
+  constructor(
+    private readonly petService: PetService,
+    private readonly awsS3Service: AwsS3Service,
+  ) {}
 
   @Mutation(() => AddPetResponse)
   @Roles(Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
@@ -25,8 +29,15 @@ export class PetResolver {
     @Args('addPetInput') addPetInput: AddPetInput,
     @Context() context,
   ): Promise<AddPetResponse> {
+    const { image, ...rest } = addPetInput;
+
+    const s3Location = await this.awsS3Service.savePetImageToS3(image);
+
     const result = await this.petService.createPet(
-      addPetInput,
+      {
+        ...rest,
+        image: s3Location,
+      },
       context.req.user.sub,
     );
 
