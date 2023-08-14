@@ -125,12 +125,15 @@ input AddPetInput {
   id_specie: Int!
   id_breed: Int!
   name: String!
-  image: String
+  image: Upload!
   gender: String!
   castrated: Boolean!
   dob: DateTime
   observations: String
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 input UpdatePetInput {
   id: String!

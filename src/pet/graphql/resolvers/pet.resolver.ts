@@ -1,7 +1,7 @@
+import { AddPetInput } from '@/pet/graphql/input/add-pet.input';
 import { Args, Context, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { PetService } from '@/pet/pet.service';
-import { AddPetInput } from '../input/add-pet.input';
 import { AddPetResponse } from '../types/add-pet-response.type';
 import { AddPetResult } from '../constant/constants';
 import { JwtAuthGuard } from '@/global/guard/jwt-auth.guard';
@@ -27,11 +27,14 @@ export class PetResolver {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async registerPet(
     @Args('addPetInput') addPetInput: AddPetInput,
-    @Context() context,
+    @Context()
+    context,
   ): Promise<AddPetResponse> {
     const { image, ...rest } = addPetInput;
 
-    const s3Location = await this.awsS3Service.savePetImageToS3(image);
+    const file = await image;
+
+    const s3Location = await this.awsS3Service.savePetImageToS3(file);
 
     const result = await this.petService.createPet(
       {
