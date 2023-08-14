@@ -3,5 +3,6 @@ import { AwsS3Service } from './aws_s3.service';
 
 @Module({
   providers: [AwsS3Service],
+  exports: [AwsS3Service],
 })
 export class AwsS3Module {}
