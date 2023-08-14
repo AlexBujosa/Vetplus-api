@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { CustomExceptionFilter } from './global/filter/custom-exception.filter';
 import * as passport from 'passport';
-import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress';
+import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
