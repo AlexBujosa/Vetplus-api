@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import {
   AbortMultipartUploadCommandOutput,
   CompleteMultipartUploadCommandOutput,
+  DeleteObjectCommand,
+  DeleteObjectCommandOutput,
   S3Client,
 } from '@aws-sdk/client-s3';
 import { Upload as UploadSdk } from '@aws-sdk/lib-storage';
@@ -18,25 +20,38 @@ const {
 
 @Injectable()
 export class AwsS3Service {
-  validateImages(file: Upload) {
-    const images = ['image/jpeg', 'image/png', 'image/jpg'];
-    if (!images.includes(file.mimetype))
-      throw customException.INVALID_FILE_TYPE();
-  }
-
-  async savePetImageToS3(file: UploadType) {
-    const { createReadStream, filename, mimetype } = await file;
-
-    const client = new S3Client({
+  private readonly client: S3Client;
+  constructor() {
+    this.client = new S3Client({
       region: AWS_S3_REGION,
       credentials: {
         accessKeyId: AWS_S3_ACCESS_KEY_ID,
         secretAccessKey: AWS_S3_SECRET_ACCESS_KEY,
       },
     });
+  }
+  validateImages(file: Upload) {
+    const images = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (!images.includes(file.mimetype))
+      throw customException.INVALID_FILE_TYPE();
+  }
+
+  async deletePetImageToS3(url: string): Promise<boolean> {
+    const result = new DeleteObjectCommand({
+      Bucket: AWS_S3_BUCKET_NAME,
+      Key: `pets/${url}`,
+    });
+    const s3DeletedOutput = await this.client.send(result);
+    return isDeleted(s3DeletedOutput);
+  }
+
+  async savePetImageToS3(file: UploadType) {
+    const { createReadStream, filename, mimetype } = await file;
 
     const blob = createReadStream(filename);
     const uuid = uuidv4();
+
+    const client = this.client;
 
     const upload = new UploadSdk({
       client,
@@ -63,4 +78,10 @@ function isComplete(
     | AbortMultipartUploadCommandOutput,
 ): output is CompleteMultipartUploadCommandOutput {
   return (output as CompleteMultipartUploadCommandOutput).ETag !== undefined;
+}
+
+function isDeleted(
+  output: DeleteObjectCommandOutput,
+): output is DeleteObjectCommandOutput {
+  return (output as DeleteObjectCommandOutput).DeleteMarker !== false;
 }

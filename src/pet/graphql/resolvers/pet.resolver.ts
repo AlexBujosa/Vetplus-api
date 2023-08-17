@@ -16,6 +16,8 @@ import { Pet } from '../types/pet.type';
 import { AwsS3Service } from '@/aws_s3/aws_s3.service';
 import { SavePetImageInput } from '../input/save-pet-image.input';
 import { SavePetImageResponse } from '../types/save-pet-image-response.type';
+import { DeletePetImageInput } from '../input/delete-pet-image.input';
+import { DeletePetImageResponse } from '../types/delete-pet-image-response.type';
 
 @Resolver()
 export class PetResolver {
@@ -23,6 +25,21 @@ export class PetResolver {
     private readonly petService: PetService,
     private readonly awsS3Service: AwsS3Service,
   ) {}
+
+  @Mutation(() => DeletePetImageResponse)
+  @Roles(Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async deletePetImage(
+    @Args('deletePetImageInput') deletePetImageInput: DeletePetImageInput,
+  ): Promise<DeletePetImageResponse> {
+    const { image } = deletePetImageInput;
+
+    const result = await this.awsS3Service.deletePetImageToS3(image);
+
+    return !result
+      ? { result: AddPetResult.FAILED }
+      : { result: AddPetResult.COMPLETED };
+  }
 
   @Mutation(() => SavePetImageResponse)
   @Roles(Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
