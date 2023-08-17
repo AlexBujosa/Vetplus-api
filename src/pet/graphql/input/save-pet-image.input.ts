@@ -5,5 +5,5 @@ import * as Upload from 'graphql-upload/Upload.js';
 @InputType()
 export class SavePetImageInput {
   @Field(() => GraphQLUpload)
-  image?: Upload;
+  image: Upload;
 }

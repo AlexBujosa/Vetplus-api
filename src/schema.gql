@@ -76,6 +76,10 @@ type SavePetImageResponse {
   image: String
 }
 
+type DeletePetImageResponse {
+  result: String!
+}
+
 type AddSpecieResponse {
   result: String!
 }
@@ -103,6 +107,7 @@ type Mutation {
   signUp(signUpInput: SignUpInput!): SignUpResponse!
   googleRegister(signUpInput: SignUpInput!): SignInResponse!
   createUser(createUserInput: CreateUserInput!): CreatedUserResponse!
+  deletePetImage(deletePetImageInput: DeletePetImageInput!): DeletePetImageResponse!
   savePetImage(savePetImageInput: SavePetImageInput!): SavePetImageResponse!
   registerPet(addPetInput: AddPetInput!): AddPetResponse!
   updatePet(updatePetInput: UpdatePetInput!): UpdatePetResponse!
@@ -127,6 +132,10 @@ input CreateUserInput {
   provider: String
 }
 
+input DeletePetImageInput {
+  image: String!
+}
+
 input SavePetImageInput {
   image: Upload!
 }
@@ -138,7 +147,7 @@ input AddPetInput {
   id_specie: Int!
   id_breed: Int!
   name: String!
-  image: Upload!
+  image: String
   gender: String!
   castrated: Boolean!
   dob: DateTime
