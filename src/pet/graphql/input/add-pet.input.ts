@@ -1,7 +1,5 @@
 import { InputType, Field, Int } from '@nestjs/graphql';
 import { Sex } from '@prisma/client';
-import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
-import * as Upload from 'graphql-upload/Upload.js';
 
 @InputType()
 export class AddPetInput {
@@ -14,8 +12,8 @@ export class AddPetInput {
   @Field(() => String)
   name: string;
 
-  @Field(() => GraphQLUpload)
-  image: Upload;
+  @Field({ nullable: true })
+  image: string;
 
   @Field()
   gender: Sex;

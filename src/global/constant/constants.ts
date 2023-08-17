@@ -39,6 +39,7 @@ export enum CustomExceptionMessage {
   SOMETHING_WRONG_FIND_CREDENTIALS = 'SOMETHING_WRONG_TRYING_TO_FIND_CREDENTIALS',
   FORBIDDEN = 'FORBIDDEN',
   INVALID_TOKEN = 'INVALID_TOKEN',
+  INVALID_FILE_TYPE = 'INVALID_FILE_TYPE',
 }
 
 const {
@@ -48,6 +49,7 @@ const {
   SOMETHING_WRONG_FIND_CREDENTIALS,
   FORBIDDEN,
   INVALID_TOKEN,
+  INVALID_FILE_TYPE,
 } = CustomExceptionMessage;
 
 export const customException = {
@@ -59,4 +61,5 @@ export const customException = {
     new CustomException(SOMETHING_WRONG_FIND_CREDENTIALS, 200),
   FORBIDDEN: () => new CustomException(FORBIDDEN, 200),
   INVALID_TOKEN: () => new CustomException(INVALID_TOKEN, 200),
+  INVALID_FILE_TYPE: () => new CustomException(INVALID_FILE_TYPE, 200),
 };

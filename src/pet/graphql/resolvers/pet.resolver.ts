@@ -14,6 +14,8 @@ import { DeletePetInput } from '../input/delete-pet.input';
 import { DeletePetResponse } from '../types/delete-pet-response,type';
 import { Pet } from '../types/pet.type';
 import { AwsS3Service } from '@/aws_s3/aws_s3.service';
+import { SavePetImageInput } from '../input/save-pet-image.input';
+import { SavePetImageResponse } from '../types/save-pet-image-response.type';
 
 @Resolver()
 export class PetResolver {
@@ -22,36 +24,40 @@ export class PetResolver {
     private readonly awsS3Service: AwsS3Service,
   ) {}
 
+  @Mutation(() => SavePetImageResponse)
+  @Roles(Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async savePetImage(
+    @Args('savePetImageInput') savePetImageInput: SavePetImageInput,
+  ): Promise<SavePetImageResponse> {
+    const { image } = savePetImageInput;
+
+    if (!image) this.awsS3Service.validateImages(await image);
+
+    const s3Location = image
+      ? await this.awsS3Service.savePetImageToS3(await image)
+      : null;
+
+    return !s3Location
+      ? { result: AddPetResult.FAILED, image: s3Location }
+      : { result: AddPetResult.COMPLETED, image: s3Location };
+  }
+
   @Mutation(() => AddPetResponse)
   @Roles(Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async registerPet(
     @Args('addPetInput') addPetInput: AddPetInput,
-    @Context()
-    context,
+    @Context() context,
   ): Promise<AddPetResponse> {
-    const { image, ...rest } = addPetInput;
-
-    const file = await image;
-
-    const s3Location = await this.awsS3Service.savePetImageToS3(file);
-
     const result = await this.petService.createPet(
-      {
-        ...rest,
-        image: s3Location,
-      },
+      addPetInput,
       context.req.user.sub,
     );
 
-    if (!result)
-      return {
-        result: AddPetResult.FAILED,
-      };
-
-    return {
-      result: AddPetResult.COMPLETED,
-    };
+    return !result
+      ? { result: AddPetResult.FAILED }
+      : { result: AddPetResult.COMPLETED };
   }
 
   @Mutation(() => UpdatePetResponse)
@@ -66,14 +72,9 @@ export class PetResolver {
       context.req.user.sub,
     );
 
-    if (!result)
-      return {
-        result: AddPetResult.FAILED,
-      };
-
-    return {
-      result: AddPetResult.COMPLETED,
-    };
+    return !result
+      ? { result: AddPetResult.FAILED }
+      : { result: AddPetResult.COMPLETED };
   }
 
   @Mutation(() => DeletePetResponse)
@@ -88,14 +89,9 @@ export class PetResolver {
       context.req.user.sub,
     );
 
-    if (!result)
-      return {
-        result: AddPetResult.FAILED,
-      };
-
-    return {
-      result: AddPetResult.COMPLETED,
-    };
+    return !result
+      ? { result: AddPetResult.FAILED }
+      : { result: AddPetResult.COMPLETED };
   }
 
   @Query(() => [Pet])
