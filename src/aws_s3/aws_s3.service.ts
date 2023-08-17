@@ -37,9 +37,12 @@ export class AwsS3Service {
   }
 
   async deletePetImageToS3(url: string): Promise<boolean> {
+    const regex = /\/pets\/([a-f0-9-]+)\b/;
+    const [, id] = url.match(regex);
+
     const result = new DeleteObjectCommand({
       Bucket: AWS_S3_BUCKET_NAME,
-      Key: `pets/${url}`,
+      Key: `pets/${id}`,
     });
     const s3DeletedOutput = await this.client.send(result);
     return isDeleted(s3DeletedOutput);
