@@ -4,9 +4,11 @@ import {
   CompleteMultipartUploadCommandOutput,
   S3Client,
 } from '@aws-sdk/client-s3';
-import { Upload } from '@aws-sdk/lib-storage';
+import { Upload as UploadSdk } from '@aws-sdk/lib-storage';
+import * as Upload from 'graphql-upload/Upload.js';
 import * as UploadType from 'graphql-upload/Upload.js';
-
+import { customException } from '@/global/constant/constants';
+import { v4 as uuidv4 } from 'uuid';
 const {
   AWS_S3_ACCESS_KEY_ID,
   AWS_S3_SECRET_ACCESS_KEY,
@@ -16,8 +18,13 @@ const {
 
 @Injectable()
 export class AwsS3Service {
+  validateImages(file: Upload) {
+    const images = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (!images.includes(file.mimetype))
+      throw customException.INVALID_FILE_TYPE();
+  }
+
   async savePetImageToS3(file: UploadType) {
-    console.log(file);
     const { createReadStream, filename, mimetype } = await file;
 
     const client = new S3Client({
@@ -29,12 +36,13 @@ export class AwsS3Service {
     });
 
     const blob = createReadStream(filename);
+    const uuid = uuidv4();
 
-    const upload = new Upload({
+    const upload = new UploadSdk({
       client,
       params: {
         Bucket: AWS_S3_BUCKET_NAME,
-        Key: `pets/${filename}`,
+        Key: `pets/${uuid}`,
         ContentType: mimetype,
         Body: blob,
         ACL: 'public-read',
