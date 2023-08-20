@@ -5,5 +5,10 @@ export default {
   },
   website: {
     template: 'carbon-multi-page',
+    options: {
+      queryGenerationFactories: {
+        Upload: 'image blob goes here',
+      },
+    },
   },
 };
