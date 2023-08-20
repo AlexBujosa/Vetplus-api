@@ -16,7 +16,10 @@ export class UpdatePetInput {
   name: string;
 
   @Field({ nullable: true })
-  image: string;
+  url_current_image: string;
+
+  @Field({ nullable: true })
+  url_new_image: string;
 
   @Field()
   gender: Sex;
