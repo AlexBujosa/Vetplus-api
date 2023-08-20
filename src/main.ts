@@ -8,7 +8,9 @@ async function bootstrap() {
   app.useGlobalFilters(new CustomExceptionFilter());
   app.use(passport.initialize());
   app.enableCors({
+    allowedHeaders: '*',
     origin: '*',
+    credentials: true,
   });
   await app.listen(3000);
 }
