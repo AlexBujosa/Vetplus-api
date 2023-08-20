@@ -20,6 +20,7 @@ import { BreedModule } from './breed/breed.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      introspection: true,
     }),
     PrismaModule,
     BcryptModule,
