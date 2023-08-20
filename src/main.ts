@@ -8,10 +8,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalFilters(new CustomExceptionFilter());
   app.use(passport.initialize());
-  app.enableCors({
-    origin: '*',
-  });
   app.use(graphqlUploadExpress({ maxFileSize: 1000000, maxFiles: 10 }));
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
   await app.listen(3000);
 }
 bootstrap();
