@@ -58,7 +58,7 @@ export class AuthService {
       hash,
       password,
     );
-
+    if (!coincidence) throw customException.INVALID_CREDENTIALS;
     return coincidence ? user : null;
   }
 

@@ -40,7 +40,7 @@ export class UserService {
       },
     });
 
-    if (!result) throw customException.EMAIL_NOT_FOUND();
+    if (!result) throw customException.INVALID_CREDENTIALS();
 
     return result;
   }
