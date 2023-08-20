@@ -40,6 +40,7 @@ export enum CustomExceptionMessage {
   FORBIDDEN = 'FORBIDDEN',
   INVALID_TOKEN = 'INVALID_TOKEN',
   INVALID_FILE_TYPE = 'INVALID_FILE_TYPE',
+  INVALID_CREDENTIALS = 'INVALID_CREDENTIALS',
 }
 
 const {
@@ -50,6 +51,7 @@ const {
   FORBIDDEN,
   INVALID_TOKEN,
   INVALID_FILE_TYPE,
+  INVALID_CREDENTIALS,
 } = CustomExceptionMessage;
 
 export const customException = {
@@ -62,4 +64,5 @@ export const customException = {
   FORBIDDEN: () => new CustomException(FORBIDDEN, 200),
   INVALID_TOKEN: () => new CustomException(INVALID_TOKEN, 200),
   INVALID_FILE_TYPE: () => new CustomException(INVALID_FILE_TYPE, 200),
+  INVALID_CREDENTIALS: () => new CustomException(INVALID_CREDENTIALS, 200),
 };
