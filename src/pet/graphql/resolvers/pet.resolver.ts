@@ -88,6 +88,10 @@ export class PetResolver {
       updatePetInput,
       context.req.user.sub,
     );
+    const { url_current_image, url_new_image } = updatePetInput;
+
+    if (url_new_image && url_current_image && result)
+      await this.awsS3Service.deletePetImageToS3(url_current_image);
 
     return !result
       ? { result: AddPetResult.FAILED }

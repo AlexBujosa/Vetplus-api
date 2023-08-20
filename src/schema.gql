@@ -159,7 +159,8 @@ input UpdatePetInput {
   id_specie: Int!
   id_breed: Int!
   name: String!
-  image: String
+  url_current_image: String
+  url_new_image: String
   gender: String!
   castrated: Boolean!
   dob: DateTime

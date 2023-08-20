@@ -8,6 +8,7 @@ import { Pet } from '@prisma/client';
 @Injectable()
 export class PetService {
   constructor(private readonly prismaService: PrismaService) {}
+
   async createPet(
     addPetInput: AddPetInput,
     id_owner: string,
@@ -26,12 +27,13 @@ export class PetService {
     updatePetInput: UpdatePetInput,
     id_owner: string,
   ): Promise<boolean> {
-    const { id, ...data } = updatePetInput;
+    const { id, url_current_image, url_new_image, ...data } = updatePetInput;
     const result = await this.prismaService.pet.update({
       where: {
         id,
       },
       data: {
+        image: url_new_image ? url_new_image : url_current_image,
         ...data,
         id_owner,
       },
