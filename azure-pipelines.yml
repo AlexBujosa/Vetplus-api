@@ -24,7 +24,8 @@ steps:
       repository: 'chrissst/vetplus-api'
       command: 'buildAndPush'
       Dockerfile: '**/Dockerfile'
-      tags: 'alpha'
+      tags: |
+        alpha-$(Build.BuildNumber)
     displayName: 'Build and Push Docker image'
     env:
       DATABASE_URL: $(DATABASE_URL)
