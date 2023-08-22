@@ -62,7 +62,7 @@ model User {
   email    String       @unique
   provider AuthProvider @default(EMAIL)
   names            String
-  surnames         String
+  surnames         String?
   document         String?
   address          String?
   telephone_number String?

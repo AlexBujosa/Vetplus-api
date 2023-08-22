@@ -16,6 +16,7 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
+  private readonly provider: AuthProvider = 'EMAIL';
   constructor(
     private userService: UserService,
     private bcryptService: BcryptService,
@@ -35,6 +36,7 @@ export class AuthService {
 
     await this.prismaService.$transaction(async () => {
       const hash = await this.bcryptService.hashPassword(signUpInput.password);
+      signUpInput.provider = this.provider;
       const userCreated = await this.userService.create(signUpInput);
       const { id } = userCreated;
       const createCredentials = { id_user: id, password: hash };

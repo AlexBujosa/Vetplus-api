@@ -42,6 +42,7 @@ export class GoogleAuthGuard implements CanActivate {
       return result;
     } else {
       const result = this.validateToken(token).then((result) => {
+        request.user = result;
         if (!result) return false;
         return true;
       });
