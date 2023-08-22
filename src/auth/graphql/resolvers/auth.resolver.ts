@@ -8,6 +8,7 @@ import { UseGuards } from '@nestjs/common';
 import { GoogleAuthGuard } from '@/auth/guard/google-auth.guard';
 import { GoogleAuthService } from '@/auth/google-auth/google-auth.service';
 import { GqlAuthGuard } from '@/auth/guard/gql-auth.guard';
+import { customException } from '@/global/constant/constants';
 
 @Resolver()
 export class AuthResolver {
@@ -38,7 +39,12 @@ export class AuthResolver {
 
   @Mutation(() => SignInResponse)
   @UseGuards(GoogleAuthGuard)
-  googleRegister(@Args('signUpInput') signUpInput: SignUpInput) {
+  googleRegister(
+    @Args('signUpInput') signUpInput: SignUpInput,
+    @Context() context,
+  ) {
+    if (context.req.user.email != signUpInput.email)
+      throw customException.FORBIDDEN();
     return this.googleAuthService.socialRegister(signUpInput);
   }
 }

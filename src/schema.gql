@@ -118,7 +118,7 @@ type Mutation {
 
 input SignUpInput {
   names: String!
-  surnames: String!
+  surnames: String
   email: String!
   password: String
   provider: String
@@ -126,7 +126,7 @@ input SignUpInput {
 
 input CreateUserInput {
   names: String!
-  surnames: String!
+  surnames: String
   email: String!
   password: String
   provider: String
