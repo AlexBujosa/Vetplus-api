@@ -6,6 +6,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { Schema } from 'yup';
+import { customException } from '../constant/constants';
 
 @Injectable()
 export class YupValidationPipe implements PipeTransform {
@@ -15,7 +16,7 @@ export class YupValidationPipe implements PipeTransform {
     try {
       await this.schema.validate(value);
     } catch (error) {
-      throw new BadRequestException('Validation failed');
+      throw customException.VALIDATION_FAILED();
     }
     return value;
   }
