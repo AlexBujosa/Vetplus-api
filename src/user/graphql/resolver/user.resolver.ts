@@ -9,6 +9,7 @@ import { Roles } from '@/global/decorator/roles.decorator';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '@/global/guard/jwt-auth.guard';
 import { UpdateUserInput } from '../input/update-user.input';
+import { UpdateUserResponse } from '../types/update-user-response.type';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -19,14 +20,18 @@ export class UserResolver {
     return this.userService.create(createUserInput);
   }
 
-  @Mutation(() => CreatedUserResponse)
+  @Mutation(() => UpdateUserResponse)
   @Roles(Role.CLINIC_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  updateUser(
+  async updateUser(
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
     @Context() context,
-  ) {
-    return this.userService.update(updateUserInput, context.req.user.sub);
+  ): Promise<UpdateUserResponse> {
+    const result = await this.userService.update(
+      updateUserInput,
+      context.req.user.sub,
+    );
+    return result ? { result: 'COMPLETED' } : { result: 'FAILED' };
   }
 
   @Query(() => User)
