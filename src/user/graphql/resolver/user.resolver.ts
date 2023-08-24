@@ -8,6 +8,7 @@ import { RolesGuard } from '@/global/guard/roles.guard';
 import { Roles } from '@/global/decorator/roles.decorator';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '@/global/guard/jwt-auth.guard';
+import { UpdateUserInput } from '../input/update-user.input';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -16,6 +17,16 @@ export class UserResolver {
   @Mutation(() => CreatedUserResponse)
   createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.userService.create(createUserInput);
+  }
+
+  @Mutation(() => CreatedUserResponse)
+  @Roles(Role.CLINIC_OWNER, Role.VETERINARIAN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  updateUser(
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+    @Context() context,
+  ) {
+    return this.userService.update(updateUserInput, context.req.user.sub);
   }
 
   @Query(() => User)

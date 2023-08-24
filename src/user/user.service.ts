@@ -7,6 +7,7 @@ import {
   signUpCustomException,
 } from '../global/constant/constants';
 import { User } from './graphql/types/user.type';
+import { UpdateUserInput } from './graphql/input/update-user.input';
 
 @Injectable()
 export class UserService {
@@ -19,6 +20,27 @@ export class UserService {
       return await this.prismaService.user.create({
         data: {
           ...createUser,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code == 'P2002'
+      ) {
+        throw signUpCustomException.EMAIL_ALREADY_EXIST();
+      } else {
+        throw signUpCustomException.TRANSACTION_FAILED();
+      }
+    }
+  }
+  async update(updateUserInput: UpdateUserInput, id: string): Promise<User> {
+    try {
+      return await this.prismaService.user.update({
+        data: {
+          ...updateUserInput,
+        },
+        where: {
+          id,
         },
       });
     } catch (error) {
