@@ -42,6 +42,7 @@ export enum CustomExceptionMessage {
   INVALID_FILE_TYPE = 'INVALID_FILE_TYPE',
   INVALID_CREDENTIALS = 'INVALID_CREDENTIALS',
   VALIDATION_FAILED = 'VALIDATION_FIELDS_FAIL',
+  UPDATE_USER_FAIL = 'UPDATE_USER_FAIL',
 }
 
 const {
@@ -54,6 +55,7 @@ const {
   INVALID_FILE_TYPE,
   INVALID_CREDENTIALS,
   VALIDATION_FAILED,
+  UPDATE_USER_FAIL,
 } = CustomExceptionMessage;
 
 export const customException = {
@@ -68,4 +70,5 @@ export const customException = {
   INVALID_FILE_TYPE: () => new CustomException(INVALID_FILE_TYPE, 200),
   INVALID_CREDENTIALS: () => new CustomException(INVALID_CREDENTIALS, 200),
   VALIDATION_FAILED: () => new CustomException(VALIDATION_FAILED, 200),
+  UPDATE_USER_FAIL: () => new CustomException(UPDATE_USER_FAIL, 200),
 };

@@ -50,7 +50,7 @@ export class UserService {
       ) {
         throw signUpCustomException.EMAIL_ALREADY_EXIST();
       } else {
-        throw signUpCustomException.TRANSACTION_FAILED();
+        throw customException.UPDATE_USER_FAIL();
       }
     }
   }
