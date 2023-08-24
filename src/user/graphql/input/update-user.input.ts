@@ -9,9 +9,6 @@ export class UpdateUserInput {
   surnames: string;
 
   @Field({ nullable: true })
-  password: string;
-
-  @Field({ nullable: true })
   document: string;
 
   @Field({ nullable: true })
