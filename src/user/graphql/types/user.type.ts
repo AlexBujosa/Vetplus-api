@@ -10,7 +10,7 @@ export class User {
   @Field()
   names: string;
 
-  @Field()
+  @Field({ nullable: true })
   surnames: string;
 
   @Field()
