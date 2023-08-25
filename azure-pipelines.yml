@@ -22,19 +22,26 @@ steps:
     inputs:
       containerRegistry: 'docker-hub-connection'
       repository: 'chrissst/vetplus-api'
-      command: 'buildAndPush'
+      command: 'build'
       Dockerfile: '**/Dockerfile'
+      arguments: '
+        --build-arg DATABASE_URL=$(DATABASE_URL)
+        --build-arg GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID)
+        --build-arg GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET)
+        --build-arg AWS_S3_ACCESS_KEY_ID=$(AWS_S3_ACCESS_KEY_ID)
+        --build-arg AWS_S3_SECRET_ACCESS_KEY=$(AWS_S3_SECRET_ACCESS_KEY)
+        --build-arg AWS_S3_BUCKET_NAME=$(AWS_S3_BUCKET_NAME)
+        --build-arg AWS_S3_REGION: $(AWS_S3_REGION)'
+    displayName: 'Build Docker image'
+
+  - task: Docker@2
+    inputs:
+      containerRegistry: 'docker-hub-connection'
+      repository: 'chrissst/vetplus-api'
+      command: 'push'
       tags: |
         alpha-$(Build.BuildNumber)
-    displayName: 'Build and Push Docker image'
-    env:
-      DATABASE_URL: $(DATABASE_URL)
-      GOOGLE_CLIENT_ID: $(GOOGLE_CLIENT_ID)
-      GOOGLE_CLIENT_SECRET: $(GOOGLE_CLIENT_SECRET)
-      AWS_S3_ACCESS_KEY_ID: $(AWS_S3_ACCESS_KEY_ID)
-      AWS_S3_SECRET_ACCESS_KEY: $(AWS_S3_SECRET_ACCESS_KEY)
-      AWS_S3_BUCKET_NAME: $(AWS_S3_BUCKET_NAME)
-      AWS_S3_REGION: $(AWS_S3_REGION)
+    displayName: 'Push Docker image'
 
   - task: CopyFiles@2
     inputs:
