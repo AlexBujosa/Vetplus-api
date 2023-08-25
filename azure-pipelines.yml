@@ -12,6 +12,7 @@ steps:
     displayName: 'Install Node.js'
 
   - script: |
+      npm install
       npm run docs:g
     displayName: 'generate docs'
 
