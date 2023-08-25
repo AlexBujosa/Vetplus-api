@@ -13,26 +13,21 @@ steps:
 
   - script: |
       npm install
+      npm run lint
+      npm run build
       npm run docs:g
-    displayName: 'generate docs'
+    displayName: 'npm install, lint and build'
 
   - task: Docker@2
     inputs:
       containerRegistry: 'docker-hub-connection'
       repository: 'chrissst/vetplus-api'
-      command: 'build'
+      command: 'buildAndPush'
       Dockerfile: '**/Dockerfile'
       arguments: '--build-arg DATABASE_URL=$(DATABASE_URL) --build-arg GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) --build-arg GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET) --build-arg AWS_S3_ACCESS_KEY_ID=$(AWS_S3_ACCESS_KEY_ID) --build-arg AWS_S3_SECRET_ACCESS_KEY=$(AWS_S3_SECRET_ACCESS_KEY) --build-arg AWS_S3_BUCKET_NAME=$(AWS_S3_BUCKET_NAME) --build-arg AWS_S3_REGION=$(AWS_S3_REGION)'
-    displayName: 'Build Docker image'
-
-  - task: Docker@2
-    inputs:
-      containerRegistry: 'docker-hub-connection'
-      repository: 'chrissst/vetplus-api'
-      command: 'push'
       tags: |
         alpha-$(Build.BuildNumber)
-    displayName: 'Push Docker image'
+    displayName: 'Build and Push Docker image'
 
   - task: CopyFiles@2
     inputs:
