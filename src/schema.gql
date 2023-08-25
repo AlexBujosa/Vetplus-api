@@ -140,7 +140,6 @@ input CreateUserInput {
 input UpdateUserInput {
   names: String!
   surnames: String
-  password: String
   document: String
   address: String
   telephone_number: String
