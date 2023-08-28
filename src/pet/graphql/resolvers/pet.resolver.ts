@@ -26,6 +26,14 @@ export class PetResolver {
     private readonly awsS3Service: AwsS3Service,
   ) {}
 
+  @Query(() => [Pet])
+  @Roles(Role.PET_OWNER, Role.VETERINARIAN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getMyPets(@Context() context): Promise<Pet[]> {
+    const result = await this.petService.getMyPets(context.req.user.sub);
+    return result;
+  }
+
   @Mutation(() => DeletePetImageResponse)
   @Roles(Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -49,7 +57,7 @@ export class PetResolver {
   ): Promise<SavePetImageResponse> {
     const { image } = savePetImageInput;
 
-    if (!image) this.awsS3Service.validateImages(await image);
+    if (image) this.awsS3Service.validateImages(await image);
 
     const s3Location = image
       ? await this.awsS3Service.savePetImageToS3(await image)
