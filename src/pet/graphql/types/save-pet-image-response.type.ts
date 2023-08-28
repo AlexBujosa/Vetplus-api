@@ -1,10 +1,10 @@
+import { Status } from '@/global/constant/constants';
 import { ObjectType, Field } from '@nestjs/graphql';
-import { AddPetResult as SavePetImageResult } from '../constant/constants';
 
 @ObjectType()
 export class SavePetImageResponse {
   @Field()
-  result: SavePetImageResult;
+  result: Status;
 
   @Field({ nullable: true })
   image: string;
