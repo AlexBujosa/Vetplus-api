@@ -19,7 +19,7 @@ type SignInResponse {
 type User {
   id: String!
   names: String!
-  surnames: String!
+  surnames: String
   email: String!
   provider: String!
   document: String
@@ -99,6 +99,7 @@ type Query {
   getMyProfile: User!
   findAll: [User!]!
   findCredentialsById: Credentials!
+  getMyPets: [Pet!]!
   findAllPet: [Pet!]!
 }
 

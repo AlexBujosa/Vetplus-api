@@ -21,7 +21,7 @@ export class UserResolver {
   }
 
   @Mutation(() => UpdateUserResponse)
-  @Roles(Role.CLINIC_OWNER, Role.VETERINARIAN)
+  @Roles(Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updateUser(
     @Args('updateUserInput') updateUserInput: UpdateUserInput,

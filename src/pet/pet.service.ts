@@ -22,6 +22,15 @@ export class PetService {
     if (!result) return false;
     return true;
   }
+  async getMyPets(id: string): Promise<Pet[]> {
+    const result = await this.prismaService.pet.findMany({
+      where: {
+        id_owner: id,
+      },
+    });
+
+    return result;
+  }
 
   async updatePet(
     updatePetInput: UpdatePetInput,
