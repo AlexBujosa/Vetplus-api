@@ -1,8 +1,8 @@
-import { ObjectType, Field } from '@nestjs/graphql';
 import { Status } from '@/global/constant/constants';
+import { ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType()
-export class AddPetResponse {
+export class DeleteUserImageResponse {
   @Field()
   result: Status;
 }

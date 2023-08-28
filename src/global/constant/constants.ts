@@ -1,5 +1,12 @@
 import { CustomException } from '../exception/custom.exception';
 
+export enum Status {
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+}
+
+export type ImageUploadFolder = 'pets' | 'users';
+
 export enum SignUpCustomExceptionMessage {
   EMAIL_EXIST = 'EMAIL_EXIST',
   PASSWORD_WEAK = 'PASSWORD_WEAK',

@@ -3,7 +3,6 @@ import { Args, Context, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { PetService } from '@/pet/pet.service';
 import { AddPetResponse } from '../types/add-pet-response.type';
-import { AddPetResult } from '../constant/constants';
 import { JwtAuthGuard } from '@/global/guard/jwt-auth.guard';
 import { RolesGuard } from '@/global/guard/roles.guard';
 import { Roles } from '@/global/decorator/roles.decorator';
@@ -18,6 +17,7 @@ import { SavePetImageInput } from '../input/save-pet-image.input';
 import { SavePetImageResponse } from '../types/save-pet-image-response.type';
 import { DeletePetImageInput } from '../input/delete-pet-image.input';
 import { DeletePetImageResponse } from '../types/delete-pet-image-response.type';
+import { Status } from '@/global/constant/constants';
 
 @Resolver()
 export class PetResolver {
@@ -42,11 +42,9 @@ export class PetResolver {
   ): Promise<DeletePetImageResponse> {
     const { image } = deletePetImageInput;
 
-    const result = await this.awsS3Service.deletePetImageToS3(image);
+    const result = await this.awsS3Service.deleteImageToS3(image, 'pets');
 
-    return !result
-      ? { result: AddPetResult.FAILED }
-      : { result: AddPetResult.COMPLETED };
+    return !result ? { result: Status.FAILED } : { result: Status.COMPLETED };
   }
 
   @Mutation(() => SavePetImageResponse)
@@ -58,14 +56,13 @@ export class PetResolver {
     const { image } = savePetImageInput;
 
     if (image) this.awsS3Service.validateImages(await image);
-
     const s3Location = image
-      ? await this.awsS3Service.savePetImageToS3(await image)
+      ? await this.awsS3Service.saveImageToS3(await image, 'pets')
       : null;
 
     return !s3Location
-      ? { result: AddPetResult.FAILED, image: s3Location }
-      : { result: AddPetResult.COMPLETED, image: s3Location };
+      ? { result: Status.FAILED, image: s3Location }
+      : { result: Status.COMPLETED, image: s3Location };
   }
 
   @Mutation(() => AddPetResponse)
@@ -80,9 +77,7 @@ export class PetResolver {
       context.req.user.sub,
     );
 
-    return !result
-      ? { result: AddPetResult.FAILED }
-      : { result: AddPetResult.COMPLETED };
+    return !result ? { result: Status.FAILED } : { result: Status.COMPLETED };
   }
 
   @Mutation(() => UpdatePetResponse)
@@ -99,11 +94,9 @@ export class PetResolver {
     const { url_current_image, url_new_image } = updatePetInput;
 
     if (url_new_image && url_current_image && result)
-      await this.awsS3Service.deletePetImageToS3(url_current_image);
+      await this.awsS3Service.deleteImageToS3(url_current_image, 'pets');
 
-    return !result
-      ? { result: AddPetResult.FAILED }
-      : { result: AddPetResult.COMPLETED };
+    return !result ? { result: Status.FAILED } : { result: Status.COMPLETED };
   }
 
   @Mutation(() => DeletePetResponse)
@@ -118,9 +111,7 @@ export class PetResolver {
       context.req.user.sub,
     );
 
-    return !result
-      ? { result: AddPetResult.FAILED }
-      : { result: AddPetResult.COMPLETED };
+    return !result ? { result: Status.FAILED } : { result: Status.COMPLETED };
   }
 
   @Query(() => [Pet])
