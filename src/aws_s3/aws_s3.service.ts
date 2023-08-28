@@ -9,7 +9,10 @@ import {
 import { Upload as UploadSdk } from '@aws-sdk/lib-storage';
 import * as Upload from 'graphql-upload/Upload.js';
 import * as UploadType from 'graphql-upload/Upload.js';
-import { customException } from '@/global/constant/constants';
+import {
+  ImageUploadFolder,
+  customException,
+} from '@/global/constant/constants';
 import { v4 as uuidv4 } from 'uuid';
 const {
   AWS_S3_ACCESS_KEY_ID,
@@ -36,19 +39,23 @@ export class AwsS3Service {
       throw customException.INVALID_FILE_TYPE();
   }
 
-  async deletePetImageToS3(url: string): Promise<boolean> {
-    const regex = /\/pets\/([a-f0-9-]+)\b/;
+  async deleteImageToS3(
+    url: string,
+    folder: ImageUploadFolder,
+  ): Promise<boolean> {
+    const regex =
+      folder == 'pets' ? /\/pets\/([a-f0-9-]+)\b/ : /\/users\/([a-f0-9-]+)\b/;
     const [, id] = url.match(regex);
 
     const result = new DeleteObjectCommand({
       Bucket: AWS_S3_BUCKET_NAME,
-      Key: `pets/${id}`,
+      Key: `${folder}/${id}`,
     });
     const s3DeletedOutput = await this.client.send(result);
     return isDeleted(s3DeletedOutput);
   }
 
-  async savePetImageToS3(file: UploadType) {
+  async saveImageToS3(file: UploadType, folder: ImageUploadFolder) {
     const { createReadStream, filename, mimetype } = await file;
 
     const blob = createReadStream(filename);
@@ -60,7 +67,7 @@ export class AwsS3Service {
       client,
       params: {
         Bucket: AWS_S3_BUCKET_NAME,
-        Key: `pets/${uuid}`,
+        Key: `${folder}/${uuid}`,
         ContentType: mimetype,
         Body: blob,
         ACL: 'public-read',
