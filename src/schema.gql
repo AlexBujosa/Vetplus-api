@@ -41,6 +41,15 @@ type UpdateUserResponse {
   result: String!
 }
 
+type SaveUserImageResponse {
+  result: String!
+  image: String
+}
+
+type DeleteUserImageResponse {
+  result: String!
+}
+
 type Credentials {
   id_user: String!
   password: String!
@@ -113,6 +122,8 @@ type Mutation {
   googleRegister(signUpInput: SignUpInput!): SignInResponse!
   createUser(createUserInput: CreateUserInput!): CreatedUserResponse!
   updateUser(updateUserInput: UpdateUserInput!): UpdateUserResponse!
+  saveUserImage(saveUserImageInput: SaveUserImageInput!): SaveUserImageResponse!
+  deleteUserImage(deleteUserImageInput: DeleteUserImageInput!): DeleteUserImageResponse!
   deletePetImage(deletePetImageInput: DeletePetImageInput!): DeletePetImageResponse!
   savePetImage(savePetImageInput: SavePetImageInput!): SavePetImageResponse!
   registerPet(addPetInput: AddPetInput!): AddPetResponse!
@@ -147,6 +158,17 @@ input UpdateUserInput {
   image: String
 }
 
+input SaveUserImageInput {
+  image: Upload!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input DeleteUserImageInput {
+  image: String!
+}
+
 input DeletePetImageInput {
   image: String!
 }
@@ -154,9 +176,6 @@ input DeletePetImageInput {
 input SavePetImageInput {
   image: Upload!
 }
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
 
 input AddPetInput {
   id_specie: Int!
