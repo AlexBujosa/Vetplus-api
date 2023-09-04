@@ -8,14 +8,15 @@ import { AddBreedInput } from '../input/add-breed.input';
 import { BreedService } from '@/breed/breed.service';
 import { BreedResult } from '@/breed/constant';
 import { AddBreedResponse } from '../types/add-specie-response.type';
+import { Breed } from '../types/breed.type';
 
 @Resolver()
-@Roles(Role.ADMIN)
 export class BreedResolver {
   constructor(private readonly breedService: BreedService) {}
 
   @Mutation(() => AddBreedResponse)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   async registerBreed(
     @Args('addBreedInput') addBreedInput: AddBreedInput,
   ): Promise<AddBreedResponse> {
@@ -24,5 +25,11 @@ export class BreedResolver {
     return !result
       ? { result: BreedResult.FAILED }
       : { result: BreedResult.COMPLETED };
+  }
+  @Query(() => [Breed])
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.CLINIC_OWNER, Role.VETERINARIAN)
+  async getAllBreed(): Promise<Breed[]> {
+    return await this.breedService.getAllBreed();
   }
 }
