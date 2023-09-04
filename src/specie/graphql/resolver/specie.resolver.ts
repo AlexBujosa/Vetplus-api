@@ -8,14 +8,15 @@ import { SpecieService } from '@/specie/specie.service';
 import { AddSpecieInput } from '../input/add-specie.input';
 import { SpecieResult } from '@/specie/constant/contant';
 import { AddSpecieResponse } from '../types/add-specie-response.type';
+import { Specie } from '../types/specie.type';
 
 @Resolver()
-@Roles(Role.ADMIN)
 export class SpecieResolver {
   constructor(private readonly specieService: SpecieService) {}
 
   @Mutation(() => AddSpecieResponse)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   async registerSpecie(
     @Args('addPetInput') addSpecieInput: AddSpecieInput,
   ): Promise<AddSpecieResponse> {
@@ -24,5 +25,12 @@ export class SpecieResolver {
     return !result
       ? { result: SpecieResult.FAILED }
       : { result: SpecieResult.COMPLETED };
+  }
+
+  @Query(() => [Specie])
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.CLINIC_OWNER, Role.VETERINARIAN)
+  async getAllBreed(): Promise<Specie[]> {
+    return await this.specieService.getAllSpecie();
   }
 }

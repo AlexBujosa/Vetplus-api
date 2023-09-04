@@ -1,6 +1,7 @@
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { AddSpecieInput } from './graphql/input/add-specie.input';
+import { Specie } from '@prisma/client';
 
 @Injectable()
 export class SpecieService {
@@ -13,5 +14,9 @@ export class SpecieService {
     });
     if (!result) return false;
     return true;
+  }
+  async getAllSpecie(): Promise<Specie[]> {
+    const result = await this.prismaService.specie.findMany();
+    return result;
   }
 }
