@@ -78,6 +78,7 @@ model User {
   Clinic                  Clinic[]
   AppointmentOwner        Appointment[]  @relation("owner")
   AppointmentVeterinarian Appointment[]  @relation("veterinarian")
+  clinicUsers Clinic_User[]
 }
 
 model Credentials {
@@ -222,11 +223,24 @@ model Clinic {
 
   Appointment    Appointment[]
   Clinic_Service Clinic_Service[]
-
+  clinicUsers Clinic_User[]
   // TODO: Read google maps map url
   // TODO: Add Clinic Schedule tables for Days and Hours
 
   @@index([id_owner])
+}
+
+model Clinic_User {
+  id String @id @default(uuid())
+  id_user String 
+  id_clinic String
+  favorite Boolean
+  points Float
+  user User @relation(fields: [id_user], references: [id])
+  clinic Clinic @relation(fields: [id_clinic], references: [id])
+
+  @@index([id_user])
+  @@index([id_clinic])
 }
 
 model Clinic_Service {
