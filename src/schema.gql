@@ -97,7 +97,40 @@ type AddSpecieResponse {
   result: String!
 }
 
+type Specie {
+  id: Int!
+  name: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
 type AddBreedResponse {
+  result: String!
+}
+
+type Breed {
+  id: Int!
+  id_specie: Int!
+  name: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+type Clinic {
+  id: String!
+  id_owner: String!
+  name: String!
+  telephone_number: String!
+  google_maps_url: String
+  address: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+type AddClinicResponse {
   result: String!
 }
 
@@ -110,6 +143,8 @@ type Query {
   findCredentialsById: Credentials!
   getMyPets: [Pet!]!
   findAllPet: [Pet!]!
+  getAllBreed: [Breed!]!
+  getAllClinic: [Clinic!]!
 }
 
 input SignInInput {
@@ -131,6 +166,7 @@ type Mutation {
   deletePet(deletePetInput: DeletePetInput!): DeletePetResponse!
   registerSpecie(addPetInput: AddSpecieInput!): AddSpecieResponse!
   registerBreed(addBreedInput: AddBreedInput!): AddBreedResponse!
+  registerClinic(addClinicInput: AddClinicInput!): AddClinicResponse!
 }
 
 input SignUpInput {
@@ -213,4 +249,11 @@ input AddSpecieInput {
 input AddBreedInput {
   id_specie: Int!
   name: String!
+}
+
+input AddClinicInput {
+  name: String!
+  telephone_number: String!
+  google_maps_url: String
+  address: String!
 }
