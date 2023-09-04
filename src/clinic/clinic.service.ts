@@ -23,4 +23,13 @@ export class ClinicService {
     const result = await this.prismaService.clinic.findMany();
     return result;
   }
+
+  async getClinicById(id: string): Promise<Clinic> {
+    const result = await this.prismaService.clinic.findFirst({
+      where: {
+        id,
+      },
+    });
+    return result;
+  }
 }
