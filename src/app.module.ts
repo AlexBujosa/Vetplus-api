@@ -15,6 +15,7 @@ import { PetModule } from './pet/pet.module';
 import { SpecieModule } from './specie/specie.module';
 import { BreedModule } from './breed/breed.module';
 import { AwsS3Module } from './aws_s3/aws_s3.module';
+import { ClinicModule } from './clinic/clinic.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AwsS3Module } from './aws_s3/aws_s3.module';
     SpecieModule,
     BreedModule,
     AwsS3Module,
+    ClinicModule,
   ],
   providers: [PrismaService, BcryptService, UserService, CredentialsService],
 })
