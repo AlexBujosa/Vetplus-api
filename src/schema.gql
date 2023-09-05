@@ -134,6 +134,20 @@ type AddClinicResponse {
   result: String!
 }
 
+type Service {
+  name: String!
+  description: String!
+}
+
+type ClinicServiceResult {
+  service: Service!
+  id_clinic: String!
+  id_service: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
 type Query {
   signInWithEmail(signInInput: SignInInput!): SignInResponse!
   googleLogin: SignInResponse!
@@ -145,11 +159,21 @@ type Query {
   findAllPet: [Pet!]!
   getAllBreed: [Breed!]!
   getAllClinic: [Clinic!]!
+  getClinicById(getClinicByIdInput: GetClinicByIdInput!): Clinic!
+  getAllClinicServices(getAllServicesById: GetAllServicesByIdInput!): [ClinicServiceResult!]!
 }
 
 input SignInInput {
   email: String!
   password: String!
+}
+
+input GetClinicByIdInput {
+  id: String!
+}
+
+input GetAllServicesByIdInput {
+  id: String!
 }
 
 type Mutation {
