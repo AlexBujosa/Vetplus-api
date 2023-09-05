@@ -1,8 +1,9 @@
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { Clinic, Clinic_Service } from '@prisma/client';
+import { Clinic } from '@prisma/client';
 import { AddClinicInput } from './graphql/input/add-clinic.input';
-import { ServiceResult } from './constant';
+import { EmployeeResult, FavoriteClinic, ServiceResult } from './constant';
+import { MarkAsFavoriteClinicInput } from './graphql/input/mark-as-favorite-clinic.input';
 
 @Injectable()
 export class ClinicService {
@@ -49,5 +50,64 @@ export class ClinicService {
       },
     });
     return result;
+  }
+
+  async getAllEmployeeById(id_clinic: string): Promise<EmployeeResult[]> {
+    const result = await this.prismaService.clinic_Employee.findMany({
+      where: {
+        id_clinic,
+        employee_invitation_status: 'ACCEPTED',
+      },
+      include: {
+        employee: {
+          select: {
+            names: true,
+            surnames: true,
+            email: true,
+          },
+        },
+      },
+    });
+    return result;
+  }
+
+  async getAllFavoriteById(id_user: string): Promise<FavoriteClinic[]> {
+    const result = await this.prismaService.clinic_User.findMany({
+      where: {
+        id_user,
+        favorite: true,
+      },
+      include: {
+        clinic: {
+          select: {
+            name: true,
+            address: true,
+          },
+        },
+      },
+    });
+    return result;
+  }
+
+  async markAsFavoriteClinic(
+    markAsFavortiClinicInput: MarkAsFavoriteClinicInput,
+    id_user: string,
+  ): Promise<boolean> {
+    const { id, favorite } = markAsFavortiClinicInput;
+    const result = await this.prismaService.clinic_User.upsert({
+      where: {
+        id_user_id_clinic: { id_user, id_clinic: id },
+      },
+      update: {
+        favorite,
+      },
+      create: {
+        favorite,
+        id_user,
+        id_clinic: id,
+      },
+    });
+
+    return result ? true : false;
   }
 }
