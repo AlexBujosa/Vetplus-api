@@ -1,7 +1,8 @@
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { Clinic } from '@prisma/client';
+import { Clinic, Clinic_Service } from '@prisma/client';
 import { AddClinicInput } from './graphql/input/add-clinic.input';
+import { ServiceResult } from './constant';
 
 @Injectable()
 export class ClinicService {
@@ -28,6 +29,23 @@ export class ClinicService {
     const result = await this.prismaService.clinic.findFirst({
       where: {
         id,
+      },
+    });
+    return result;
+  }
+
+  async getAllServicesById(id_clinic: string): Promise<ServiceResult[]> {
+    const result = await this.prismaService.clinic_Service.findMany({
+      where: {
+        id_clinic,
+      },
+      include: {
+        service: {
+          select: {
+            name: true,
+            description: true,
+          },
+        },
       },
     });
     return result;

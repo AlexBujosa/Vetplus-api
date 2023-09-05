@@ -10,6 +10,8 @@ import { ClinicService } from '@/clinic/clinic.service';
 import { ClinicResult } from '@/clinic/constant';
 import { AddClinicResponse } from '../types/add-clinic-response.type';
 import { GetClinicByIdInput } from '../input/get-clinic-by-id.input';
+import { GetAllServicesByIdInput } from '../input/get-all-services-by-id.input';
+import { ClinicServiceResult } from '../types/clinic-service-result.type';
 
 @Resolver()
 export class ClinicResolver {
@@ -47,5 +49,16 @@ export class ClinicResolver {
   ): Promise<Clinic> {
     const { id } = getClinicByIdInput;
     return await this.clinicService.getClinicById(id);
+  }
+
+  @Query(() => [ClinicServiceResult])
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.CLINIC_OWNER, Role.VETERINARIAN)
+  async getAllClinicServices(
+    @Args('getAllServicesById')
+    getAllServicesByIdInput: GetAllServicesByIdInput,
+  ): Promise<ClinicServiceResult[]> {
+    const { id } = getAllServicesByIdInput;
+    return await this.clinicService.getAllServicesById(id);
   }
 }
