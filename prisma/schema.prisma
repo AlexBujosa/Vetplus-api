@@ -31,6 +31,14 @@ enum Sex {
   F
 }
 
+enum EmployeeInvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+  CANCELED
+}
+
 enum NotificationCategory {
   APPOINTMENT
   HISTORY_ACCESS
@@ -79,6 +87,7 @@ model User {
   AppointmentOwner        Appointment[]  @relation("owner")
   AppointmentVeterinarian Appointment[]  @relation("veterinarian")
   clinicUsers Clinic_User[]
+  clinicEmployees Clinic_Employee[]
 }
 
 model Credentials {
@@ -224,6 +233,7 @@ model Clinic {
   Appointment    Appointment[]
   Clinic_Service Clinic_Service[]
   clinicUsers Clinic_User[]
+  clinicEmployees Clinic_Employee[]
   // TODO: Read google maps map url
   // TODO: Add Clinic Schedule tables for Days and Hours
 
@@ -231,14 +241,13 @@ model Clinic {
 }
 
 model Clinic_User {
-  id String @id @default(uuid())
   id_user String 
   id_clinic String
-  favorite Boolean
-  points Float
+  favorite Boolean @default(false)
+  points Float?
   user User @relation(fields: [id_user], references: [id])
   clinic Clinic @relation(fields: [id_clinic], references: [id])
-
+  @@id([id_user, id_clinic])
   @@index([id_user])
   @@index([id_clinic])
 }
@@ -257,6 +266,23 @@ model Clinic_Service {
   @@id([id_clinic, id_service])
   @@index([id_clinic])
   @@index([id_service])
+}
+
+model Clinic_Employee {
+  id_clinic  String
+  id_employee String
+  employee_invitation_status EmployeeInvitationStatus
+
+  clinic  Clinic  @relation(fields: [id_clinic], references: [id])
+  employee User @relation(fields: [id_employee], references: [id])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+
+  @@id([id_clinic, id_employee])
+  @@index([id_clinic])
+  @@index([id_employee])
 }
 
 model Service {
