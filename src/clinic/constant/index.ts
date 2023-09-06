@@ -8,7 +8,6 @@ export enum ClinicResult {
 export type ServiceResult = {
   service: {
     name: string;
-    description: string;
   };
 } & {
   id_clinic: string;

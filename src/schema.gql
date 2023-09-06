@@ -136,7 +136,6 @@ type AddClinicResponse {
 
 type Service {
   name: String!
-  description: String!
 }
 
 type ClinicServiceResult {
@@ -185,6 +184,22 @@ type ScoreClinicResponse {
   result: String!
 }
 
+type AddProcedureResponse {
+  result: String!
+}
+
+type Procedure {
+  id: String!
+  name: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+type UpdateProcedureResponse {
+  result: String!
+}
+
 type Query {
   signInWithEmail(signInInput: SignInInput!): SignInResponse!
   googleLogin: SignInResponse!
@@ -200,6 +215,7 @@ type Query {
   getAllClinicServices(getAllServicesByIdInput: GetAllServicesByIdInput!): [ClinicServiceResult!]!
   getAllEmployee(getAllEmployeeByIdInput: GetAllEmployeeByIdInput!): [ClinicEmployeeResult!]!
   getAllFavoriteClinic: [FavoriteClinicResult!]!
+  getAllProcedure: [Procedure!]!
 }
 
 input SignInInput {
@@ -236,6 +252,8 @@ type Mutation {
   registerClinic(addClinicInput: AddClinicInput!): AddClinicResponse!
   markAsFavoriteClinic(markAsFavoriteClinicInput: MarkAsFavoriteClinicInput!): [MarkAsFavoriteClinicResponse!]!
   scoreClinic(scoreClinicInput: ScoreClinicInput!): [ScoreClinicResponse!]!
+  registerProcedure(addProcedureInput: AddProcedureInput!): AddProcedureResponse!
+  updateProcedure(updateProcedureInput: UpdateProcedureInput!): UpdateProcedureResponse!
 }
 
 input SignUpInput {
@@ -335,4 +353,13 @@ input MarkAsFavoriteClinicInput {
 input ScoreClinicInput {
   id_clinic: String!
   score: Float!
+}
+
+input AddProcedureInput {
+  name: String!
+}
+
+input UpdateProcedureInput {
+  name: String!
+  id: String!
 }

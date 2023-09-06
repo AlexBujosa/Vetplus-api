@@ -4,7 +4,4 @@ import { ObjectType, Field } from '@nestjs/graphql';
 export class Service {
   @Field(() => String)
   name: string;
-
-  @Field(() => String)
-  description: string;
 }

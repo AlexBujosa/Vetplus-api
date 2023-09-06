@@ -289,7 +289,6 @@ model Service {
   id String @id @default(uuid())
 
   name        String
-  description String
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
