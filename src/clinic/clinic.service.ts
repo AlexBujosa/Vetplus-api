@@ -45,7 +45,6 @@ export class ClinicService {
         service: {
           select: {
             name: true,
-            description: true,
           },
         },
       },
