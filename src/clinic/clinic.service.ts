@@ -4,6 +4,7 @@ import { Clinic } from '@prisma/client';
 import { AddClinicInput } from './graphql/input/add-clinic.input';
 import { EmployeeResult, FavoriteClinic, ServiceResult } from './constant';
 import { MarkAsFavoriteClinicInput } from './graphql/input/mark-as-favorite-clinic.input';
+import { ScoreClinicInput } from './graphql/input/score-clinic.input';
 
 @Injectable()
 export class ClinicService {
@@ -105,6 +106,49 @@ export class ClinicService {
         favorite,
         id_user,
         id_clinic: id,
+      },
+    });
+
+    return result ? true : false;
+  }
+
+  async scoreClinic(
+    scoreClinicInput: ScoreClinicInput,
+    id_user: string,
+  ): Promise<boolean> {
+    const result = await this.upsertScoreClinic(scoreClinicInput, id_user);
+
+    return result ? true : false;
+  }
+
+  async getTotalScoreClinic(id_clinic: string) {
+    const result = this.prismaService.clinic_User.groupBy({
+      by: 'id_clinic',
+      _sum: {
+        points: true,
+      },
+      _count: true,
+      where: {
+        id_clinic,
+      },
+    });
+    return { total_points: 1 };
+  }
+  private async upsertScoreClinic(
+    scoreClinicInput: ScoreClinicInput,
+    id_user: string,
+  ): Promise<boolean> {
+    const { id_clinic, score } = scoreClinicInput;
+    const result = await this.prismaService.clinic_User.upsert({
+      where: {
+        id_user_id_clinic: { id_user, id_clinic },
+      },
+      update: {
+        points: score,
+      },
+      create: {
+        id_user,
+        id_clinic,
       },
     });
 

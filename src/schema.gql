@@ -148,6 +148,43 @@ type ClinicServiceResult {
   status: Boolean!
 }
 
+type Employee {
+  names: String!
+  surnames: String!
+  email: String!
+}
+
+type ClinicEmployeeResult {
+  employee: Employee!
+  id_clinic: String!
+  id_employee: String!
+  employee_invitation_status: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+type ClinicInfo {
+  name: String!
+  address: String!
+}
+
+type FavoriteClinicResult {
+  clinic: ClinicInfo!
+  id_user: String!
+  id_clinic: String!
+  favorite: Boolean!
+  points: Float!
+}
+
+type MarkAsFavoriteClinicResponse {
+  result: String!
+}
+
+type ScoreClinicResponse {
+  result: String!
+}
+
 type Query {
   signInWithEmail(signInInput: SignInInput!): SignInResponse!
   googleLogin: SignInResponse!
@@ -160,7 +197,9 @@ type Query {
   getAllBreed: [Breed!]!
   getAllClinic: [Clinic!]!
   getClinicById(getClinicByIdInput: GetClinicByIdInput!): Clinic!
-  getAllClinicServices(getAllServicesById: GetAllServicesByIdInput!): [ClinicServiceResult!]!
+  getAllClinicServices(getAllServicesByIdInput: GetAllServicesByIdInput!): [ClinicServiceResult!]!
+  getAllEmployee(getAllEmployeeByIdInput: GetAllEmployeeByIdInput!): [ClinicEmployeeResult!]!
+  getAllFavoriteClinic: [FavoriteClinicResult!]!
 }
 
 input SignInInput {
@@ -173,6 +212,10 @@ input GetClinicByIdInput {
 }
 
 input GetAllServicesByIdInput {
+  id: String!
+}
+
+input GetAllEmployeeByIdInput {
   id: String!
 }
 
@@ -191,6 +234,8 @@ type Mutation {
   registerSpecie(addPetInput: AddSpecieInput!): AddSpecieResponse!
   registerBreed(addBreedInput: AddBreedInput!): AddBreedResponse!
   registerClinic(addClinicInput: AddClinicInput!): AddClinicResponse!
+  markAsFavoriteClinic(markAsFavoriteClinicInput: MarkAsFavoriteClinicInput!): [MarkAsFavoriteClinicResponse!]!
+  scoreClinic(scoreClinicInput: ScoreClinicInput!): [ScoreClinicResponse!]!
 }
 
 input SignUpInput {
@@ -280,4 +325,14 @@ input AddClinicInput {
   telephone_number: String!
   google_maps_url: String
   address: String!
+}
+
+input MarkAsFavoriteClinicInput {
+  id: String!
+  favorite: Boolean!
+}
+
+input ScoreClinicInput {
+  id_clinic: String!
+  score: Float!
 }

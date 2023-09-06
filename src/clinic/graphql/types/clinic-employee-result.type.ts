@@ -13,7 +13,7 @@ export class ClinicEmployeeResult {
   @Field(() => String)
   id_employee: string;
 
-  @Field(() => EmployeeInvitationStatus)
+  @Field(() => String)
   employee_invitation_status: EmployeeInvitationStatus;
 
   @Field(() => Date)
