@@ -234,6 +234,7 @@ model Clinic {
   Clinic_Service Clinic_Service[]
   clinicUsers Clinic_User[]
   clinicEmployees Clinic_Employee[]
+  clinicSummaryScore Clinic_Summary_Score?
   // TODO: Read google maps map url
   // TODO: Add Clinic Schedule tables for Days and Hours
 
@@ -296,4 +297,14 @@ model Service {
 
   Appointment    Appointment[]
   Clinic_Service Clinic_Service[]
+}
+
+model Clinic_Summary_Score {
+  id_clinic String @id
+  total_points Float
+  total_users Int
+
+  clinic  Clinic?  @relation(fields: [id_clinic], references: [id])
+
+  @@index([id_clinic])
 }

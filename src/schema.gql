@@ -251,7 +251,7 @@ type Mutation {
   registerBreed(addBreedInput: AddBreedInput!): AddBreedResponse!
   registerClinic(addClinicInput: AddClinicInput!): AddClinicResponse!
   markAsFavoriteClinic(markAsFavoriteClinicInput: MarkAsFavoriteClinicInput!): [MarkAsFavoriteClinicResponse!]!
-  scoreClinic(scoreClinicInput: ScoreClinicInput!): [ScoreClinicResponse!]!
+  scoreClinic(scoreClinicInput: ScoreClinicInput!): ScoreClinicResponse!
   registerProcedure(addProcedureInput: AddProcedureInput!): AddProcedureResponse!
   updateProcedure(updateProcedureInput: UpdateProcedureInput!): UpdateProcedureResponse!
 }
