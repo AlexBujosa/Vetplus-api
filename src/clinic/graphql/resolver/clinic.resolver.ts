@@ -21,6 +21,7 @@ import { MarkAsFavoriteClinicResponse } from '../types/mark-as-favorite-clinic-r
 import { ScoreClinicResponse } from '../types/score-clinic-response.type';
 import { YupValidationPipe } from '@/global/pipe/yup-validation.pipe';
 import { AddClinicInputSchema } from '@/global/schema/add-clinic-input.schema';
+import { ScoreClinicInputSchema } from '@/global/schema/score-clinic-input.schema';
 
 @Resolver()
 export class ClinicResolver {
@@ -45,14 +46,14 @@ export class ClinicResolver {
   }
 
   @Query(() => [Clinic])
-  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.CLINIC_OWNER, Role.VETERINARIAN)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getAllClinic(): Promise<Clinic[]> {
     return await this.clinicService.getAllClinic();
   }
 
   @Query(() => Clinic)
-  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.CLINIC_OWNER, Role.VETERINARIAN)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getClinicById(
     @Args('getClinicByIdInput') getClinicByIdInput: GetClinicByIdInput,
@@ -62,7 +63,7 @@ export class ClinicResolver {
   }
 
   @Query(() => [ClinicServiceResult])
-  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.CLINIC_OWNER, Role.VETERINARIAN)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getAllClinicServices(
     @Args('getAllServicesByIdInput')
@@ -73,7 +74,7 @@ export class ClinicResolver {
   }
 
   @Query(() => [ClinicEmployeeResult])
-  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.CLINIC_OWNER, Role.VETERINARIAN)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getAllEmployee(
     @Args('getAllEmployeeByIdInput')
@@ -110,9 +111,10 @@ export class ClinicResolver {
     return await this.clinicService.getAllFavoriteById(context.req.user.sub);
   }
 
-  @Mutation(() => [ScoreClinicResponse])
+  @Mutation(() => ScoreClinicResponse)
   @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.VETERINARIAN, Role.PET_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @UsePipes(new YupValidationPipe(ScoreClinicInputSchema))
   async scoreClinic(
     @Args('scoreClinicInput') scoreClinicInput: ScoreClinicInput,
     @Context() context,

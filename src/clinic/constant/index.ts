@@ -43,3 +43,10 @@ export type FavoriteClinic = {
   favorite: boolean;
   points: number;
 };
+
+export type SummaryScoreClinic = {
+  _count: number;
+  _sum: {
+    points: number;
+  };
+};
