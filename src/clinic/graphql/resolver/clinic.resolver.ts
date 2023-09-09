@@ -8,7 +8,7 @@ import { AddClinicInput } from '../input/add-clinic.input';
 import { Clinic } from '../types/clinic.type';
 import { ClinicService } from '@/clinic/clinic.service';
 import { ClinicResult } from '@/clinic/constant';
-import { AddClinicResponse } from '../types/add-clinic-response.type';
+import { ClinicResponse } from '../types/add-clinic-response.type';
 import { GetClinicByIdInput } from '../input/get-clinic-by-id.input';
 import { GetAllServicesByIdInput } from '../input/get-all-services-by-id.input';
 import { ClinicServiceResult } from '../types/clinic-service-result.type';
@@ -17,27 +17,44 @@ import { GetAllEmployeeByIdInput } from '../input/get-all-employee-by-id.input';
 import { MarkAsFavoriteClinicInput } from '../input/mark-as-favorite-clinic.input';
 import { FavoriteClinicResult } from '../types/favorite-clinic-result.type';
 import { ScoreClinicInput } from '../input/score-clinic.input';
-import { MarkAsFavoriteClinicResponse } from '../types/mark-as-favorite-clinic-response.type';
 import { ScoreClinicResponse } from '../types/score-clinic-response.type';
 import { YupValidationPipe } from '@/global/pipe/yup-validation.pipe';
 import { AddClinicInputSchema } from '@/global/schema/add-clinic-input.schema';
 import { ScoreClinicInputSchema } from '@/global/schema/score-clinic-input.schema';
+import { TurnEmployeeStatusInput } from '../input/turn-employee-status.input';
 
 @Resolver()
 export class ClinicResolver {
   constructor(private readonly clinicService: ClinicService) {}
 
-  @Mutation(() => AddClinicResponse)
+  @Mutation(() => ClinicResponse)
   @Roles(Role.ADMIN, Role.CLINIC_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @UsePipes(new YupValidationPipe(AddClinicInputSchema))
   async registerClinic(
     @Args('addClinicInput') addClinicInput: AddClinicInput,
     @Context() context,
-  ): Promise<AddClinicResponse> {
+  ): Promise<ClinicResponse> {
     const result = await this.clinicService.createClinic(
       addClinicInput,
       context.req.user.sub,
+    );
+
+    return !result
+      ? { result: ClinicResult.FAILED }
+      : { result: ClinicResult.COMPLETED };
+  }
+
+  @Mutation(() => ClinicResponse)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UsePipes(new YupValidationPipe(AddClinicInputSchema))
+  async changeEmployeeStatus(
+    @Args('turnEmployeeStatusInput')
+    turnEmployeeStatusInput: TurnEmployeeStatusInput,
+  ): Promise<ClinicResponse> {
+    const result = await this.clinicService.turnEmployeeStatus(
+      turnEmployeeStatusInput,
     );
 
     return !result
@@ -84,14 +101,14 @@ export class ClinicResolver {
     return await this.clinicService.getAllEmployeeById(id);
   }
 
-  @Mutation(() => [MarkAsFavoriteClinicResponse])
+  @Mutation(() => [ClinicResponse])
   @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.VETERINARIAN, Role.PET_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async markAsFavoriteClinic(
     @Args('markAsFavoriteClinicInput')
     markAsFavoriteClinicInput: MarkAsFavoriteClinicInput,
     @Context() context,
-  ): Promise<MarkAsFavoriteClinicResponse> {
+  ): Promise<ClinicResponse> {
     const result = await this.clinicService.markAsFavoriteClinic(
       markAsFavoriteClinicInput,
       context.req.user.sub,

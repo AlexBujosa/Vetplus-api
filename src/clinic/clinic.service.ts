@@ -10,6 +10,7 @@ import {
 } from './constant';
 import { MarkAsFavoriteClinicInput } from './graphql/input/mark-as-favorite-clinic.input';
 import { ScoreClinicInput } from './graphql/input/score-clinic.input';
+import { TurnEmployeeStatusInput } from './graphql/input/turn-employee-status.input';
 
 @Injectable()
 export class ClinicService {
@@ -75,6 +76,21 @@ export class ClinicService {
       },
     });
     return result;
+  }
+
+  async turnEmployeeStatus(
+    turnEmployeeStatusInput: TurnEmployeeStatusInput,
+  ): Promise<boolean> {
+    const { id_employee, id, status } = turnEmployeeStatusInput;
+    const result = await this.prismaService.clinic_Employee.update({
+      data: {
+        status,
+      },
+      where: {
+        id_clinic_id_employee: { id_clinic: id, id_employee },
+      },
+    });
+    return result ? true : false;
   }
 
   async getAllFavoriteById(id_user: string): Promise<FavoriteClinic[]> {
