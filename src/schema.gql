@@ -352,7 +352,7 @@ input MarkAsFavoriteClinicInput {
 
 input ScoreClinicInput {
   id_clinic: String!
-  score: Float!
+  score: Float
 }
 
 input AddProcedureInput {
