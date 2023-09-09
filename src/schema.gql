@@ -130,7 +130,7 @@ type Clinic {
   status: Boolean!
 }
 
-type AddClinicResponse {
+type ClinicResponse {
   result: String!
 }
 
@@ -174,10 +174,6 @@ type FavoriteClinicResult {
   id_clinic: String!
   favorite: Boolean!
   points: Float!
-}
-
-type MarkAsFavoriteClinicResponse {
-  result: String!
 }
 
 type ScoreClinicResponse {
@@ -249,8 +245,9 @@ type Mutation {
   deletePet(deletePetInput: DeletePetInput!): DeletePetResponse!
   registerSpecie(addPetInput: AddSpecieInput!): AddSpecieResponse!
   registerBreed(addBreedInput: AddBreedInput!): AddBreedResponse!
-  registerClinic(addClinicInput: AddClinicInput!): AddClinicResponse!
-  markAsFavoriteClinic(markAsFavoriteClinicInput: MarkAsFavoriteClinicInput!): [MarkAsFavoriteClinicResponse!]!
+  registerClinic(addClinicInput: AddClinicInput!): ClinicResponse!
+  changeEmployeeStatus(turnEmployeeStatusInput: TurnEmployeeStatusInput!): ClinicResponse!
+  markAsFavoriteClinic(markAsFavoriteClinicInput: MarkAsFavoriteClinicInput!): [ClinicResponse!]!
   scoreClinic(scoreClinicInput: ScoreClinicInput!): ScoreClinicResponse!
   registerProcedure(addProcedureInput: AddProcedureInput!): AddProcedureResponse!
   updateProcedure(updateProcedureInput: UpdateProcedureInput!): UpdateProcedureResponse!
@@ -343,6 +340,12 @@ input AddClinicInput {
   telephone_number: String!
   google_maps_url: String
   address: String!
+}
+
+input TurnEmployeeStatusInput {
+  id: String!
+  id_employee: String!
+  status: Boolean!
 }
 
 input MarkAsFavoriteClinicInput {
