@@ -27,6 +27,7 @@ export class ClinicService {
     if (!result) return false;
     return true;
   }
+
   async getAllClinic(): Promise<Clinic[]> {
     const result = await this.prismaService.clinic.findMany();
     return result;
@@ -122,13 +123,11 @@ export class ClinicService {
   ): Promise<boolean> {
     const { id_clinic } = scoreClinicInput;
     const result = await this.upsertScoreClinic(scoreClinicInput, id_user);
+
     const total_score_clinic = await this.getTotalScoreClinic(id_clinic);
-    const summary_score_completed = await this.upsertSummaryScoreClinic(
-      total_score_clinic,
-      id_clinic,
-    );
-    if (summary_score_completed)
-      console.log('Se ha guardado correctamente la puntuacion veterinaria');
+
+    await this.upsertSummaryScoreClinic(total_score_clinic, id_clinic);
+
     return result;
   }
 
@@ -141,6 +140,11 @@ export class ClinicService {
       _count: true,
       where: {
         id_clinic,
+        points: {
+          not: {
+            equals: null,
+          },
+        },
       },
     });
     return result[0];

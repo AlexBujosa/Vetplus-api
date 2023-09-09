@@ -6,5 +6,6 @@ export const ScoreClinicInputSchema = yup.object().shape({
     .oneOf(
       [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5],
       'Invalid Score, Please select a good ones',
-    ),
+    )
+    .nullable(),
 });
