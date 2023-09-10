@@ -10,7 +10,7 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.use(graphqlUploadExpress({ maxFileSize: 1000000, maxFiles: 10 }));
   app.enableCors({
-    allowedHeaders: '*',
+    allowedHeaders: ['Authorization', 'Content-Type'],
     origin: '*',
     credentials: true,
   });
