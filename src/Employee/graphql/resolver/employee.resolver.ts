@@ -10,6 +10,7 @@ import { GetAllEmployeeByIdInput } from '../input/get-all-employee-by-id.input';
 import { TurnEmployeeStatusInput } from '../input/turn-employee-status.input';
 import { EmployeeResponse } from '../types/employee-response.type';
 import { Status } from '@/global/constant/constants';
+import { AddEmployeeInput } from '../input/add-employee.input';
 
 @Resolver()
 export class EmployeeResolver {
@@ -35,6 +36,20 @@ export class EmployeeResolver {
   ): Promise<EmployeeResponse> {
     const result = await this.employeeService.turnEmployeeStatus(
       turnEmployeeStatusInput,
+    );
+
+    return !result ? { result: Status.FAILED } : { result: Status.COMPLETED };
+  }
+
+  @Mutation(() => EmployeeResponse)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async registerEmployee(
+    @Args('addEmployeeInput')
+    addEmployeeInput: AddEmployeeInput,
+  ): Promise<EmployeeResponse> {
+    const result = await this.employeeService.registerEmployee(
+      addEmployeeInput,
     );
 
     return !result ? { result: Status.FAILED } : { result: Status.COMPLETED };

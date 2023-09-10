@@ -74,21 +74,6 @@ export class ClinicService {
     return result;
   }
 
-  async turnEmployeeStatus(
-    turnEmployeeStatusInput: TurnEmployeeStatusInput,
-  ): Promise<boolean> {
-    const { id_employee, id, status } = turnEmployeeStatusInput;
-    const result = await this.prismaService.clinic_Employee.update({
-      data: {
-        status,
-      },
-      where: {
-        id_clinic_id_employee: { id_clinic: id, id_employee },
-      },
-    });
-    return result ? true : false;
-  }
-
   async getAllFavoriteById(id_user: string): Promise<FavoriteClinic[]> {
     const result = await this.prismaService.clinic_User.findMany({
       where: {
