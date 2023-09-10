@@ -45,6 +45,15 @@ export class ClinicResolver {
       : { result: ClinicResult.COMPLETED };
   }
 
+  @Query(() => Clinic)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getMyClinic(@Context() context): Promise<Clinic> {
+    const result = await this.clinicService.getMyClinic(context.req.user.sub);
+
+    return result;
+  }
+
   @Mutation(() => ClinicResponse)
   @Roles(Role.ADMIN, Role.CLINIC_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)

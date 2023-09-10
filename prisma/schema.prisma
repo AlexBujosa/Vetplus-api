@@ -83,7 +83,7 @@ model User {
   Credentials Credentials[]
   Pet                     Pet[]
   Notification            Notification[]
-  Clinic                  Clinic[]
+  Clinic                  Clinic?
   AppointmentOwner        Appointment[]  @relation("owner")
   AppointmentVeterinarian Appointment[]  @relation("veterinarian")
   clinicUsers Clinic_User[]
@@ -217,7 +217,7 @@ model Appointment {
 model Clinic {
   id String @id @default(uuid())
 
-  id_owner String
+  id_owner String @unique
 
   owner User @relation(fields: [id_owner], references: [id])
 
