@@ -29,6 +29,15 @@ export class ClinicService {
     return true;
   }
 
+  async getMyClinic(id_owner: string): Promise<Clinic> {
+    const result = await this.prismaService.clinic.findUnique({
+      where: {
+        id_owner,
+      },
+    });
+    return result;
+  }
+
   async getAllClinic(): Promise<Clinic[]> {
     const result = await this.prismaService.clinic.findMany();
     return result;
