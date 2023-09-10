@@ -206,6 +206,7 @@ type Query {
   getMyPets: [Pet!]!
   findAllPet: [Pet!]!
   getAllBreed: [Breed!]!
+  getMyClinic: Clinic!
   getAllClinic: [Clinic!]!
   getClinicById(getClinicByIdInput: GetClinicByIdInput!): Clinic!
   getAllClinicServices(getAllServicesByIdInput: GetAllServicesByIdInput!): [ClinicServiceResult!]!
