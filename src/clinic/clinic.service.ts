@@ -11,6 +11,8 @@ import {
 import { MarkAsFavoriteClinicInput } from './graphql/input/mark-as-favorite-clinic.input';
 import { ScoreClinicInput } from './graphql/input/score-clinic.input';
 import { TurnEmployeeStatusInput } from './graphql/input/turn-employee-status.input';
+import { customException } from '@/global/constant/constants';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class ClinicService {
@@ -19,14 +21,23 @@ export class ClinicService {
     addClinicInput: AddClinicInput,
     id_owner: string,
   ): Promise<boolean> {
-    const result = await this.prismaService.clinic.create({
-      data: {
-        ...addClinicInput,
-        id_owner,
-      },
-    });
-    if (!result) return false;
-    return true;
+    try {
+      const result = await this.prismaService.clinic.create({
+        data: {
+          ...addClinicInput,
+          id_owner,
+        },
+      });
+      if (!result) return false;
+      return true;
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code == 'P2002'
+      ) {
+        throw customException.ALREADY_HAVE_CLINIC();
+      }
+    }
   }
 
   async getMyClinic(id_owner: string): Promise<Clinic> {
