@@ -1,10 +1,3 @@
-import { EmployeeInvitationStatus } from '@prisma/client';
-
-export enum ClinicResult {
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-}
-
 export type ServiceResult = {
   service: {
     name: string;
