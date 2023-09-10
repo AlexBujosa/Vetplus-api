@@ -272,7 +272,7 @@ model Clinic_Service {
 model Clinic_Employee {
   id_clinic  String
   id_employee String
-  employee_invitation_status EmployeeInvitationStatus
+  employee_invitation_status EmployeeInvitationStatus @default(PENDING)
 
   clinic  Clinic  @relation(fields: [id_clinic], references: [id])
   employee User @relation(fields: [id_employee], references: [id])

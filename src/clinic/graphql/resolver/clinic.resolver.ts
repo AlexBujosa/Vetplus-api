@@ -12,8 +12,6 @@ import { ClinicResponse } from '../types/add-clinic-response.type';
 import { GetClinicByIdInput } from '../input/get-clinic-by-id.input';
 import { GetAllServicesByIdInput } from '../input/get-all-services-by-id.input';
 import { ClinicServiceResult } from '../types/clinic-service-result.type';
-import { ClinicEmployeeResult } from '../types/clinic-employee-result.type';
-import { GetAllEmployeeByIdInput } from '../input/get-all-employee-by-id.input';
 import { MarkAsFavoriteClinicInput } from '../input/mark-as-favorite-clinic.input';
 import { FavoriteClinicResult } from '../types/favorite-clinic-result.type';
 import { ScoreClinicInput } from '../input/score-clinic.input';
@@ -97,17 +95,6 @@ export class ClinicResolver {
   ): Promise<ClinicServiceResult[]> {
     const { id } = getAllServicesByIdInput;
     return await this.clinicService.getAllServicesById(id);
-  }
-
-  @Query(() => [ClinicEmployeeResult])
-  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  async getAllEmployee(
-    @Args('getAllEmployeeByIdInput')
-    getAllEmployeeByIdInput: GetAllEmployeeByIdInput,
-  ): Promise<ClinicEmployeeResult[]> {
-    const { id } = getAllEmployeeByIdInput;
-    return await this.clinicService.getAllEmployeeById(id);
   }
 
   @Mutation(() => [ClinicResponse])
