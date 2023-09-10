@@ -2,6 +2,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { EmployeeResult } from './constant';
 import { TurnEmployeeStatusInput } from './graphql/input/turn-employee-status.input';
+import { AddEmployeeInput } from './graphql/input/add-employee.input';
 
 @Injectable()
 export class EmployeeService {
@@ -35,6 +36,17 @@ export class EmployeeService {
       },
       where: {
         id_clinic_id_employee: { id_clinic: id, id_employee },
+      },
+    });
+    return result ? true : false;
+  }
+
+  async registerEmployee(addEmployeeInput: AddEmployeeInput): Promise<boolean> {
+    const { id, ...rest } = addEmployeeInput;
+    const result = await this.prismaService.clinic_Employee.create({
+      data: {
+        ...rest,
+        id_clinic: id,
       },
     });
     return result ? true : false;
