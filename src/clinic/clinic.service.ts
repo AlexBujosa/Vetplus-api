@@ -2,12 +2,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { Clinic } from '@prisma/client';
 import { AddClinicInput } from './graphql/input/add-clinic.input';
-import {
-  EmployeeResult,
-  FavoriteClinic,
-  ServiceResult,
-  SummaryScoreClinic,
-} from './constant';
+import { FavoriteClinic, ServiceResult, SummaryScoreClinic } from './constant';
 import { MarkAsFavoriteClinicInput } from './graphql/input/mark-as-favorite-clinic.input';
 import { ScoreClinicInput } from './graphql/input/score-clinic.input';
 import { TurnEmployeeStatusInput } from './graphql/input/turn-employee-status.input';
@@ -72,25 +67,6 @@ export class ClinicService {
         service: {
           select: {
             name: true,
-          },
-        },
-      },
-    });
-    return result;
-  }
-
-  async getAllEmployeeById(id_clinic: string): Promise<EmployeeResult[]> {
-    const result = await this.prismaService.clinic_Employee.findMany({
-      where: {
-        id_clinic,
-        employee_invitation_status: 'ACCEPTED',
-      },
-      include: {
-        employee: {
-          select: {
-            names: true,
-            surnames: true,
-            email: true,
           },
         },
       },
