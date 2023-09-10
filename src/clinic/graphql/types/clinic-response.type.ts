@@ -1,8 +1,8 @@
-import { ClinicResult } from '@/clinic/constant';
+import { Status } from '@/global/constant/constants';
 import { ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType()
 export class ClinicResponse {
   @Field()
-  result: ClinicResult;
+  result: Status;
 }

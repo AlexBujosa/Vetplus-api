@@ -1,5 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Employee } from '../../../clinic/graphql/types/employee.type';
+import { Employee } from './employee.type';
 import { EmployeeInvitationStatus } from '@prisma/client';
 
 @ObjectType()
