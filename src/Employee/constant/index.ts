@@ -5,6 +5,7 @@ export type EmployeeResult = {
     names: string;
     surnames: string;
     email: string;
+    status: boolean;
   };
 } & {
   id_clinic: string;
@@ -13,4 +14,8 @@ export type EmployeeResult = {
   created_at: Date;
   updated_at: Date;
   status: boolean;
+};
+
+export type MyEmployees = {
+  clinicEmployees: EmployeeResult[];
 };

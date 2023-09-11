@@ -147,22 +147,6 @@ type ClinicServiceResult {
   status: Boolean!
 }
 
-type Employee {
-  names: String!
-  surnames: String!
-  email: String!
-}
-
-type ClinicEmployeeResult {
-  employee: Employee!
-  id_clinic: String!
-  id_employee: String!
-  employee_invitation_status: String!
-  created_at: DateTime!
-  updated_at: DateTime!
-  status: Boolean!
-}
-
 type ClinicInfo {
   name: String!
   address: String!
@@ -196,6 +180,31 @@ type UpdateProcedureResponse {
   result: String!
 }
 
+type Employee {
+  names: String!
+  surnames: String
+  email: String!
+  status: Boolean!
+}
+
+type ClinicEmployeeResult {
+  employee: Employee!
+  id_clinic: String!
+  id_employee: String!
+  employee_invitation_status: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+type EmployeeResponse {
+  result: String!
+}
+
+type GetMyEmployeesResult {
+  clinicEmployees: [ClinicEmployeeResult!]!
+}
+
 type Query {
   signInWithEmail(signInInput: SignInInput!): SignInResponse!
   googleLogin: SignInResponse!
@@ -208,11 +217,12 @@ type Query {
   getAllBreed: [Breed!]!
   getMyClinic: Clinic!
   getAllClinic: [Clinic!]!
-  getClinicById(getClinicByIdInput: GetClinicByIdInput!): Clinic!
+  getClinicById(getClinicByIdInput: GenericByIdInput!): Clinic!
   getAllClinicServices(getAllServicesByIdInput: GetAllServicesByIdInput!): [ClinicServiceResult!]!
-  getAllEmployee(getAllEmployeeByIdInput: GetAllEmployeeByIdInput!): [ClinicEmployeeResult!]!
   getAllFavoriteClinic: [FavoriteClinicResult!]!
   getAllProcedure: [Procedure!]!
+  getAllEmployee(getAllEmployeeByClinicIdInput: GetAllEmployeeByClinicIdInput!): [ClinicEmployeeResult!]!
+  getMyEmployees: GetMyEmployeesResult!
 }
 
 input SignInInput {
@@ -220,7 +230,7 @@ input SignInInput {
   password: String!
 }
 
-input GetClinicByIdInput {
+input GenericByIdInput {
   id: String!
 }
 
@@ -228,7 +238,7 @@ input GetAllServicesByIdInput {
   id: String!
 }
 
-input GetAllEmployeeByIdInput {
+input GetAllEmployeeByClinicIdInput {
   id: String!
 }
 
@@ -247,11 +257,12 @@ type Mutation {
   registerSpecie(addPetInput: AddSpecieInput!): AddSpecieResponse!
   registerBreed(addBreedInput: AddBreedInput!): AddBreedResponse!
   registerClinic(addClinicInput: AddClinicInput!): ClinicResponse!
-  changeEmployeeStatus(turnEmployeeStatusInput: TurnEmployeeStatusInput!): ClinicResponse!
   markAsFavoriteClinic(markAsFavoriteClinicInput: MarkAsFavoriteClinicInput!): [ClinicResponse!]!
   scoreClinic(scoreClinicInput: ScoreClinicInput!): ScoreClinicResponse!
   registerProcedure(addProcedureInput: AddProcedureInput!): AddProcedureResponse!
   updateProcedure(updateProcedureInput: UpdateProcedureInput!): UpdateProcedureResponse!
+  changeEmployeeStatus(turnEmployeeStatusInput: TurnEmployeeStatusInput!): EmployeeResponse!
+  registerEmployee(addEmployeeInput: AddEmployeeInput!): EmployeeResponse!
 }
 
 input SignUpInput {
@@ -343,12 +354,6 @@ input AddClinicInput {
   address: String!
 }
 
-input TurnEmployeeStatusInput {
-  id: String!
-  id_employee: String!
-  status: Boolean!
-}
-
 input MarkAsFavoriteClinicInput {
   id: String!
   favorite: Boolean!
@@ -366,4 +371,16 @@ input AddProcedureInput {
 input UpdateProcedureInput {
   name: String!
   id: String!
+}
+
+input TurnEmployeeStatusInput {
+  id: String!
+  id_employee: String!
+  status: Boolean!
+}
+
+input AddEmployeeInput {
+  id: String!
+  id_employee: String!
+  employee_invitation_status: String
 }

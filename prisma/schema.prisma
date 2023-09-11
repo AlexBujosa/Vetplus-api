@@ -84,10 +84,13 @@ model User {
   Pet                     Pet[]
   Notification            Notification[]
   Clinic                  Clinic?
+  VeterinarianSummaryScore Veterinarian_Summary_Score?
   AppointmentOwner        Appointment[]  @relation("owner")
   AppointmentVeterinarian Appointment[]  @relation("veterinarian")
-  clinicUsers Clinic_User[]
-  clinicEmployees Clinic_Employee[]
+  ClinicUsers Clinic_User[]
+  ClinicEmployees Clinic_Employee[]
+  Veterinarian         Veterinarian_PetOwner[] @relation("veterinarian")
+  PetOwner             Veterinarian_PetOwner[] @relation("pet_owner")
 }
 
 model Credentials {
@@ -301,10 +304,31 @@ model Service {
 
 model Clinic_Summary_Score {
   id_clinic String @id
-  total_points Float
-  total_users Int
+  total_points Float @default(5)
+  total_users Int @default(1)
 
   clinic  Clinic?  @relation(fields: [id_clinic], references: [id])
 
   @@index([id_clinic])
+}
+
+model Veterinarian_PetOwner {
+  id_veterinarian String 
+  id_petowner String
+  points Float
+  Veterinarian User @relation("veterinarian",  fields: [id_veterinarian], references: [id])
+  Pet_owner User @relation("pet_owner", fields: [id_petowner], references: [id])
+  @@id([id_veterinarian, id_petowner])
+  @@index([id_veterinarian])
+  @@index([id_petowner])
+}
+
+model Veterinarian_Summary_Score {
+  id_veterinarian String @id
+  total_points Float @default(5)
+  total_users Int @default(1)
+
+  user  User?  @relation(fields: [id_veterinarian], references: [id])
+
+  @@index([id_veterinarian])
 }

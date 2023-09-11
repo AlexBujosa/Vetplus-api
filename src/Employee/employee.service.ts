@@ -1,13 +1,19 @@
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { EmployeeResult } from './constant';
+import { EmployeeResult, MyEmployees } from './constant';
 import { TurnEmployeeStatusInput } from './graphql/input/turn-employee-status.input';
 import { AddEmployeeInput } from './graphql/input/add-employee.input';
+import { ClinicService } from '@/clinic/clinic.service';
+import { customException } from '@/global/constant/constants';
 
 @Injectable()
 export class EmployeeService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly clinicService: ClinicService,
+  ) {}
   async getAllEmployeeById(id_clinic: string): Promise<EmployeeResult[]> {
+    const startTime = new Date().getTime();
     const result = await this.prismaService.clinic_Employee.findMany({
       where: {
         id_clinic,
@@ -19,11 +25,41 @@ export class EmployeeService {
             names: true,
             surnames: true,
             email: true,
+            status: true,
           },
         },
       },
     });
+    const endTime = new Date().getTime();
+    const diffTime = endTime - startTime;
+    console.log(`${diffTime} milliseconds`);
     return result;
+  }
+
+  async getMyEmployess(id_owner: string): Promise<MyEmployees> {
+    const result = await this.prismaService.clinic.findUnique({
+      where: {
+        id_owner,
+      },
+      include: {
+        clinicEmployees: {
+          where: {
+            employee_invitation_status: 'ACCEPTED',
+          },
+          include: {
+            employee: {
+              select: {
+                names: true,
+                surnames: true,
+                email: true,
+                status: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return { clinicEmployees: result.clinicEmployees };
   }
 
   async turnEmployeeStatus(
@@ -41,8 +77,13 @@ export class EmployeeService {
     return result ? true : false;
   }
 
-  async registerEmployee(addEmployeeInput: AddEmployeeInput): Promise<boolean> {
+  async registerEmployee(
+    addEmployeeInput: AddEmployeeInput,
+    id_owner: string,
+  ): Promise<boolean> {
+    const my_clinic = await this.clinicService.getMyClinic(id_owner);
     const { id, ...rest } = addEmployeeInput;
+    if (my_clinic.id != id) throw customException.FORBIDDEN();
     const result = await this.prismaService.clinic_Employee.create({
       data: {
         ...rest,
