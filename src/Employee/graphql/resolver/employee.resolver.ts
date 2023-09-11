@@ -6,11 +6,12 @@ import { Roles } from '@/global/decorator/roles.decorator';
 import { Role } from '@prisma/client';
 import { EmployeeService } from '@/Employee/employee.service';
 import { ClinicEmployeeResult } from '../types/clinic-employee-result.type';
-import { GetAllEmployeeByIdInput } from '../input/get-all-employee-by-id.input';
 import { TurnEmployeeStatusInput } from '../input/turn-employee-status.input';
 import { EmployeeResponse } from '../types/employee-response.type';
 import { Status } from '@/global/constant/constants';
 import { AddEmployeeInput } from '../input/add-employee.input';
+import { GetAllEmployeeByClinicIdInput } from '../input/get-all-employee-by-id.input';
+import { GetMyEmployeesResult } from '../types/get-my-employees.type';
 
 @Resolver()
 export class EmployeeResolver {
@@ -20,11 +21,18 @@ export class EmployeeResolver {
   @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getAllEmployee(
-    @Args('getAllEmployeeByIdInput')
-    getAllEmployeeByIdInput: GetAllEmployeeByIdInput,
+    @Args('getAllEmployeeByClinicIdInput')
+    getAllEmployeeByClinicIdInput: GetAllEmployeeByClinicIdInput,
   ): Promise<ClinicEmployeeResult[]> {
-    const { id } = getAllEmployeeByIdInput;
+    const { id } = getAllEmployeeByClinicIdInput;
     return await this.employeeService.getAllEmployeeById(id);
+  }
+
+  @Query(() => GetMyEmployeesResult)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getMyEmployees(@Context() context): Promise<GetMyEmployeesResult> {
+    return await this.employeeService.getMyEmployess(context.req.user.sub);
   }
 
   @Mutation(() => EmployeeResponse)
@@ -47,9 +55,11 @@ export class EmployeeResolver {
   async registerEmployee(
     @Args('addEmployeeInput')
     addEmployeeInput: AddEmployeeInput,
+    @Context() context,
   ): Promise<EmployeeResponse> {
     const result = await this.employeeService.registerEmployee(
       addEmployeeInput,
+      context.req.user.sub,
     );
 
     return !result ? { result: Status.FAILED } : { result: Status.COMPLETED };
