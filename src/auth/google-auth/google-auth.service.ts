@@ -29,7 +29,7 @@ export class GoogleAuthService {
 
       return payload;
     } catch (error) {
-      throw customException.INVALID_TOKEN();
+      throw customException.INVALID_TOKEN(null);
     }
   }
 

@@ -36,7 +36,11 @@ export class AwsS3Service {
   validateImages(file: Upload) {
     const images = ['image/jpeg', 'image/png', 'image/jpg'];
     if (!images.includes(file.mimetype))
-      throw customException.INVALID_FILE_TYPE();
+      throw customException.INVALID_FILE_TYPE({
+        cause: new Error(),
+        description:
+          'Restrict File Type to "image/jpeg", "image/png"  and ""image/jpg',
+      });
   }
 
   async deleteImageToS3(

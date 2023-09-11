@@ -11,7 +11,10 @@ export class YupValidationPipe implements PipeTransform {
     try {
       await this.schema.validate(value);
     } catch (error) {
-      throw customException.VALIDATION_FAILED();
+      throw customException.VALIDATION_FAILED({
+        cause: new Error(),
+        description: error.message,
+      });
     }
     return value;
   }

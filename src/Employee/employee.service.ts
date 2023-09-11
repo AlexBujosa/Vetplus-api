@@ -6,7 +6,12 @@ import { AddEmployeeInput } from './graphql/input/add-employee.input';
 import { ClinicService } from '@/clinic/clinic.service';
 import { customException } from '@/global/constant/constants';
 import { HandleEmployeeRequestInput } from './graphql/input/handle-employee-request.input';
-import { Prisma, PrismaClient, Role } from '@prisma/client';
+import {
+  EmployeeInvitationStatus,
+  Prisma,
+  PrismaClient,
+  Role,
+} from '@prisma/client';
 import { DefaultArgs } from '@prisma/client/runtime/library';
 import { AuthService } from '@/auth/auth.service';
 type OmitTx = Omit<
@@ -90,30 +95,39 @@ export class EmployeeService {
     try {
       const result = await this.prismaService.$transaction(
         async (tx: OmitTx) => {
-          await this.upsertClinicEmployee(
+          const upsertClinicEmployee = await this.upsertClinicEmployee(
             id_employee,
             handleEmployeeRequest,
             tx,
           );
-
-          if (role !== 'PET_OWNER' || employee_invitation_status !== 'ACCEPTED')
-            return { user: null };
+          if (!upsertClinicEmployee)
+            throw Error("Employee response didn't update.");
+          if (
+            role !== Role.PET_OWNER ||
+            employee_invitation_status !== EmployeeInvitationStatus.ACCEPTED
+          )
+            return { token: null };
 
           const user = await tx.user.update({
             data: { role: 'VETERINARIAN' },
             where: { id: id_employee },
           });
-          return { user: user };
+
+          if (!user) throw Error("User role didn't update.");
+          const token = this.authService.login(user);
+          return { token: token.access_token };
         },
       );
-      const token = result.user ? this.authService.login(result.user) : null;
-      return result.user
-        ? { access_token: token.access_token }
-        : { access_token: null };
+
+      return { access_token: result.token };
     } catch (error) {
-      throw customException.HANDLE_EMPLOYEE_REQUEST_FAILED();
+      throw customException.HANDLE_EMPLOYEE_REQUEST_FAILED({
+        cause: new Error(),
+        description: error.message,
+      });
     }
   }
+
   private upsertClinicEmployee(
     id_employee: string,
     handleEmployeeRequestInput: HandleEmployeeRequestInput,
@@ -142,7 +156,7 @@ export class EmployeeService {
   ): Promise<boolean> {
     const my_clinic = await this.clinicService.getMyClinic(id_owner);
     const { id, ...rest } = addEmployeeInput;
-    if (my_clinic.id != id) throw customException.FORBIDDEN();
+    if (my_clinic.id != id) throw customException.FORBIDDEN(null);
     const result = await this.prismaService.clinic_Employee.create({
       data: {
         ...rest,
