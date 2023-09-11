@@ -51,6 +51,7 @@ export enum CustomExceptionMessage {
   VALIDATION_FAILED = 'VALIDATION_FIELDS_FAIL',
   UPDATE_USER_FAIL = 'UPDATE_USER_FAIL',
   ALREADY_HAVE_CLINIC = 'ALREADY_HAVE_CLINIC',
+  HANDLE_EMPLOYEE_REQUEST_FAILED = 'HANDLE_EMPLOYEE_REQUEST_FAILED',
 }
 
 const {
@@ -65,6 +66,7 @@ const {
   VALIDATION_FAILED,
   UPDATE_USER_FAIL,
   ALREADY_HAVE_CLINIC,
+  HANDLE_EMPLOYEE_REQUEST_FAILED,
 } = CustomExceptionMessage;
 
 export const customException = {
@@ -81,4 +83,6 @@ export const customException = {
   VALIDATION_FAILED: () => new CustomException(VALIDATION_FAILED, 200),
   UPDATE_USER_FAIL: () => new CustomException(UPDATE_USER_FAIL, 200),
   ALREADY_HAVE_CLINIC: () => new CustomException(ALREADY_HAVE_CLINIC, 200),
+  HANDLE_EMPLOYEE_REQUEST_FAILED: () =>
+    new CustomException(HANDLE_EMPLOYEE_REQUEST_FAILED, 200),
 };

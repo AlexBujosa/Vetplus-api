@@ -1,5 +1,5 @@
 import { Args, Context, Mutation, Resolver, Query } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, UsePipes } from '@nestjs/common';
 import { JwtAuthGuard } from '@/global/guard/jwt-auth.guard';
 import { RolesGuard } from '@/global/guard/roles.guard';
 import { Roles } from '@/global/decorator/roles.decorator';
@@ -12,6 +12,10 @@ import { Status } from '@/global/constant/constants';
 import { AddEmployeeInput } from '../input/add-employee.input';
 import { GetAllEmployeeByClinicIdInput } from '../input/get-all-employee-by-id.input';
 import { GetMyEmployeesResult } from '../types/get-my-employees.type';
+import { HandleEmployeeRequestInput } from '../input/handle-employee-request.input';
+import { YupValidationPipe } from '@/global/pipe/yup-validation.pipe';
+import { AddEmployeeInputSchema } from '@/global/schema/add-employee-input.schema';
+import { HandleRequestResult } from '../types/handle-request-result.type';
 
 @Resolver()
 export class EmployeeResolver {
@@ -52,6 +56,7 @@ export class EmployeeResolver {
   @Mutation(() => EmployeeResponse)
   @Roles(Role.ADMIN, Role.CLINIC_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @UsePipes(new YupValidationPipe(AddEmployeeInputSchema))
   async registerEmployee(
     @Args('addEmployeeInput')
     addEmployeeInput: AddEmployeeInput,
@@ -63,5 +68,22 @@ export class EmployeeResolver {
     );
 
     return !result ? { result: Status.FAILED } : { result: Status.COMPLETED };
+  }
+
+  @Mutation(() => HandleRequestResult)
+  @Roles(Role.PET_OWNER, Role.VETERINARIAN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async handleEmployeeRequest(
+    @Args('handleEmployeeRequestInput')
+    handleEmployeeRequestInput: HandleEmployeeRequestInput,
+    @Context() context,
+  ): Promise<HandleRequestResult> {
+    const result = await this.employeeService.handleEmployeeRequest(
+      handleEmployeeRequestInput,
+      context.req.user.sub,
+      context.req.user.role,
+    );
+
+    return result;
   }
 }
