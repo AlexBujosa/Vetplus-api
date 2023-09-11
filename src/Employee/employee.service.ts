@@ -5,15 +5,22 @@ import { TurnEmployeeStatusInput } from './graphql/input/turn-employee-status.in
 import { AddEmployeeInput } from './graphql/input/add-employee.input';
 import { ClinicService } from '@/clinic/clinic.service';
 import { customException } from '@/global/constant/constants';
-
+import { HandleEmployeeRequestInput } from './graphql/input/handle-employee-request.input';
+import { Prisma, PrismaClient, Role } from '@prisma/client';
+import { DefaultArgs } from '@prisma/client/runtime/library';
+import { AuthService } from '@/auth/auth.service';
+type OmitTx = Omit<
+  PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+  '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
+>;
 @Injectable()
 export class EmployeeService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly clinicService: ClinicService,
+    private readonly authService: AuthService,
   ) {}
   async getAllEmployeeById(id_clinic: string): Promise<EmployeeResult[]> {
-    const startTime = new Date().getTime();
     const result = await this.prismaService.clinic_Employee.findMany({
       where: {
         id_clinic,
@@ -30,9 +37,6 @@ export class EmployeeService {
         },
       },
     });
-    const endTime = new Date().getTime();
-    const diffTime = endTime - startTime;
-    console.log(`${diffTime} milliseconds`);
     return result;
   }
 
@@ -75,6 +79,61 @@ export class EmployeeService {
       },
     });
     return result ? true : false;
+  }
+
+  async handleEmployeeRequest(
+    handleEmployeeRequest: HandleEmployeeRequestInput,
+    id_employee: string,
+    role: Role,
+  ): Promise<{ access_token: string }> {
+    const { employee_invitation_status } = handleEmployeeRequest;
+    try {
+      const result = await this.prismaService.$transaction(
+        async (tx: OmitTx) => {
+          await this.upsertClinicEmployee(
+            id_employee,
+            handleEmployeeRequest,
+            tx,
+          );
+
+          if (role !== 'PET_OWNER' || employee_invitation_status !== 'ACCEPTED')
+            return { user: null };
+
+          const user = await tx.user.update({
+            data: { role: 'VETERINARIAN' },
+            where: { id: id_employee },
+          });
+          return { user: user };
+        },
+      );
+      const token = result.user ? this.authService.login(result.user) : null;
+      return result.user
+        ? { access_token: token.access_token }
+        : { access_token: null };
+    } catch (error) {
+      throw customException.HANDLE_EMPLOYEE_REQUEST_FAILED();
+    }
+  }
+  private upsertClinicEmployee(
+    id_employee: string,
+    handleEmployeeRequestInput: HandleEmployeeRequestInput,
+    tx: OmitTx,
+  ) {
+    const { employee_invitation_status, id } = handleEmployeeRequestInput;
+    const result = tx.clinic_Employee.upsert({
+      create: {
+        employee_invitation_status,
+        id_clinic: id,
+        id_employee,
+      },
+      update: {
+        employee_invitation_status,
+      },
+      where: {
+        id_clinic_id_employee: { id_clinic: id, id_employee },
+      },
+    });
+    return result;
   }
 
   async registerEmployee(

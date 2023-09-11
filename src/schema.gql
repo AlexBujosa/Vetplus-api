@@ -205,6 +205,10 @@ type GetMyEmployeesResult {
   clinicEmployees: [ClinicEmployeeResult!]!
 }
 
+type HandleRequestResult {
+  access_token: String!
+}
+
 type Query {
   signInWithEmail(signInInput: SignInInput!): SignInResponse!
   googleLogin: SignInResponse!
@@ -263,6 +267,7 @@ type Mutation {
   updateProcedure(updateProcedureInput: UpdateProcedureInput!): UpdateProcedureResponse!
   changeEmployeeStatus(turnEmployeeStatusInput: TurnEmployeeStatusInput!): EmployeeResponse!
   registerEmployee(addEmployeeInput: AddEmployeeInput!): EmployeeResponse!
+  handleEmployeeRequest(handleEmployeeRequestInput: HandleEmployeeRequestInput!): HandleRequestResult!
 }
 
 input SignUpInput {
@@ -383,4 +388,9 @@ input AddEmployeeInput {
   id: String!
   id_employee: String!
   employee_invitation_status: String
+}
+
+input HandleEmployeeRequestInput {
+  id: String!
+  employee_invitation_status: String!
 }

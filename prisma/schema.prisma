@@ -249,8 +249,13 @@ model Clinic_User {
   id_clinic String
   favorite Boolean @default(false)
   points Float?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+
   user User @relation(fields: [id_user], references: [id])
   clinic Clinic @relation(fields: [id_clinic], references: [id])
+
   @@id([id_user, id_clinic])
   @@index([id_user])
   @@index([id_clinic])
@@ -306,19 +311,27 @@ model Clinic_Summary_Score {
   id_clinic String @id
   total_points Float @default(5)
   total_users Int @default(1)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
 
   clinic  Clinic?  @relation(fields: [id_clinic], references: [id])
-
+  
   @@index([id_clinic])
 }
 
 model Veterinarian_PetOwner {
+  id String @id @default(uuid())
   id_veterinarian String 
   id_petowner String
-  points Float
+  points Float?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+
   Veterinarian User @relation("veterinarian",  fields: [id_veterinarian], references: [id])
   Pet_owner User @relation("pet_owner", fields: [id_petowner], references: [id])
-  @@id([id_veterinarian, id_petowner])
+
   @@index([id_veterinarian])
   @@index([id_petowner])
 }
@@ -327,8 +340,11 @@ model Veterinarian_Summary_Score {
   id_veterinarian String @id
   total_points Float @default(5)
   total_users Int @default(1)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
 
   user  User?  @relation(fields: [id_veterinarian], references: [id])
-
+ 
   @@index([id_veterinarian])
 }
