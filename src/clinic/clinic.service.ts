@@ -5,7 +5,6 @@ import { AddClinicInput } from './graphql/input/add-clinic.input';
 import { FavoriteClinic, ServiceResult, SummaryScoreClinic } from './constant';
 import { MarkAsFavoriteClinicInput } from './graphql/input/mark-as-favorite-clinic.input';
 import { ScoreClinicInput } from './graphql/input/score-clinic.input';
-import { TurnEmployeeStatusInput } from '../Employee/graphql/input/turn-employee-status.input';
 import { customException } from '@/global/constant/constants';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
@@ -30,7 +29,7 @@ export class ClinicService {
         error instanceof PrismaClientKnownRequestError &&
         error.code == 'P2002'
       ) {
-        throw customException.ALREADY_HAVE_CLINIC();
+        throw customException.ALREADY_HAVE_CLINIC(null);
       }
     }
   }

@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { AddProcedureInput } from '../input/add-procedure.input';
 import { ProcedureService } from '@/procedure/procedure.service';
 import { AddProcedureResponse } from '../types/add-procedure-response.type';

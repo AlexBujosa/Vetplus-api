@@ -27,9 +27,9 @@ export class UserService {
         error instanceof PrismaClientKnownRequestError &&
         error.code == 'P2002'
       ) {
-        throw signUpCustomException.EMAIL_ALREADY_EXIST();
+        throw signUpCustomException.EMAIL_ALREADY_EXIST(null);
       } else {
-        throw signUpCustomException.TRANSACTION_FAILED();
+        throw signUpCustomException.TRANSACTION_FAILED(null);
       }
     }
   }
@@ -48,9 +48,9 @@ export class UserService {
         error instanceof PrismaClientKnownRequestError &&
         error.code == 'P2002'
       ) {
-        throw signUpCustomException.EMAIL_ALREADY_EXIST();
+        throw signUpCustomException.EMAIL_ALREADY_EXIST(null);
       } else {
-        throw customException.UPDATE_USER_FAIL();
+        throw customException.UPDATE_USER_FAIL(null);
       }
     }
   }
@@ -74,7 +74,7 @@ export class UserService {
       },
     });
 
-    if (!result) throw customException.INVALID_CREDENTIALS();
+    if (!result) throw customException.INVALID_CREDENTIALS(null);
 
     return result;
   }

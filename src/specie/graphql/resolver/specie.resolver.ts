@@ -1,4 +1,4 @@
-import { Args, Context, Mutation, Resolver, Query } from '@nestjs/graphql';
+import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '@/global/guard/jwt-auth.guard';
 import { RolesGuard } from '@/global/guard/roles.guard';

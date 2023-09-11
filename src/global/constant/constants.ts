@@ -1,3 +1,4 @@
+import { HttpExceptionOptions } from '@nestjs/common';
 import { CustomException } from '../exception/custom.exception';
 
 export enum Status {
@@ -22,11 +23,14 @@ const {
 } = SignUpCustomExceptionMessage;
 
 export const signUpCustomException = {
-  EMAIL_ALREADY_EXIST: () => new CustomException(EMAIL_EXIST, 200),
-  PASSWORD_WEAK: () => new CustomException(PASSWORD_WEAK, 200),
-  FAILED_CREATE_CREDENTIALS: () =>
-    new CustomException(FAILED_CREATE_CREDENTIALS, 200),
-  TRANSACTION_FAILED: () => new CustomException(TRANSACTION_FAILED, 200),
+  EMAIL_ALREADY_EXIST: (options: HttpExceptionOptions) =>
+    new CustomException(EMAIL_EXIST, 200, options),
+  PASSWORD_WEAK: (options: HttpExceptionOptions) =>
+    new CustomException(PASSWORD_WEAK, 200, options),
+  FAILED_CREATE_CREDENTIALS: (options: HttpExceptionOptions) =>
+    new CustomException(FAILED_CREATE_CREDENTIALS, 200, options),
+  TRANSACTION_FAILED: (options: HttpExceptionOptions) =>
+    new CustomException(TRANSACTION_FAILED, 200, options),
 };
 
 export enum SignInCustomExceptionMessage {
@@ -36,7 +40,8 @@ export enum SignInCustomExceptionMessage {
 const { WRONG_PROVIDER } = SignInCustomExceptionMessage;
 
 export const signInCustomException = {
-  WRONG_PROVIDER: () => new CustomException(WRONG_PROVIDER, 200),
+  WRONG_PROVIDER: (options: HttpExceptionOptions) =>
+    new CustomException(WRONG_PROVIDER, 200, options),
 };
 
 export enum CustomExceptionMessage {
@@ -70,19 +75,28 @@ const {
 } = CustomExceptionMessage;
 
 export const customException = {
-  EMAIL_NOT_FOUND: () => new CustomException(EMAIL_NOT_FOUND, 200),
-  CREDENTIALS_NOT_FOUND: () => new CustomException(CREDENTIALS_NOT_FOUND, 200),
-  SOMETHING_WRONG_FIND_EMAIL: () =>
-    new CustomException(SOMETHING_WRONG_FIND_EMAIL, 200),
-  SOMETHING_WRONG_FIND_CREDENTIALS: () =>
-    new CustomException(SOMETHING_WRONG_FIND_CREDENTIALS, 200),
-  FORBIDDEN: () => new CustomException(FORBIDDEN, 200),
-  INVALID_TOKEN: () => new CustomException(INVALID_TOKEN, 200),
-  INVALID_FILE_TYPE: () => new CustomException(INVALID_FILE_TYPE, 200),
-  INVALID_CREDENTIALS: () => new CustomException(INVALID_CREDENTIALS, 200),
-  VALIDATION_FAILED: () => new CustomException(VALIDATION_FAILED, 200),
-  UPDATE_USER_FAIL: () => new CustomException(UPDATE_USER_FAIL, 200),
-  ALREADY_HAVE_CLINIC: () => new CustomException(ALREADY_HAVE_CLINIC, 200),
-  HANDLE_EMPLOYEE_REQUEST_FAILED: () =>
-    new CustomException(HANDLE_EMPLOYEE_REQUEST_FAILED, 200),
+  EMAIL_NOT_FOUND: (options: HttpExceptionOptions) =>
+    new CustomException(EMAIL_NOT_FOUND, 200, options),
+  CREDENTIALS_NOT_FOUND: (options: HttpExceptionOptions) =>
+    new CustomException(CREDENTIALS_NOT_FOUND, 200, options),
+  SOMETHING_WRONG_FIND_EMAIL: (options: HttpExceptionOptions) =>
+    new CustomException(SOMETHING_WRONG_FIND_EMAIL, 200, options),
+  SOMETHING_WRONG_FIND_CREDENTIALS: (options: HttpExceptionOptions) =>
+    new CustomException(SOMETHING_WRONG_FIND_CREDENTIALS, 200, options),
+  FORBIDDEN: (options: HttpExceptionOptions) =>
+    new CustomException(FORBIDDEN, 200, options),
+  INVALID_TOKEN: (options: HttpExceptionOptions) =>
+    new CustomException(INVALID_TOKEN, 200, options),
+  INVALID_FILE_TYPE: (options: HttpExceptionOptions) =>
+    new CustomException(INVALID_FILE_TYPE, 200, options),
+  INVALID_CREDENTIALS: (options: HttpExceptionOptions) =>
+    new CustomException(INVALID_CREDENTIALS, 200, options),
+  VALIDATION_FAILED: (options: HttpExceptionOptions) =>
+    new CustomException(VALIDATION_FAILED, 200, options),
+  UPDATE_USER_FAIL: (options: HttpExceptionOptions) =>
+    new CustomException(UPDATE_USER_FAIL, 200, options),
+  ALREADY_HAVE_CLINIC: (options: HttpExceptionOptions) =>
+    new CustomException(ALREADY_HAVE_CLINIC, 200, options),
+  HANDLE_EMPLOYEE_REQUEST_FAILED: (options: HttpExceptionOptions) =>
+    new CustomException(HANDLE_EMPLOYEE_REQUEST_FAILED, 200, options),
 };
