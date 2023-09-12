@@ -102,6 +102,7 @@ export class EmployeeService {
           );
           if (!upsertClinicEmployee)
             throw Error("Employee response didn't update.");
+
           if (
             role !== Role.PET_OWNER ||
             employee_invitation_status !== EmployeeInvitationStatus.ACCEPTED
@@ -114,6 +115,14 @@ export class EmployeeService {
           });
 
           if (!user) throw Error("User role didn't update.");
+
+          const score = await tx.veterinarian_Summary_Score.create({
+            data: {
+              id_veterinarian: id_employee,
+            },
+          });
+          if (!score) throw Error('Did not create veterinarian score');
+
           const token = this.authService.login(user);
           return { token: token.access_token };
         },
