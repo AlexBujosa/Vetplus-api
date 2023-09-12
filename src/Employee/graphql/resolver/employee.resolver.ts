@@ -4,30 +4,30 @@ import { JwtAuthGuard } from '@/global/guard/jwt-auth.guard';
 import { RolesGuard } from '@/global/guard/roles.guard';
 import { Roles } from '@/global/decorator/roles.decorator';
 import { Role } from '@prisma/client';
-import { EmployeeService } from '@/Employee/employee.service';
-import { ClinicEmployeeResult } from '../types/clinic-employee-result.type';
 import { TurnEmployeeStatusInput } from '../input/turn-employee-status.input';
 import { EmployeeResponse } from '../types/employee-response.type';
 import { Status } from '@/global/constant/constants';
-import { AddEmployeeInput } from '../input/add-employee.input';
+import { InviteToClinicInput } from '../input/invite-employee.input';
 import { GetAllEmployeeByClinicIdInput } from '../input/get-all-employee-by-id.input';
-import { GetMyEmployeesResult } from '../types/get-my-employees.type';
 import { HandleEmployeeRequestInput } from '../input/handle-employee-request.input';
 import { YupValidationPipe } from '@/global/pipe/yup-validation.pipe';
-import { AddEmployeeInputSchema } from '@/global/schema/add-employee-input.schema';
+import { InviteToClinicInputSchema } from '@/global/schema/add-employee-input.schema';
 import { HandleRequestResult } from '../types/handle-request-result.type';
+import { EmployeeService } from '@/Employee/employee.service';
+import { GetAllEmployeeResult } from '../types/get-all-employee-result.type';
+import { GetMyEmployeesResult } from '../types/get-my-employees-result.type';
 
 @Resolver()
 export class EmployeeResolver {
   constructor(private readonly employeeService: EmployeeService) {}
 
-  @Query(() => [ClinicEmployeeResult])
+  @Query(() => [GetAllEmployeeResult])
   @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getAllEmployee(
     @Args('getAllEmployeeByClinicIdInput')
     getAllEmployeeByClinicIdInput: GetAllEmployeeByClinicIdInput,
-  ): Promise<ClinicEmployeeResult[]> {
+  ): Promise<GetAllEmployeeResult[]> {
     const { id } = getAllEmployeeByClinicIdInput;
     return await this.employeeService.getAllEmployeeById(id);
   }
@@ -56,14 +56,14 @@ export class EmployeeResolver {
   @Mutation(() => EmployeeResponse)
   @Roles(Role.ADMIN, Role.CLINIC_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @UsePipes(new YupValidationPipe(AddEmployeeInputSchema))
-  async registerEmployee(
-    @Args('addEmployeeInput')
-    addEmployeeInput: AddEmployeeInput,
+  @UsePipes(new YupValidationPipe(InviteToClinicInputSchema))
+  async inviteToClinic(
+    @Args('inviteToClinicInput')
+    inviteToClinicInput: InviteToClinicInput,
     @Context() context,
   ): Promise<EmployeeResponse> {
-    const result = await this.employeeService.registerEmployee(
-      addEmployeeInput,
+    const result = await this.employeeService.inviteToClinic(
+      inviteToClinicInput,
       context.req.user.sub,
     );
 

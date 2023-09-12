@@ -1,23 +1,14 @@
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { EmployeeResult, MyEmployees } from './constant';
+import { EmployeeResult, MyEmployees, OmitTx } from './constant';
 import { TurnEmployeeStatusInput } from './graphql/input/turn-employee-status.input';
-import { AddEmployeeInput } from './graphql/input/add-employee.input';
 import { ClinicService } from '@/clinic/clinic.service';
 import { customException } from '@/global/constant/constants';
 import { HandleEmployeeRequestInput } from './graphql/input/handle-employee-request.input';
-import {
-  EmployeeInvitationStatus,
-  Prisma,
-  PrismaClient,
-  Role,
-} from '@prisma/client';
-import { DefaultArgs } from '@prisma/client/runtime/library';
+import { EmployeeInvitationStatus, Role } from '@prisma/client';
 import { AuthService } from '@/auth/auth.service';
-type OmitTx = Omit<
-  PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
-  '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
->;
+import { InviteToClinicInput } from './graphql/input/invite-employee.input';
+
 @Injectable()
 export class EmployeeService {
   constructor(
@@ -57,11 +48,13 @@ export class EmployeeService {
           },
           include: {
             employee: {
-              select: {
-                names: true,
-                surnames: true,
-                email: true,
-                status: true,
+              include: {
+                VeterinarianSummaryScore: {
+                  select: {
+                    total_points: true,
+                    total_users: true,
+                  },
+                },
               },
             },
           },
@@ -159,12 +152,12 @@ export class EmployeeService {
     return result;
   }
 
-  async registerEmployee(
-    addEmployeeInput: AddEmployeeInput,
+  async inviteToClinic(
+    InviteToClinicInput: InviteToClinicInput,
     id_owner: string,
   ): Promise<boolean> {
     const my_clinic = await this.clinicService.getMyClinic(id_owner);
-    const { id, ...rest } = addEmployeeInput;
+    const { id, ...rest } = InviteToClinicInput;
     if (my_clinic.id != id) throw customException.FORBIDDEN(null);
     const result = await this.prismaService.clinic_Employee.create({
       data: {
