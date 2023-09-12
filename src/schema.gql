@@ -180,6 +180,14 @@ type UpdateProcedureResponse {
   result: String!
 }
 
+type EmployeeResponse {
+  result: String!
+}
+
+type HandleRequestResult {
+  access_token: String
+}
+
 type Employee {
   names: String!
   surnames: String
@@ -187,26 +195,41 @@ type Employee {
   status: Boolean!
 }
 
-type ClinicEmployeeResult {
-  employee: Employee!
+type GetAllEmployeeResult {
   id_clinic: String!
   id_employee: String!
   employee_invitation_status: String!
   created_at: DateTime!
   updated_at: DateTime!
   status: Boolean!
+  employee: Employee!
 }
 
-type EmployeeResponse {
-  result: String!
+type VeterinariaSummaryScore {
+  total_points: Float!
+  total_users: Int!
+}
+
+type EmployeeScore {
+  names: String!
+  surnames: String
+  email: String!
+  status: Boolean!
+  VeterinarianSummaryScore: VeterinariaSummaryScore!
+}
+
+type GetMyEmployee {
+  id_clinic: String!
+  id_employee: String!
+  employee_invitation_status: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+  employee: EmployeeScore!
 }
 
 type GetMyEmployeesResult {
-  clinicEmployees: [ClinicEmployeeResult!]!
-}
-
-type HandleRequestResult {
-  access_token: String!
+  clinicEmployees: [GetMyEmployee!]!
 }
 
 type Query {
@@ -225,7 +248,7 @@ type Query {
   getAllClinicServices(getAllServicesByIdInput: GetAllServicesByIdInput!): [ClinicServiceResult!]!
   getAllFavoriteClinic: [FavoriteClinicResult!]!
   getAllProcedure: [Procedure!]!
-  getAllEmployee(getAllEmployeeByClinicIdInput: GetAllEmployeeByClinicIdInput!): [ClinicEmployeeResult!]!
+  getAllEmployee(getAllEmployeeByClinicIdInput: GetAllEmployeeByClinicIdInput!): [GetAllEmployeeResult!]!
   getMyEmployees: GetMyEmployeesResult!
 }
 
@@ -266,7 +289,7 @@ type Mutation {
   registerProcedure(addProcedureInput: AddProcedureInput!): AddProcedureResponse!
   updateProcedure(updateProcedureInput: UpdateProcedureInput!): UpdateProcedureResponse!
   changeEmployeeStatus(turnEmployeeStatusInput: TurnEmployeeStatusInput!): EmployeeResponse!
-  registerEmployee(addEmployeeInput: AddEmployeeInput!): EmployeeResponse!
+  inviteToClinic(inviteToClinicInput: InviteToClinicInput!): EmployeeResponse!
   handleEmployeeRequest(handleEmployeeRequestInput: HandleEmployeeRequestInput!): HandleRequestResult!
 }
 
@@ -384,7 +407,7 @@ input TurnEmployeeStatusInput {
   status: Boolean!
 }
 
-input AddEmployeeInput {
+input InviteToClinicInput {
   id: String!
   id_employee: String!
   employee_invitation_status: String

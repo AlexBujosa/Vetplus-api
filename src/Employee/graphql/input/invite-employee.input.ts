@@ -3,7 +3,7 @@ import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
 import { EmployeeInvitationStatus } from '@prisma/client';
 
 @InputType()
-export class AddEmployeeInput extends GenericByIdInput {
+export class InviteToClinicInput extends GenericByIdInput {
   @Field(() => String)
   id_employee: string;
 
