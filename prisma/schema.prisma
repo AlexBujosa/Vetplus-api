@@ -204,7 +204,7 @@ model Appointment {
 
   start_at     DateTime
   end_at       DateTime
-  observations String           @db.Text
+  observations String?           @db.Text
   State        AppointmentState @default(PENDING)
 
   created_at DateTime @default(now())
@@ -251,6 +251,7 @@ model Clinic_User {
   id_clinic String
   favorite Boolean @default(false)
   points Int?
+  clientAttendance Boolean @default(false)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)

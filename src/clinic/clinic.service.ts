@@ -9,6 +9,8 @@ import { customException } from '@/global/constant/constants';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { OmitTx } from '@/Employee/constant';
 import { GetAllClinic } from './graphql/types/get-all-clinic.type';
+import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
+import { GetAllClientsResult } from './graphql/types/get-all-clients-result.type';
 
 @Injectable()
 export class ClinicService {
@@ -168,6 +170,35 @@ export class ClinicService {
       },
     });
     return result[0];
+  }
+  async GetAllClients(
+    genericByIdInput: GenericByIdInput,
+  ): Promise<GetAllClientsResult[]> {
+    const { id } = genericByIdInput;
+    const result = await this.prismaService.clinic_User.findMany({
+      where: {
+        id_clinic: id,
+        clientAttendance: true,
+      },
+      include: {
+        user: {
+          include: {
+            Pet: true,
+            AppointmentOwner: {
+              select: {
+                start_at: true,
+                end_at: true,
+              },
+              orderBy: {
+                start_at: 'desc',
+              },
+              take: 1,
+            },
+          },
+        },
+      },
+    });
+    return result;
   }
 
   private async upsertScoreClinic(
