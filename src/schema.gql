@@ -1,0 +1,369 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type CreatedUserResponse {
+  result: String!
+  message: String!
+}
+
+type SignUpResponse {
+  result: String!
+  message: String!
+}
+
+type SignInResponse {
+  access_token: String
+}
+
+type User {
+  id: String!
+  names: String!
+  surnames: String
+  email: String!
+  provider: String!
+  document: String
+  address: String
+  telephone_number: String
+  image: String
+  role: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type UpdateUserResponse {
+  result: String!
+}
+
+type SaveUserImageResponse {
+  result: String!
+  image: String
+}
+
+type DeleteUserImageResponse {
+  result: String!
+}
+
+type Credentials {
+  id_user: String!
+  password: String!
+  Status: Boolean!
+}
+
+type AddPetResponse {
+  result: String!
+}
+
+type UpdatePetResponse {
+  result: String!
+}
+
+type DeletePetResponse {
+  result: String!
+}
+
+type Pet {
+  id: String!
+  id_owner: String!
+  id_specie: Int!
+  id_breed: Int!
+  name: String!
+  image: String
+  gender: String!
+  castrated: Boolean!
+  dob: DateTime
+  observations: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+type SavePetImageResponse {
+  result: String!
+  image: String
+}
+
+type DeletePetImageResponse {
+  result: String!
+}
+
+type AddSpecieResponse {
+  result: String!
+}
+
+type Specie {
+  id: Int!
+  name: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+type AddBreedResponse {
+  result: String!
+}
+
+type Breed {
+  id: Int!
+  id_specie: Int!
+  name: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+type Clinic {
+  id: String!
+  id_owner: String!
+  name: String!
+  telephone_number: String!
+  google_maps_url: String
+  address: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+type ClinicResponse {
+  result: String!
+}
+
+type Service {
+  name: String!
+}
+
+type ClinicServiceResult {
+  service: Service!
+  id_clinic: String!
+  id_service: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+type Employee {
+  names: String!
+  surnames: String!
+  email: String!
+}
+
+type ClinicEmployeeResult {
+  employee: Employee!
+  id_clinic: String!
+  id_employee: String!
+  employee_invitation_status: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+type ClinicInfo {
+  name: String!
+  address: String!
+}
+
+type FavoriteClinicResult {
+  clinic: ClinicInfo!
+  id_user: String!
+  id_clinic: String!
+  favorite: Boolean!
+  points: Float!
+}
+
+type ScoreClinicResponse {
+  result: String!
+}
+
+type AddProcedureResponse {
+  result: String!
+}
+
+type Procedure {
+  id: String!
+  name: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+type UpdateProcedureResponse {
+  result: String!
+}
+
+type Query {
+  signInWithEmail(signInInput: SignInInput!): SignInResponse!
+  googleLogin: SignInResponse!
+  findUserById: User!
+  getMyProfile: User!
+  findAll: [User!]!
+  findCredentialsById: Credentials!
+  getMyPets: [Pet!]!
+  findAllPet: [Pet!]!
+  getAllBreed: [Breed!]!
+  getMyClinic: Clinic!
+  getAllClinic: [Clinic!]!
+  getClinicById(getClinicByIdInput: GetClinicByIdInput!): Clinic!
+  getAllClinicServices(getAllServicesByIdInput: GetAllServicesByIdInput!): [ClinicServiceResult!]!
+  getAllEmployee(getAllEmployeeByIdInput: GetAllEmployeeByIdInput!): [ClinicEmployeeResult!]!
+  getAllFavoriteClinic: [FavoriteClinicResult!]!
+  getAllProcedure: [Procedure!]!
+}
+
+input SignInInput {
+  email: String!
+  password: String!
+}
+
+input GetClinicByIdInput {
+  id: String!
+}
+
+input GetAllServicesByIdInput {
+  id: String!
+}
+
+input GetAllEmployeeByIdInput {
+  id: String!
+}
+
+type Mutation {
+  signUp(signUpInput: SignUpInput!): SignUpResponse!
+  googleRegister(signUpInput: SignUpInput!): SignInResponse!
+  createUser(createUserInput: CreateUserInput!): CreatedUserResponse!
+  updateUser(updateUserInput: UpdateUserInput!): UpdateUserResponse!
+  saveUserImage(saveUserImageInput: SaveUserImageInput!): SaveUserImageResponse!
+  deleteUserImage(deleteUserImageInput: DeleteUserImageInput!): DeleteUserImageResponse!
+  deletePetImage(deletePetImageInput: DeletePetImageInput!): DeletePetImageResponse!
+  savePetImage(savePetImageInput: SavePetImageInput!): SavePetImageResponse!
+  registerPet(addPetInput: AddPetInput!): AddPetResponse!
+  updatePet(updatePetInput: UpdatePetInput!): UpdatePetResponse!
+  deletePet(deletePetInput: DeletePetInput!): DeletePetResponse!
+  registerSpecie(addPetInput: AddSpecieInput!): AddSpecieResponse!
+  registerBreed(addBreedInput: AddBreedInput!): AddBreedResponse!
+  registerClinic(addClinicInput: AddClinicInput!): ClinicResponse!
+  changeEmployeeStatus(turnEmployeeStatusInput: TurnEmployeeStatusInput!): ClinicResponse!
+  markAsFavoriteClinic(markAsFavoriteClinicInput: MarkAsFavoriteClinicInput!): [ClinicResponse!]!
+  scoreClinic(scoreClinicInput: ScoreClinicInput!): ScoreClinicResponse!
+  registerProcedure(addProcedureInput: AddProcedureInput!): AddProcedureResponse!
+  updateProcedure(updateProcedureInput: UpdateProcedureInput!): UpdateProcedureResponse!
+}
+
+input SignUpInput {
+  names: String!
+  surnames: String
+  email: String!
+  password: String
+  provider: String
+}
+
+input CreateUserInput {
+  names: String!
+  surnames: String
+  email: String!
+  password: String
+  provider: String
+}
+
+input UpdateUserInput {
+  names: String!
+  surnames: String
+  document: String
+  address: String
+  telephone_number: String
+  image: String
+}
+
+input SaveUserImageInput {
+  image: Upload!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input DeleteUserImageInput {
+  image: String!
+}
+
+input DeletePetImageInput {
+  image: String!
+}
+
+input SavePetImageInput {
+  image: Upload!
+}
+
+input AddPetInput {
+  id_specie: Int!
+  id_breed: Int!
+  name: String!
+  image: String
+  gender: String!
+  castrated: Boolean!
+  dob: DateTime
+  observations: String
+}
+
+input UpdatePetInput {
+  id: String!
+  id_specie: Int!
+  id_breed: Int!
+  name: String!
+  url_current_image: String
+  url_new_image: String
+  gender: String!
+  castrated: Boolean!
+  dob: DateTime
+  observations: String
+}
+
+input DeletePetInput {
+  id: String!
+  status: Boolean!
+}
+
+input AddSpecieInput {
+  name: String!
+}
+
+input AddBreedInput {
+  id_specie: Int!
+  name: String!
+}
+
+input AddClinicInput {
+  name: String!
+  telephone_number: String!
+  google_maps_url: String
+  address: String!
+}
+
+input TurnEmployeeStatusInput {
+  id: String!
+  id_employee: String!
+  status: Boolean!
+}
+
+input MarkAsFavoriteClinicInput {
+  id: String!
+  favorite: Boolean!
+}
+
+input ScoreClinicInput {
+  id_clinic: String!
+  score: Float
+}
+
+input AddProcedureInput {
+  name: String!
+}
+
+input UpdateProcedureInput {
+  name: String!
+  id: String!
+}

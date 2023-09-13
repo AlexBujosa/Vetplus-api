@@ -1,5 +1,6 @@
 trigger:
   - main
+  - dev
 
 pool:
   vmImage: ubuntu-22.04
@@ -14,11 +15,62 @@ steps:
   - script: |
       npm install
       npm run lint
-    displayName: 'npm install and lint'
+      npm run build
+      npm run docs:g
+    displayName: 'npm install, lint and build'
 
   - task: Docker@2
+    displayName: 'Docker build for DEV'
     inputs:
+      command: build
       containerRegistry: 'docker-hub-connection'
-      repository: 'vetplus-api'
-      command: 'buildAndPush'
-      Dockerfile: '**/Dockerfile'
+      repository: 'chrissst/vetplus-api'
+      tags: |
+        alpha-$(Build.BuildNumber)
+      arguments: '--build-arg DATABASE_URL=$(DATABASE_URL) --build-arg GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) --build-arg GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET) --build-arg AWS_S3_ACCESS_KEY_ID=$(AWS_S3_ACCESS_KEY_ID) --build-arg AWS_S3_SECRET_ACCESS_KEY=$(AWS_S3_SECRET_ACCESS_KEY) --build-arg AWS_S3_BUCKET_NAME=$(AWS_S3_BUCKET_NAME) --build-arg AWS_S3_REGION=$(AWS_S3_REGION)'
+
+  - task: Docker@2
+    displayName: 'Docker push for DEV'
+    inputs:
+      command: push
+      containerRegistry: 'docker-hub-connection'
+      repository: 'chrissst/vetplus-api'
+      tags: |
+        alpha-$(Build.BuildNumber)
+
+  - task: Docker@2
+    displayName: 'Docker build for QA'
+    inputs:
+      command: build
+      containerRegistry: 'docker-hub-connection'
+      repository: 'chrissst/vetplus-api'
+      tags: |
+        beta-$(Build.BuildNumber)
+      arguments: '--build-arg DATABASE_URL=$(QA_DATABASE_URL) --build-arg GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) --build-arg GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET) --build-arg AWS_S3_ACCESS_KEY_ID=$(AWS_S3_ACCESS_KEY_ID) --build-arg AWS_S3_SECRET_ACCESS_KEY=$(AWS_S3_SECRET_ACCESS_KEY) --build-arg AWS_S3_BUCKET_NAME=$(AWS_S3_BUCKET_NAME) --build-arg AWS_S3_REGION=$(AWS_S3_REGION)'
+
+  - task: Docker@2
+    displayName: 'Docker push for QA'
+    inputs:
+      command: push
+      containerRegistry: 'docker-hub-connection'
+      repository: 'chrissst/vetplus-api'
+      tags: |
+        beta-$(Build.BuildNumber)
+
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: '$(System.DefaultWorkingDirectory)/docs'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+  - task: Bash@3
+    inputs:
+      targetType: 'inline'
+      script: |
+        npm install -g netlify-cli
+        netlify login
+        netlify deploy --prod --dir '$(Build.ArtifactStagingDirectory)'
+    displayName: 'Deploy docs website to netlify'
+    timeoutInMinutes: 5
+    env:
+      NETLIFY_AUTH_TOKEN: $(NETLIFY_AUTH_TOKEN)
+      NETLIFY_SITE_ID: $(NETLIFY_SITE_ID)
