@@ -16,7 +16,7 @@ export class CredentialsService {
         data: { ...createCredentialsInput },
       });
     } catch (error) {
-      throw signUpCustomException.FAILED_CREATE_CREDENTIALS();
+      throw signUpCustomException.FAILED_CREATE_CREDENTIALS(null);
     }
   }
 
@@ -28,7 +28,7 @@ export class CredentialsService {
         },
       });
     } catch (error) {
-      throw customException.SOMETHING_WRONG_FIND_CREDENTIALS();
+      throw customException.SOMETHING_WRONG_FIND_CREDENTIALS(null);
     }
   }
 

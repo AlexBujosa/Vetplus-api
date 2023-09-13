@@ -5,9 +5,12 @@ import { AddClinicInput } from './graphql/input/add-clinic.input';
 import { FavoriteClinic, ServiceResult, SummaryScoreClinic } from './constant';
 import { MarkAsFavoriteClinicInput } from './graphql/input/mark-as-favorite-clinic.input';
 import { ScoreClinicInput } from './graphql/input/score-clinic.input';
-import { TurnEmployeeStatusInput } from './graphql/input/turn-employee-status.input';
 import { customException } from '@/global/constant/constants';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { OmitTx } from '@/Employee/constant';
+import { GetAllClinic } from './graphql/types/get-all-clinic.type';
+import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
+import { GetAllClientsResult } from './graphql/types/get-all-clients-result.type';
 
 @Injectable()
 export class ClinicService {
@@ -17,12 +20,28 @@ export class ClinicService {
     id_owner: string,
   ): Promise<boolean> {
     try {
-      const result = await this.prismaService.clinic.create({
-        data: {
-          ...addClinicInput,
-          id_owner,
+      const result = await this.prismaService.$transaction(
+        async (tx: OmitTx) => {
+          const createClinic = await tx.clinic.create({
+            data: {
+              ...addClinicInput,
+              id_owner,
+            },
+          });
+
+          if (!createClinic) return false;
+
+          const score = await tx.clinic_Summary_Score.create({
+            data: {
+              id_clinic: createClinic.id,
+            },
+          });
+
+          if (!score) throw Error('Did not create clinic score');
+          return true;
         },
-      });
+      );
+
       if (!result) return false;
       return true;
     } catch (error) {
@@ -30,7 +49,9 @@ export class ClinicService {
         error instanceof PrismaClientKnownRequestError &&
         error.code == 'P2002'
       ) {
-        throw customException.ALREADY_HAVE_CLINIC();
+        throw customException.ALREADY_HAVE_CLINIC(null);
+      } else {
+        throw customException.CREATION_CLINIC_FAILED(error.message);
       }
     }
   }
@@ -44,8 +65,12 @@ export class ClinicService {
     return result;
   }
 
-  async getAllClinic(): Promise<Clinic[]> {
-    const result = await this.prismaService.clinic.findMany();
+  async getAllClinic(): Promise<GetAllClinic[]> {
+    const result = await this.prismaService.clinic.findMany({
+      include: {
+        clinicSummaryScore: true,
+      },
+    });
     return result;
   }
 
@@ -72,21 +97,6 @@ export class ClinicService {
       },
     });
     return result;
-  }
-
-  async turnEmployeeStatus(
-    turnEmployeeStatusInput: TurnEmployeeStatusInput,
-  ): Promise<boolean> {
-    const { id_employee, id, status } = turnEmployeeStatusInput;
-    const result = await this.prismaService.clinic_Employee.update({
-      data: {
-        status,
-      },
-      where: {
-        id_clinic_id_employee: { id_clinic: id, id_employee },
-      },
-    });
-    return result ? true : false;
   }
 
   async getAllFavoriteById(id_user: string): Promise<FavoriteClinic[]> {
@@ -160,6 +170,35 @@ export class ClinicService {
       },
     });
     return result[0];
+  }
+  async GetAllClients(
+    genericByIdInput: GenericByIdInput,
+  ): Promise<GetAllClientsResult[]> {
+    const { id } = genericByIdInput;
+    const result = await this.prismaService.clinic_User.findMany({
+      where: {
+        id_clinic: id,
+        clientAttendance: true,
+      },
+      include: {
+        user: {
+          include: {
+            Pet: true,
+            AppointmentOwner: {
+              select: {
+                start_at: true,
+                end_at: true,
+              },
+              orderBy: {
+                start_at: 'desc',
+              },
+              take: 1,
+            },
+          },
+        },
+      },
+    });
+    return result;
   }
 
   private async upsertScoreClinic(

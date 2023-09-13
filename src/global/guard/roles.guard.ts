@@ -18,7 +18,7 @@ export class RolesGuard implements CanActivate {
     const request = ctx.req;
 
     const { role } = request.user;
-    if (!roles.includes(role)) throw customException.FORBIDDEN();
+    if (!roles.includes(role)) throw customException.FORBIDDEN(null);
 
     return true;
   }
