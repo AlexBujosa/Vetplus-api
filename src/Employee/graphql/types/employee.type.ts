@@ -5,9 +5,12 @@ export class Employee {
   @Field(() => String)
   names: string;
 
-  @Field(() => String)
+  @Field({ nullable: true })
   surnames: string;
 
   @Field(() => String)
   email: string;
+
+  @Field(() => Boolean)
+  status: boolean;
 }

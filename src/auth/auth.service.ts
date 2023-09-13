@@ -32,7 +32,7 @@ export class AuthService {
     const strongPassword = this.credentialsService.validatePassword(
       signUpInput.password,
     );
-    if (!strongPassword) throw signUpCustomException.PASSWORD_WEAK();
+    if (!strongPassword) throw signUpCustomException.PASSWORD_WEAK(null);
 
     await this.prismaService.$transaction(async () => {
       const hash = await this.bcryptService.hashPassword(signUpInput.password);
@@ -50,10 +50,10 @@ export class AuthService {
     const user = await this.userService.findByEmail(email);
     const { id, provider } = user;
     if (provider != AuthProvider.EMAIL)
-      throw signInCustomException.WRONG_PROVIDER();
+      throw signInCustomException.WRONG_PROVIDER(null);
 
     const result = await this.credentialsService.findById(id);
-    if (!result) throw customException.CREDENTIALS_NOT_FOUND();
+    if (!result) throw customException.CREDENTIALS_NOT_FOUND(null);
     const { password: hash } = result;
 
     const coincidence = await this.bcryptService.decryptPassword(

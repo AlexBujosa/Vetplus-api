@@ -1,10 +1,21 @@
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { EmployeeResult } from './constant';
+import { EmployeeResult, MyEmployees, OmitTx } from './constant';
+import { TurnEmployeeStatusInput } from './graphql/input/turn-employee-status.input';
+import { ClinicService } from '@/clinic/clinic.service';
+import { customException } from '@/global/constant/constants';
+import { HandleEmployeeRequestInput } from './graphql/input/handle-employee-request.input';
+import { EmployeeInvitationStatus, Role } from '@prisma/client';
+import { AuthService } from '@/auth/auth.service';
+import { InviteToClinicInput } from './graphql/input/invite-employee.input';
 
 @Injectable()
 export class EmployeeService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly clinicService: ClinicService,
+    private readonly authService: AuthService,
+  ) {}
   async getAllEmployeeById(id_clinic: string): Promise<EmployeeResult[]> {
     const result = await this.prismaService.clinic_Employee.findMany({
       where: {
@@ -17,10 +28,144 @@ export class EmployeeService {
             names: true,
             surnames: true,
             email: true,
+            status: true,
           },
         },
       },
     });
     return result;
+  }
+
+  async getMyEmployess(id_owner: string): Promise<MyEmployees> {
+    const result = await this.prismaService.clinic.findUnique({
+      where: {
+        id_owner,
+      },
+      include: {
+        clinicEmployees: {
+          where: {
+            employee_invitation_status: 'ACCEPTED',
+          },
+          include: {
+            employee: {
+              include: {
+                VeterinarianSummaryScore: {
+                  select: {
+                    total_points: true,
+                    total_users: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    return { clinicEmployees: result?.clinicEmployees };
+  }
+
+  async turnEmployeeStatus(
+    turnEmployeeStatusInput: TurnEmployeeStatusInput,
+  ): Promise<boolean> {
+    const { id_employee, id, status } = turnEmployeeStatusInput;
+    const result = await this.prismaService.clinic_Employee.update({
+      data: {
+        status,
+      },
+      where: {
+        id_clinic_id_employee: { id_clinic: id, id_employee },
+      },
+    });
+    return result ? true : false;
+  }
+
+  async handleEmployeeRequest(
+    handleEmployeeRequest: HandleEmployeeRequestInput,
+    id_employee: string,
+    role: Role,
+  ): Promise<{ access_token: string }> {
+    const { employee_invitation_status } = handleEmployeeRequest;
+    try {
+      const result = await this.prismaService.$transaction(
+        async (tx: OmitTx) => {
+          const upsertClinicEmployee = await this.upsertClinicEmployee(
+            id_employee,
+            handleEmployeeRequest,
+            tx,
+          );
+          if (!upsertClinicEmployee)
+            throw Error("Employee response didn't update.");
+
+          if (
+            role !== Role.PET_OWNER ||
+            employee_invitation_status !== EmployeeInvitationStatus.ACCEPTED
+          )
+            return { token: null };
+
+          const user = await tx.user.update({
+            data: { role: 'VETERINARIAN' },
+            where: { id: id_employee },
+          });
+
+          if (!user) throw Error("User role didn't update.");
+
+          const score = await tx.veterinarian_Summary_Score.create({
+            data: {
+              id_veterinarian: id_employee,
+            },
+          });
+
+          if (!score) throw Error('Did not create veterinarian score');
+
+          const token = this.authService.login(user);
+          return { token: token.access_token };
+        },
+      );
+
+      return { access_token: result.token };
+    } catch (error) {
+      throw customException.HANDLE_EMPLOYEE_REQUEST_FAILED({
+        cause: new Error(),
+        description: error.message,
+      });
+    }
+  }
+
+  private upsertClinicEmployee(
+    id_employee: string,
+    handleEmployeeRequestInput: HandleEmployeeRequestInput,
+    tx: OmitTx,
+  ) {
+    const { employee_invitation_status, id } = handleEmployeeRequestInput;
+    const result = tx.clinic_Employee.upsert({
+      create: {
+        employee_invitation_status,
+        id_clinic: id,
+        id_employee,
+      },
+      update: {
+        employee_invitation_status,
+      },
+      where: {
+        id_clinic_id_employee: { id_clinic: id, id_employee },
+      },
+    });
+    return result;
+  }
+
+  async inviteToClinic(
+    InviteToClinicInput: InviteToClinicInput,
+    id_owner: string,
+  ): Promise<boolean> {
+    const my_clinic = await this.clinicService.getMyClinic(id_owner);
+    const { id, ...rest } = InviteToClinicInput;
+    if (my_clinic.id != id) throw customException.FORBIDDEN(null);
+    const result = await this.prismaService.clinic_Employee.create({
+      data: {
+        ...rest,
+        id_clinic: id,
+      },
+    });
+    return result ? true : false;
   }
 }

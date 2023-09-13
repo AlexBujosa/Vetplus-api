@@ -6,4 +6,7 @@ import * as Upload from 'graphql-upload/Upload.js';
 export class SavePetImageInput {
   @Field(() => GraphQLUpload)
   image: Upload;
+
+  @Field({ nullable: true })
+  old_image: string;
 }
