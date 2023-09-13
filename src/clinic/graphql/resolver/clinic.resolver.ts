@@ -7,9 +7,7 @@ import { Role } from '@prisma/client';
 import { AddClinicInput } from '../input/add-clinic.input';
 import { Clinic } from '../types/clinic.type';
 import { ClinicService } from '@/clinic/clinic.service';
-import { ClinicResult } from '@/clinic/constant';
-import { ClinicResponse } from '../types/add-clinic-response.type';
-import { GetClinicByIdInput } from '../input/get-clinic-by-id.input';
+import { ClinicResponse } from '../types/clinic-response.type';
 import { GetAllServicesByIdInput } from '../input/get-all-services-by-id.input';
 import { ClinicServiceResult } from '../types/clinic-service-result.type';
 import { MarkAsFavoriteClinicInput } from '../input/mark-as-favorite-clinic.input';
@@ -19,7 +17,10 @@ import { ScoreClinicResponse } from '../types/score-clinic-response.type';
 import { YupValidationPipe } from '@/global/pipe/yup-validation.pipe';
 import { AddClinicInputSchema } from '@/global/schema/add-clinic-input.schema';
 import { ScoreClinicInputSchema } from '@/global/schema/score-clinic-input.schema';
-import { TurnEmployeeStatusInput } from '../input/turn-employee-status.input';
+import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
+import { Status } from '@/global/constant/constants';
+import { GetAllClinic } from '../types/get-all-clinic.type';
+import { GetAllClientsResult } from '../types/get-all-clients-result.type';
 
 @Resolver()
 export class ClinicResolver {
@@ -38,9 +39,7 @@ export class ClinicResolver {
       context.req.user.sub,
     );
 
-    return !result
-      ? { result: ClinicResult.FAILED }
-      : { result: ClinicResult.COMPLETED };
+    return !result ? { result: Status.FAILED } : { result: Status.COMPLETED };
   }
 
   @Query(() => Clinic)
@@ -52,27 +51,10 @@ export class ClinicResolver {
     return result;
   }
 
-  @Mutation(() => ClinicResponse)
-  @Roles(Role.ADMIN, Role.CLINIC_OWNER)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @UsePipes(new YupValidationPipe(AddClinicInputSchema))
-  async changeEmployeeStatus(
-    @Args('turnEmployeeStatusInput')
-    turnEmployeeStatusInput: TurnEmployeeStatusInput,
-  ): Promise<ClinicResponse> {
-    const result = await this.clinicService.turnEmployeeStatus(
-      turnEmployeeStatusInput,
-    );
-
-    return !result
-      ? { result: ClinicResult.FAILED }
-      : { result: ClinicResult.COMPLETED };
-  }
-
-  @Query(() => [Clinic])
+  @Query(() => [GetAllClinic])
   @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async getAllClinic(): Promise<Clinic[]> {
+  async getAllClinic(): Promise<GetAllClinic[]> {
     return await this.clinicService.getAllClinic();
   }
 
@@ -80,7 +62,7 @@ export class ClinicResolver {
   @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getClinicById(
-    @Args('getClinicByIdInput') getClinicByIdInput: GetClinicByIdInput,
+    @Args('getClinicByIdInput') getClinicByIdInput: GenericByIdInput,
   ): Promise<Clinic> {
     const { id } = getClinicByIdInput;
     return await this.clinicService.getClinicById(id);
@@ -110,9 +92,7 @@ export class ClinicResolver {
       context.req.user.sub,
     );
 
-    return result
-      ? { result: ClinicResult.COMPLETED }
-      : { result: ClinicResult.FAILED };
+    return result ? { result: Status.COMPLETED } : { result: Status.FAILED };
   }
 
   @Query(() => [FavoriteClinicResult])
@@ -136,8 +116,17 @@ export class ClinicResolver {
       scoreClinicInput,
       context.req.user.sub,
     );
-    return result
-      ? { result: ClinicResult.COMPLETED }
-      : { result: ClinicResult.FAILED };
+    return result ? { result: Status.COMPLETED } : { result: Status.FAILED };
+  }
+
+  @Query(() => [GetAllClientsResult])
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UsePipes(new YupValidationPipe(ScoreClinicInputSchema))
+  async getAllClients(
+    @Args('genericByIdInput') genericByIdInput: GenericByIdInput,
+  ): Promise<GetAllClientsResult[]> {
+    const result = await this.clinicService.GetAllClients(genericByIdInput);
+    return result;
   }
 }

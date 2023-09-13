@@ -8,7 +8,7 @@ import {
 } from '../global/constant/constants';
 import { User } from './graphql/types/user.type';
 import { UpdateUserInput } from './graphql/input/update-user.input';
-
+import { UpdateUserRoleInput } from './graphql/input/update-user-role.input';
 @Injectable()
 export class UserService {
   constructor(private prismaService: PrismaService) {}
@@ -27,9 +27,9 @@ export class UserService {
         error instanceof PrismaClientKnownRequestError &&
         error.code == 'P2002'
       ) {
-        throw signUpCustomException.EMAIL_ALREADY_EXIST();
+        throw signUpCustomException.EMAIL_ALREADY_EXIST(null);
       } else {
-        throw signUpCustomException.TRANSACTION_FAILED();
+        throw signUpCustomException.TRANSACTION_FAILED(null);
       }
     }
   }
@@ -48,11 +48,23 @@ export class UserService {
         error instanceof PrismaClientKnownRequestError &&
         error.code == 'P2002'
       ) {
-        throw signUpCustomException.EMAIL_ALREADY_EXIST();
+        throw signUpCustomException.EMAIL_ALREADY_EXIST(null);
       } else {
-        throw customException.UPDATE_USER_FAIL();
+        throw customException.UPDATE_USER_FAIL(null);
       }
     }
+  }
+
+  async updateRole(updateUserRoleInput: UpdateUserRoleInput): Promise<User> {
+    const { id, role } = updateUserRoleInput;
+    return await this.prismaService.user.update({
+      data: {
+        role,
+      },
+      where: {
+        id,
+      },
+    });
   }
 
   async findByEmail(email: string): Promise<User> {
@@ -62,7 +74,7 @@ export class UserService {
       },
     });
 
-    if (!result) throw customException.INVALID_CREDENTIALS();
+    if (!result) throw customException.INVALID_CREDENTIALS(null);
 
     return result;
   }

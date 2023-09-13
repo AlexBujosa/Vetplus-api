@@ -48,7 +48,7 @@ export class AuthResolver {
     @Context() context,
   ) {
     if (context.req.user.email != signUpInput.email)
-      throw customException.FORBIDDEN();
+      throw customException.FORBIDDEN(null);
     return this.googleAuthService.socialRegister(signUpInput);
   }
 }
