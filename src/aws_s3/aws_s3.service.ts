@@ -14,6 +14,7 @@ import {
   customException,
 } from '@/global/constant/constants';
 import { v4 as uuidv4 } from 'uuid';
+import { PrismaService } from '@/prisma/prisma.service';
 const {
   AWS_S3_ACCESS_KEY_ID,
   AWS_S3_SECRET_ACCESS_KEY,
@@ -24,7 +25,7 @@ const {
 @Injectable()
 export class AwsS3Service {
   private readonly client: S3Client;
-  constructor() {
+  constructor(private readonly prismaService: PrismaService) {
     this.client = new S3Client({
       region: AWS_S3_REGION,
       credentials: {
@@ -59,7 +60,11 @@ export class AwsS3Service {
     return isDeleted(s3DeletedOutput);
   }
 
-  async saveImageToS3(file: UploadType, folder: ImageUploadFolder) {
+  async saveImageToS3(
+    file: UploadType,
+    folder: ImageUploadFolder,
+    old_image_url?: string,
+  ) {
     const { createReadStream, filename, mimetype } = await file;
 
     const blob = createReadStream(filename);
@@ -80,9 +85,11 @@ export class AwsS3Service {
 
     const result = await upload.done();
 
-    if (isComplete(result)) {
-      return result.Location;
-    }
+    if (!isComplete(result)) return null;
+
+    if (old_image_url) await this.deleteImageToS3(old_image_url, folder);
+
+    return result.Location;
   }
 }
 
