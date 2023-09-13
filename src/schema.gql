@@ -182,6 +182,40 @@ type GetAllClinic {
   clinicSummaryScore: ClinicSummaryScore!
 }
 
+type AppointmentSchedule {
+  start_at: DateTime!
+  end_at: DateTime!
+}
+
+type GetAllClients {
+  id: String!
+  names: String!
+  surnames: String
+  email: String!
+  provider: String!
+  document: String
+  address: String
+  telephone_number: String
+  image: String
+  role: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+  Pet: [Pet!]!
+  AppointmentOwner: [AppointmentSchedule!]!
+}
+
+type GetAllClientsResult {
+  id_user: String!
+  id_clinic: String!
+  favorite: Boolean!
+  points: Int
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+  user: GetAllClients
+}
+
 type AddProcedureResponse {
   result: String!
 }
@@ -274,6 +308,7 @@ type Query {
   getClinicById(getClinicByIdInput: GenericByIdInput!): Clinic!
   getAllClinicServices(getAllServicesByIdInput: GetAllServicesByIdInput!): [ClinicServiceResult!]!
   getAllFavoriteClinic: [FavoriteClinicResult!]!
+  getAllClients(genericByIdInput: GenericByIdInput!): [GetAllClientsResult!]!
   getAllProcedure: [Procedure!]!
   getAllProcedureByIdClinic(genericByIdInput: GenericByIdInput!): [GetAllProcedureByClinicId!]!
   getAllEmployee(getAllEmployeeByClinicIdInput: GetAllEmployeeByClinicIdInput!): [GetAllEmployeeResult!]!
