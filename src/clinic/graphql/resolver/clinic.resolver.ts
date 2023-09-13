@@ -20,6 +20,7 @@ import { ScoreClinicInputSchema } from '@/global/schema/score-clinic-input.schem
 import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
 import { Status } from '@/global/constant/constants';
 import { GetAllClinic } from '../types/get-all-clinic.type';
+import { GetAllClientsResult } from '../types/get-all-clients-result.type';
 
 @Resolver()
 export class ClinicResolver {
@@ -116,5 +117,16 @@ export class ClinicResolver {
       context.req.user.sub,
     );
     return result ? { result: Status.COMPLETED } : { result: Status.FAILED };
+  }
+
+  @Query(() => [GetAllClientsResult])
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UsePipes(new YupValidationPipe(ScoreClinicInputSchema))
+  async getAllClients(
+    @Args('genericByIdInput') genericByIdInput: GenericByIdInput,
+  ): Promise<GetAllClientsResult[]> {
+    const result = await this.clinicService.GetAllClients(genericByIdInput);
+    return result;
   }
 }

@@ -4,16 +4,16 @@ import { AuthProvider } from '@prisma/client';
 
 @ObjectType()
 export class User {
-  @Field()
+  @Field(() => String)
   id: string;
 
-  @Field()
+  @Field(() => String)
   names: string;
 
   @Field({ nullable: true })
   surnames: string;
 
-  @Field()
+  @Field(() => String)
   email: string;
 
   @Field()
@@ -34,12 +34,12 @@ export class User {
   @Field()
   role: Role;
 
-  @Field()
+  @Field(() => Date)
   created_at: Date;
 
-  @Field()
+  @Field(() => Date)
   updated_at: Date;
 
-  @Field()
+  @Field(() => Boolean)
   status: boolean;
 }
