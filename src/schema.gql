@@ -398,6 +398,7 @@ input DeletePetImageInput {
 
 input SavePetImageInput {
   image: Upload!
+  old_image: String
 }
 
 input AddPetInput {
