@@ -28,7 +28,7 @@ export class BreedResolver {
   }
   @Query(() => [Breed])
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.CLINIC_OWNER, Role.VETERINARIAN)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   async getAllBreed(): Promise<Breed[]> {
     return await this.breedService.getAllBreed();
   }

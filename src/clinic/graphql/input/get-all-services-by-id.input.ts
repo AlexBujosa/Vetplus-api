@@ -1,5 +1,5 @@
 import { InputType } from '@nestjs/graphql';
-import { GetClinicByIdInput } from './get-clinic-by-id.input';
+import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
 
 @InputType()
-export class GetAllServicesByIdInput extends GetClinicByIdInput {}
+export class GetAllServicesByIdInput extends GenericByIdInput {}

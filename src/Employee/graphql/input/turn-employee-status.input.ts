@@ -1,8 +1,8 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { GetClinicByIdInput } from './get-clinic-by-id.input';
+import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
 
 @InputType()
-export class TurnEmployeeStatusInput extends GetClinicByIdInput {
+export class TurnEmployeeStatusInput extends GenericByIdInput {
   @Field(() => String)
   id_employee: string;
 

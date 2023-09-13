@@ -53,11 +53,11 @@ export class PetResolver {
   async savePetImage(
     @Args('savePetImageInput') savePetImageInput: SavePetImageInput,
   ): Promise<SavePetImageResponse> {
-    const { image } = savePetImageInput;
-
+    const { image, old_image } = savePetImageInput;
     if (image) this.awsS3Service.validateImages(await image);
+
     const s3Location = image
-      ? await this.awsS3Service.saveImageToS3(await image, 'pets')
+      ? await this.awsS3Service.saveImageToS3(await image, 'pets', old_image)
       : null;
 
     return !s3Location
