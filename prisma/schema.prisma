@@ -195,16 +195,17 @@ model Appointment {
   id_service      String
   id_clinic       String
 
-  owner        User  @relation("owner", fields: [id_owner], references: [id])
-  veterinarian User  @relation("veterinarian", fields: [id_veterinarian], references: [id])
-  pet          Pet     @relation(fields: [id_pet], references: [id])
-  service      Service @relation(fields: [id_service], references: [id])
-  clinic       Clinic  @relation(fields: [id_clinic], references: [id])
+  Owner        User  @relation("owner", fields: [id_owner], references: [id])
+  Veterinarian User  @relation("veterinarian", fields: [id_veterinarian], references: [id])
+  Pet          Pet     @relation(fields: [id_pet], references: [id])
+  Service      Service @relation(fields: [id_service], references: [id])
+  Clinic       Clinic  @relation(fields: [id_clinic], references: [id])
+  Veterinarian_PetOwner Veterinarian_PetOwner? 
 
   start_at     DateTime
   end_at       DateTime
   observations String           @db.Text
-  state        AppointmentState @default(PENDING)
+  State        AppointmentState @default(PENDING)
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -215,6 +216,7 @@ model Appointment {
   @@index([id_service])
   @@index([id_pet])
   @@index([id_clinic])
+  @@index([id])
 }
 
 model Clinic {
@@ -248,7 +250,7 @@ model Clinic_User {
   id_user String 
   id_clinic String
   favorite Boolean @default(false)
-  points Float?
+  points Int?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
@@ -309,7 +311,7 @@ model Service {
 
 model Clinic_Summary_Score {
   id_clinic String @id
-  total_points Float @default(5)
+  total_points Int @default(5)
   total_users Int @default(1)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -320,25 +322,29 @@ model Clinic_Summary_Score {
   @@index([id_clinic])
 }
 
+
 model Veterinarian_PetOwner {
   id String @id @default(uuid())
   id_veterinarian String 
   id_petowner String
-  points Float?
+  id_appointment String @unique
+  points Int?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  status     Boolean  @default(true)
+  status Boolean @default(true)
 
-  Veterinarian User @relation("veterinarian",  fields: [id_veterinarian], references: [id])
+  Veterinarian User @relation("veterinarian", fields: [id_veterinarian], references: [id])
   Pet_owner User @relation("pet_owner", fields: [id_petowner], references: [id])
+  Appointment Appointment? @relation(fields: [id_appointment], references: [id])
 
   @@index([id_veterinarian])
   @@index([id_petowner])
 }
 
+
 model Veterinarian_Summary_Score {
   id_veterinarian String @id
-  total_points Float @default(5)
+  total_points Int @default(5)
   total_users Int @default(1)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

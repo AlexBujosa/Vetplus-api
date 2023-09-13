@@ -19,6 +19,7 @@ import { AddClinicInputSchema } from '@/global/schema/add-clinic-input.schema';
 import { ScoreClinicInputSchema } from '@/global/schema/score-clinic-input.schema';
 import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
 import { Status } from '@/global/constant/constants';
+import { GetAllClinic } from '../types/get-all-clinic.type';
 
 @Resolver()
 export class ClinicResolver {
@@ -49,10 +50,10 @@ export class ClinicResolver {
     return result;
   }
 
-  @Query(() => [Clinic])
+  @Query(() => [GetAllClinic])
   @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async getAllClinic(): Promise<Clinic[]> {
+  async getAllClinic(): Promise<GetAllClinic[]> {
     return await this.clinicService.getAllClinic();
   }
 

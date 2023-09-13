@@ -61,7 +61,7 @@ export class EmployeeService {
         },
       },
     });
-    return { clinicEmployees: result.clinicEmployees };
+    return { clinicEmployees: result?.clinicEmployees };
   }
 
   async turnEmployeeStatus(
@@ -114,6 +114,7 @@ export class EmployeeService {
               id_veterinarian: id_employee,
             },
           });
+
           if (!score) throw Error('Did not create veterinarian score');
 
           const token = this.authService.login(user);

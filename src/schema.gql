@@ -164,6 +164,24 @@ type ScoreClinicResponse {
   result: String!
 }
 
+type ClinicSummaryScore {
+  total_points: Int!
+  total_users: Int!
+}
+
+type GetAllClinic {
+  id: String!
+  id_owner: String!
+  name: String!
+  telephone_number: String!
+  google_maps_url: String
+  address: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+  clinicSummaryScore: ClinicSummaryScore!
+}
+
 type AddProcedureResponse {
   result: String!
 }
@@ -178,6 +196,15 @@ type Procedure {
 
 type UpdateProcedureResponse {
   result: String!
+}
+
+type GetAllProcedureByClinicId {
+  id_clinic: String!
+  id_service: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+  service: Procedure!
 }
 
 type EmployeeResponse {
@@ -206,7 +233,7 @@ type GetAllEmployeeResult {
 }
 
 type VeterinariaSummaryScore {
-  total_points: Float!
+  total_points: Int!
   total_users: Int!
 }
 
@@ -229,7 +256,7 @@ type GetMyEmployee {
 }
 
 type GetMyEmployeesResult {
-  clinicEmployees: [GetMyEmployee!]!
+  clinicEmployees: [GetMyEmployee!]
 }
 
 type Query {
@@ -243,11 +270,12 @@ type Query {
   findAllPet: [Pet!]!
   getAllBreed: [Breed!]!
   getMyClinic: Clinic!
-  getAllClinic: [Clinic!]!
+  getAllClinic: [GetAllClinic!]!
   getClinicById(getClinicByIdInput: GenericByIdInput!): Clinic!
   getAllClinicServices(getAllServicesByIdInput: GetAllServicesByIdInput!): [ClinicServiceResult!]!
   getAllFavoriteClinic: [FavoriteClinicResult!]!
   getAllProcedure: [Procedure!]!
+  getAllProcedureByIdClinic(genericByIdInput: GenericByIdInput!): [GetAllProcedureByClinicId!]!
   getAllEmployee(getAllEmployeeByClinicIdInput: GetAllEmployeeByClinicIdInput!): [GetAllEmployeeResult!]!
   getMyEmployees: GetMyEmployeesResult!
 }

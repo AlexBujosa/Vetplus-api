@@ -3,6 +3,6 @@ import { GetMyEmployee } from './get-my-employees.type';
 
 @ObjectType()
 export class GetMyEmployeesResult {
-  @Field(() => [GetMyEmployee])
+  @Field(() => [GetMyEmployee], { nullable: true })
   clinicEmployees: GetMyEmployee[];
 }
