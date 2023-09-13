@@ -7,6 +7,8 @@ import { MarkAsFavoriteClinicInput } from './graphql/input/mark-as-favorite-clin
 import { ScoreClinicInput } from './graphql/input/score-clinic.input';
 import { customException } from '@/global/constant/constants';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { OmitTx } from '@/Employee/constant';
+import { GetAllClinic } from './graphql/types/get-all-clinic.type';
 
 @Injectable()
 export class ClinicService {
@@ -16,12 +18,28 @@ export class ClinicService {
     id_owner: string,
   ): Promise<boolean> {
     try {
-      const result = await this.prismaService.clinic.create({
-        data: {
-          ...addClinicInput,
-          id_owner,
+      const result = await this.prismaService.$transaction(
+        async (tx: OmitTx) => {
+          const createClinic = await tx.clinic.create({
+            data: {
+              ...addClinicInput,
+              id_owner,
+            },
+          });
+
+          if (!createClinic) return false;
+
+          const score = await tx.clinic_Summary_Score.create({
+            data: {
+              id_clinic: createClinic.id,
+            },
+          });
+
+          if (!score) throw Error('Did not create clinic score');
+          return true;
         },
-      });
+      );
+
       if (!result) return false;
       return true;
     } catch (error) {
@@ -30,6 +48,8 @@ export class ClinicService {
         error.code == 'P2002'
       ) {
         throw customException.ALREADY_HAVE_CLINIC(null);
+      } else {
+        throw customException.CREATION_CLINIC_FAILED(error.message);
       }
     }
   }
@@ -43,8 +63,12 @@ export class ClinicService {
     return result;
   }
 
-  async getAllClinic(): Promise<Clinic[]> {
-    const result = await this.prismaService.clinic.findMany();
+  async getAllClinic(): Promise<GetAllClinic[]> {
+    const result = await this.prismaService.clinic.findMany({
+      include: {
+        clinicSummaryScore: true,
+      },
+    });
     return result;
   }
 

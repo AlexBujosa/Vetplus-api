@@ -57,6 +57,7 @@ export enum CustomExceptionMessage {
   UPDATE_USER_FAIL = 'UPDATE_USER_FAIL',
   ALREADY_HAVE_CLINIC = 'ALREADY_HAVE_CLINIC',
   HANDLE_EMPLOYEE_REQUEST_FAILED = 'HANDLE_EMPLOYEE_REQUEST_FAILED',
+  CREATION_CLINIC_FAILED = 'CREATION_CLINIC_FAILED',
 }
 
 const {
@@ -72,6 +73,7 @@ const {
   UPDATE_USER_FAIL,
   ALREADY_HAVE_CLINIC,
   HANDLE_EMPLOYEE_REQUEST_FAILED,
+  CREATION_CLINIC_FAILED,
 } = CustomExceptionMessage;
 
 export const customException = {
@@ -99,4 +101,6 @@ export const customException = {
     new CustomException(ALREADY_HAVE_CLINIC, 200, options),
   HANDLE_EMPLOYEE_REQUEST_FAILED: (options: HttpExceptionOptions) =>
     new CustomException(HANDLE_EMPLOYEE_REQUEST_FAILED, 200, options),
+  CREATION_CLINIC_FAILED: (options: HttpExceptionOptions) =>
+    new CustomException(CREATION_CLINIC_FAILED, 200, options),
 };
