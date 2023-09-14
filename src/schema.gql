@@ -291,7 +291,7 @@ type EmployeeSpecialtiesScore {
   email: String!
   status: Boolean!
   VeterinarianSummaryScore: VeterinarianSummaryScore!
-  VeterinariaSpecialties: VeterinarianSpecialties!
+  VeterinariaSpecialties: VeterinarianSpecialties
 }
 
 type GetMyEmployee {
@@ -363,7 +363,7 @@ type Mutation {
   scoreClinic(scoreClinicInput: ScoreClinicInput!): ScoreClinicResponse!
   registerProcedure(addProcedureInput: AddProcedureInput!): AddProcedureResponse!
   updateProcedure(updateProcedureInput: UpdateProcedureInput!): UpdateProcedureResponse!
-  registerSpecialty: EmployeeResponse!
+  registerSpecialty(addSpecialtyInput: AddSpecialtyInput!): EmployeeResponse!
   changeEmployeeStatus(turnEmployeeStatusInput: TurnEmployeeStatusInput!): EmployeeResponse!
   inviteToClinic(inviteToClinicInput: InviteToClinicInput!): EmployeeResponse!
   handleEmployeeRequest(handleEmployeeRequestInput: HandleEmployeeRequestInput!): HandleRequestResult!
@@ -490,6 +490,10 @@ input AddProcedureInput {
 input UpdateProcedureInput {
   name: String!
   id: String!
+}
+
+input AddSpecialtyInput {
+  specialties: String
 }
 
 input TurnEmployeeStatusInput {
