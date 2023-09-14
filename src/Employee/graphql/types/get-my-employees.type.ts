@@ -1,9 +1,9 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { ClinicEmployee } from './clinic-employee.type';
-import { EmployeeScore } from './employee-score.type';
+import { EmployeeSpecialtiesScore } from './employee-specialties-score.type';
 
 @ObjectType()
 export class GetMyEmployee extends ClinicEmployee {
-  @Field(() => EmployeeScore)
-  employee: EmployeeScore;
+  @Field(() => EmployeeSpecialtiesScore)
+  employee: EmployeeSpecialtiesScore;
 }
