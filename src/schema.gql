@@ -154,6 +154,7 @@ type GetAllClinic {
   name: String!
   telephone_number: String!
   google_maps_url: String
+  email: String
   image: String
   address: String!
   created_at: DateTime!
@@ -219,6 +220,7 @@ type ClinicServiceArray {
   name: String!
   telephone_number: String!
   google_maps_url: String
+  email: String
   image: String
   address: String!
   created_at: DateTime!
@@ -448,6 +450,7 @@ input AddClinicInput {
   name: String!
   telephone_number: String!
   google_maps_url: String
+  email: String
   image: String
   address: String!
 }
@@ -457,6 +460,7 @@ input UpdateClinicInput {
   name: String
   telephone_number: String
   google_maps_url: String
+  email: String
   image: String
   address: String
   services: [String!]

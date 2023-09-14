@@ -13,6 +13,9 @@ export class UpdateClinicInput extends GenericByIdInput {
   google_maps_url: string;
 
   @Field({ nullable: true })
+  email: string;
+
+  @Field({ nullable: true })
   image: string;
 
   @Field(() => String, { nullable: true })

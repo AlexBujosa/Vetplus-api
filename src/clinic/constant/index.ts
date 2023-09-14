@@ -9,6 +9,7 @@ export type ClinicType = {
   telephone_number: string;
   google_maps_url: string;
   address: string;
+  email: string;
   image: string;
   created_at: Date;
   updated_at: Date;

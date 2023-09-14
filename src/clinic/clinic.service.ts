@@ -17,7 +17,6 @@ import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
 import { GetAllClientsResult } from './graphql/types/get-all-clients-result.type';
 import { UpdateClinicInput } from './graphql/input/update-clinic.input';
 import { ClinicServiceArray } from './graphql/types/clinic-services-array.type';
-import { Clinic } from '@prisma/client';
 
 @Injectable()
 export class ClinicService {

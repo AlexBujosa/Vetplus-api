@@ -12,6 +12,9 @@ export class AddClinicInput {
   google_maps_url: string;
 
   @Field({ nullable: true })
+  email: string;
+
+  @Field({ nullable: true })
   image: string;
 
   @Field(() => String)
