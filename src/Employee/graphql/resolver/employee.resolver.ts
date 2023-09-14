@@ -16,6 +16,7 @@ import { HandleRequestResult } from '../types/handle-request-result.type';
 import { EmployeeService } from '@/Employee/employee.service';
 import { GetAllEmployeeResult } from '../types/get-all-employee-result.type';
 import { GetMyEmployeesResult } from '../types/get-my-employees-result.type';
+import { ScoreVeterinarianInput } from '../input/score-veterinarian.input';
 
 @Resolver()
 export class EmployeeResolver {
@@ -85,5 +86,21 @@ export class EmployeeResolver {
     );
 
     return result;
+  }
+
+  @Mutation(() => EmployeeResponse)
+  @Roles(Role.PET_OWNER, Role.VETERINARIAN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async scoreVeterinarian(
+    @Args('scoreVeterinarianInput')
+    scoreVeterinarianInput: ScoreVeterinarianInput,
+    @Context() context,
+  ): Promise<EmployeeResponse> {
+    const result = await this.employeeService.scoreEmployee(
+      scoreVeterinarianInput,
+      context.req.user.sub,
+    );
+
+    return !result ? { result: Status.FAILED } : { result: Status.COMPLETED };
   }
 }

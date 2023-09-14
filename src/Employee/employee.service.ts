@@ -3,11 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { EmployeeResult, MyEmployees, OmitTx } from './constant';
 import { TurnEmployeeStatusInput } from './graphql/input/turn-employee-status.input';
 import { ClinicService } from '@/clinic/clinic.service';
-import { customException } from '@/global/constant/constants';
+import { SummaryScore, customException } from '@/global/constant/constants';
 import { HandleEmployeeRequestInput } from './graphql/input/handle-employee-request.input';
 import { EmployeeInvitationStatus, Role } from '@prisma/client';
 import { AuthService } from '@/auth/auth.service';
 import { InviteToClinicInput } from './graphql/input/invite-employee.input';
+import { ScoreVeterinarianInput } from './graphql/input/score-veterinarian.input';
 
 @Injectable()
 export class EmployeeService {
@@ -165,6 +166,93 @@ export class EmployeeService {
       data: {
         ...rest,
         id_clinic: id,
+      },
+    });
+    return result ? true : false;
+  }
+
+  async scoreEmployee(
+    scoreVeterinarianInput: ScoreVeterinarianInput,
+    id_owner: string,
+  ) {
+    try {
+      const result = await this.prismaService.$transaction(
+        async (tx: OmitTx) => {
+          const scoreVeterinarian = await tx.veterinarian_PetOwner.create({
+            data: {
+              ...scoreVeterinarianInput,
+              id_petowner: id_owner,
+            },
+          });
+
+          if (!scoreVeterinarian)
+            throw Error('Something is wrong with the veterinary score');
+
+          const totalScoreVeterinarian: SummaryScore =
+            await this.getTotalScoreVeterinarian(
+              tx,
+              scoreVeterinarianInput.id_veterinarian,
+            );
+
+          if (!totalScoreVeterinarian)
+            throw Error(
+              'Something is wrong getting the total score of the veterinarian',
+            );
+
+          await this.upsertSummaryScoreVeterinarian(
+            totalScoreVeterinarian,
+            id_owner,
+          );
+
+          return true;
+        },
+      );
+
+      return result ? true : false;
+    } catch (error) {
+      throw customException.SCORE_VETERINARIAN_FAILED(error.message);
+    }
+  }
+
+  async getTotalScoreVeterinarian(tx: OmitTx, id_veterinarian: string) {
+    const result = await this.prismaService.veterinarian_PetOwner.groupBy({
+      by: 'id_veterinarian',
+      _sum: {
+        points: true,
+      },
+      _count: true,
+      where: {
+        id_veterinarian,
+        points: {
+          not: {
+            equals: null,
+          },
+        },
+      },
+    });
+    return result[0];
+  }
+
+  private async upsertSummaryScoreVeterinarian(
+    summaryScoreVeterinarian: SummaryScore,
+    id_veterinarian: string,
+  ): Promise<boolean> {
+    const {
+      _count,
+      _sum: { points },
+    } = summaryScoreVeterinarian;
+    const result = await this.prismaService.veterinarian_Summary_Score.upsert({
+      where: {
+        id_veterinarian,
+      },
+      update: {
+        total_users: _count,
+        total_points: points,
+      },
+      create: {
+        total_users: _count,
+        total_points: points,
+        id_veterinarian,
       },
     });
     return result ? true : false;

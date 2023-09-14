@@ -312,10 +312,9 @@ model Clinic_Summary_Score {
 
 
 model Veterinarian_PetOwner {
-  id String @id @default(uuid())
+  id_appointment String @unique
   id_veterinarian String 
   id_petowner String
-  id_appointment String @unique
   points Int?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

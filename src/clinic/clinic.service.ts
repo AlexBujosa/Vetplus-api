@@ -1,15 +1,10 @@
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { AddClinicInput } from './graphql/input/add-clinic.input';
-import {
-  ClinicType,
-  FavoriteClinic,
-  ServiceResult,
-  SummaryScoreClinic,
-} from './constant';
+import { ClinicType, FavoriteClinic, ServiceResult } from './constant';
 import { MarkAsFavoriteClinicInput } from './graphql/input/mark-as-favorite-clinic.input';
 import { ScoreClinicInput } from './graphql/input/score-clinic.input';
-import { customException } from '@/global/constant/constants';
+import { SummaryScore, customException } from '@/global/constant/constants';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { OmitTx } from '@/Employee/constant';
 import { GetAllClinic } from './graphql/types/get-all-clinic.type';
@@ -270,7 +265,7 @@ export class ClinicService {
   }
 
   private async upsertSummaryScoreClinic(
-    summaryScoreClinic: SummaryScoreClinic,
+    summaryScoreClinic: SummaryScore,
     id_clinic: string,
   ): Promise<boolean> {
     const {
