@@ -1,8 +1,12 @@
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { Clinic } from '@prisma/client';
 import { AddClinicInput } from './graphql/input/add-clinic.input';
-import { FavoriteClinic, ServiceResult, SummaryScoreClinic } from './constant';
+import {
+  ClinicType,
+  FavoriteClinic,
+  ServiceResult,
+  SummaryScoreClinic,
+} from './constant';
 import { MarkAsFavoriteClinicInput } from './graphql/input/mark-as-favorite-clinic.input';
 import { ScoreClinicInput } from './graphql/input/score-clinic.input';
 import { customException } from '@/global/constant/constants';
@@ -11,6 +15,9 @@ import { OmitTx } from '@/Employee/constant';
 import { GetAllClinic } from './graphql/types/get-all-clinic.type';
 import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
 import { GetAllClientsResult } from './graphql/types/get-all-clients-result.type';
+import { UpdateClinicInput } from './graphql/input/update-clinic.input';
+import { ClinicServiceArray } from './graphql/types/clinic-services-array.type';
+import { Clinic } from '@prisma/client';
 
 @Injectable()
 export class ClinicService {
@@ -56,13 +63,30 @@ export class ClinicService {
     }
   }
 
-  async getMyClinic(id_owner: string): Promise<Clinic> {
-    const result = await this.prismaService.clinic.findUnique({
+  async updateClinic(UpdateClinicInput: UpdateClinicInput) {
+    const { id, services, ...rest } = UpdateClinicInput;
+    const result = await this.prismaService.clinic.update({
+      data: {
+        ...rest,
+        services: services ? JSON.stringify({ services: services }) : null,
+      },
+      where: {
+        id,
+      },
+    });
+    return result ? true : false;
+  }
+
+  async getMyClinic(id_owner: string): Promise<ClinicServiceArray> {
+    const { services, ...rest } = await this.prismaService.clinic.findUnique({
       where: {
         id_owner,
       },
     });
-    return result;
+
+    const clinicServices = this.getClinicServicesAsArray(services);
+
+    return this.convertServiceResultToClinicServiceArray(clinicServices, rest);
   }
 
   async getAllClinic(): Promise<GetAllClinic[]> {
@@ -71,32 +95,51 @@ export class ClinicService {
         clinicSummaryScore: true,
       },
     });
+
     return result;
   }
 
-  async getClinicById(id: string): Promise<Clinic> {
-    const result = await this.prismaService.clinic.findFirst({
+  async getClinicById(id: string): Promise<ClinicServiceArray> {
+    const { services, ...rest } = await this.prismaService.clinic.findFirst({
       where: {
         id,
       },
     });
-    return result;
+    const clinicServices = this.getClinicServicesAsArray(services);
+
+    return this.convertServiceResultToClinicServiceArray(clinicServices, rest);
   }
 
-  async getAllServicesById(id_clinic: string): Promise<ServiceResult[]> {
-    const result = await this.prismaService.clinic_Service.findMany({
-      where: {
-        id_clinic,
+  async getAllServicesById(id_clinic: string): Promise<ServiceResult> {
+    const clinic = await this.prismaService.clinic.findFirst({
+      select: {
+        services: true,
       },
-      include: {
-        service: {
-          select: {
-            name: true,
-          },
-        },
+      where: {
+        id: id_clinic,
       },
     });
-    return result;
+
+    if (!clinic.services) return null;
+
+    return this.getClinicServicesAsArray(clinic.services);
+  }
+
+  private convertServiceResultToClinicServiceArray(
+    serviceResult: ServiceResult,
+    clinic: ClinicType,
+  ): ClinicServiceArray {
+    const clinicServiceArray: ClinicServiceArray = {
+      ...clinic,
+      services: serviceResult?.services,
+    };
+    return clinicServiceArray;
+  }
+
+  private getClinicServicesAsArray(servicesStr: string): ServiceResult {
+    if (!servicesStr) return null;
+    const clinic_service: ServiceResult = JSON.parse(servicesStr);
+    return clinic_service;
   }
 
   async getAllFavoriteById(id_user: string): Promise<FavoriteClinic[]> {
@@ -177,7 +220,7 @@ export class ClinicService {
     const { id } = genericByIdInput;
     const result = await this.prismaService.clinic_User.findMany({
       where: {
-        id_clinic: id,
+        id_user: id,
         clientAttendance: true,
       },
       include: {

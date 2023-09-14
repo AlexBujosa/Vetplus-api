@@ -38,17 +38,20 @@ export class ProcedureService {
   }
   async getAllProcedureByClinicId(
     genericByIdInput: GenericByIdInput,
-  ): Promise<GetAllProcedureByClinicId[]> {
+  ): Promise<GetAllProcedureByClinicId> {
     const { id } = genericByIdInput;
-    const result = await this.prismaService.clinic_Service.findMany({
-      where: {
-        id_clinic: id,
+    const clinic = await this.prismaService.clinic.findFirst({
+      select: {
+        services: true,
       },
-      include: {
-        service: true,
+      where: {
+        id,
       },
     });
-
-    return result;
+    if (!clinic.services) return null;
+    const clinic_service: GetAllProcedureByClinicId = JSON.parse(
+      clinic.services,
+    );
+    return clinic_service;
   }
 }
