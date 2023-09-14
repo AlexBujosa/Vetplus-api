@@ -233,7 +233,8 @@ model Clinic {
   address          String
   image            String?
   services         String?
-  email         String?
+  email            String?
+  schedule         Json?
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

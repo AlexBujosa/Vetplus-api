@@ -11,7 +11,7 @@ import { GetAllClinic } from './graphql/types/get-all-clinic.type';
 import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
 import { GetAllClientsResult } from './graphql/types/get-all-clients-result.type';
 import { UpdateClinicInput } from './graphql/input/update-clinic.input';
-import { ClinicServiceArray } from './graphql/types/clinic-services-array.type';
+import { GetClinicResult } from './graphql/types/get-clinic-result.type';
 
 @Injectable()
 export class ClinicService {
@@ -71,16 +71,23 @@ export class ClinicService {
     return result ? true : false;
   }
 
-  async getMyClinic(id_owner: string): Promise<ClinicServiceArray> {
+  async getMyClinic(id_owner: string): Promise<GetClinicResult> {
     const { services, ...rest } = await this.prismaService.clinic.findUnique({
+      include: {
+        clinicSummaryScore: {
+          select: {
+            total_points: true,
+            total_users: true,
+          },
+        },
+      },
       where: {
         id_owner,
       },
     });
 
     const clinicServices = this.getClinicServicesAsArray(services);
-
-    return this.convertServiceResultToClinicServiceArray(clinicServices, rest);
+    return this.addServiceResultToGetClinicResult(clinicServices, rest);
   }
 
   async getAllClinic(): Promise<GetAllClinic[]> {
@@ -93,15 +100,24 @@ export class ClinicService {
     return result;
   }
 
-  async getClinicById(id: string): Promise<ClinicServiceArray> {
+  async getClinicById(id: string): Promise<GetClinicResult> {
     const { services, ...rest } = await this.prismaService.clinic.findFirst({
+      include: {
+        clinicSummaryScore: {
+          select: {
+            total_points: true,
+            total_users: true,
+          },
+        },
+      },
       where: {
         id,
       },
     });
+
     const clinicServices = this.getClinicServicesAsArray(services);
 
-    return this.convertServiceResultToClinicServiceArray(clinicServices, rest);
+    return this.addServiceResultToGetClinicResult(clinicServices, rest);
   }
 
   async getAllServicesById(id_clinic: string): Promise<ServiceResult> {
@@ -119,15 +135,15 @@ export class ClinicService {
     return this.getClinicServicesAsArray(clinic.services);
   }
 
-  private convertServiceResultToClinicServiceArray(
+  private addServiceResultToGetClinicResult(
     serviceResult: ServiceResult,
     clinic: ClinicType,
-  ): ClinicServiceArray {
-    const clinicServiceArray: ClinicServiceArray = {
+  ): GetClinicResult {
+    const getMyClinic: GetClinicResult = {
       ...clinic,
       services: serviceResult?.services,
     };
-    return clinicServiceArray;
+    return getMyClinic;
   }
 
   private getClinicServicesAsArray(servicesStr: string): ServiceResult {

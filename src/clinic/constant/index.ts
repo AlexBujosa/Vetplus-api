@@ -1,3 +1,5 @@
+import { ClinicSummaryScore } from '../graphql/types/clinic-summary-score.type';
+
 export type ServiceResult = {
   services: string[];
 };
@@ -14,6 +16,7 @@ export type ClinicType = {
   created_at: Date;
   updated_at: Date;
   status: boolean;
+  clinicSummaryScore: ClinicSummaryScore;
 };
 export type FavoriteClinic = {
   clinic: {

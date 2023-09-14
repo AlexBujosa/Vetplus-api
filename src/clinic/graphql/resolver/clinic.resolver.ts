@@ -20,7 +20,8 @@ import { Status } from '@/global/constant/constants';
 import { GetAllClinic } from '../types/get-all-clinic.type';
 import { GetAllClientsResult } from '../types/get-all-clients-result.type';
 import { UpdateClinicInput } from '../input/update-clinic.input';
-import { ClinicServiceArray } from '../types/clinic-services-array.type';
+
+import { GetClinicResult } from '../types/get-clinic-result.type';
 
 @Resolver()
 export class ClinicResolver {
@@ -54,10 +55,10 @@ export class ClinicResolver {
     return !result ? { result: Status.FAILED } : { result: Status.COMPLETED };
   }
 
-  @Query(() => ClinicServiceArray)
+  @Query(() => GetClinicResult)
   @Roles(Role.ADMIN, Role.CLINIC_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async getMyClinic(@Context() context): Promise<ClinicServiceArray> {
+  async getMyClinic(@Context() context): Promise<GetClinicResult> {
     const result = await this.clinicService.getMyClinic(context.req.user.sub);
 
     return result;
@@ -70,12 +71,12 @@ export class ClinicResolver {
     return await this.clinicService.getAllClinic();
   }
 
-  @Query(() => ClinicServiceArray)
+  @Query(() => GetClinicResult)
   @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getClinicById(
     @Args('getClinicByIdInput') getClinicByIdInput: GenericByIdInput,
-  ): Promise<ClinicServiceArray> {
+  ): Promise<GetClinicResult> {
     const { id } = getClinicByIdInput;
     return await this.clinicService.getClinicById(id);
   }

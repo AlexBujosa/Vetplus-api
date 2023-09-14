@@ -214,7 +214,7 @@ type GetAllClientsResult {
   user: GetAllClients
 }
 
-type ClinicServiceArray {
+type GetClinicResult {
   id: String!
   id_owner: String!
   name: String!
@@ -227,6 +227,7 @@ type ClinicServiceArray {
   updated_at: DateTime!
   status: Boolean!
   services: [String!]
+  clinicSummaryScore: ClinicSummaryScore!
 }
 
 type AddProcedureResponse {
@@ -318,9 +319,9 @@ type Query {
   getMyPets: [Pet!]!
   findAllPet: [Pet!]!
   getAllBreed: [Breed!]!
-  getMyClinic: ClinicServiceArray!
+  getMyClinic: GetClinicResult!
   getAllClinic: [GetAllClinic!]!
-  getClinicById(getClinicByIdInput: GenericByIdInput!): ClinicServiceArray!
+  getClinicById(getClinicByIdInput: GenericByIdInput!): GetClinicResult!
   getAllClinicServices(genericByIdInput: GenericByIdInput!): ClinicServiceResult!
   getAllFavoriteClinic: [FavoriteClinicResult!]!
   getAllClients: [GetAllClientsResult!]!
