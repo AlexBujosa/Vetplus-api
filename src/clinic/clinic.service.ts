@@ -183,7 +183,11 @@ export class ClinicService {
       include: {
         user: {
           include: {
-            Pet: true,
+            Pet: {
+              include: {
+                breed: true,
+              },
+            },
             AppointmentOwner: {
               select: {
                 start_at: true,
