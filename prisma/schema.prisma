@@ -85,6 +85,7 @@ model User {
   Notification            Notification[]
   Clinic                  Clinic?
   VeterinarianSummaryScore Veterinarian_Summary_Score?
+  VeterinariaSpecialties   Veterinarian_Specialties?
   AppointmentOwner        Appointment[]  @relation("owner")
   AppointmentVeterinarian Appointment[]  @relation("veterinarian")
   ClinicUsers Clinic_User[]
@@ -340,4 +341,10 @@ model Veterinarian_Summary_Score {
   user  User?  @relation(fields: [id_veterinarian], references: [id])
  
   @@index([id_veterinarian])
+}
+
+model Veterinarian_Specialties{
+  id_veterinarian String @unique
+  specialties     String?
+  user  User?  @relation(fields: [id_veterinarian], references: [id])
 }

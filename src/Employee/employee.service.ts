@@ -9,6 +9,7 @@ import { EmployeeInvitationStatus, Role } from '@prisma/client';
 import { AuthService } from '@/auth/auth.service';
 import { InviteToClinicInput } from './graphql/input/invite-employee.input';
 import { ScoreVeterinarianInput } from './graphql/input/score-veterinarian.input';
+import { AddSpecialtyInput } from './graphql/input/add-specialty.input';
 
 @Injectable()
 export class EmployeeService {
@@ -57,6 +58,11 @@ export class EmployeeService {
                     total_users: true,
                   },
                 },
+                VeterinariaSpecialties: {
+                  select: {
+                    specialties: true,
+                  },
+                },
               },
             },
           },
@@ -64,6 +70,25 @@ export class EmployeeService {
       },
     });
     return { clinicEmployees: result?.clinicEmployees };
+  }
+
+  async addSpecialty(
+    addSpecialtyInput: AddSpecialtyInput,
+    id_veterinarian: string,
+  ): Promise<boolean> {
+    const result = await this.prismaService.veterinarian_Specialties.upsert({
+      create: {
+        specialties: addSpecialtyInput.specialties,
+        id_veterinarian,
+      },
+      update: {
+        specialties: addSpecialtyInput.specialties,
+      },
+      where: {
+        id_veterinarian,
+      },
+    });
+    return result ? true : false;
   }
 
   async turnEmployeeStatus(

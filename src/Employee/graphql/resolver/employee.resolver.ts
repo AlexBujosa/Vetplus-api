@@ -17,6 +17,7 @@ import { EmployeeService } from '@/Employee/employee.service';
 import { GetAllEmployeeResult } from '../types/get-all-employee-result.type';
 import { GetMyEmployeesResult } from '../types/get-my-employees-result.type';
 import { ScoreVeterinarianInput } from '../input/score-veterinarian.input';
+import { AddSpecialtyInput } from '../input/add-specialty.input';
 
 @Resolver()
 export class EmployeeResolver {
@@ -38,6 +39,20 @@ export class EmployeeResolver {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getMyEmployees(@Context() context): Promise<GetMyEmployeesResult> {
     return await this.employeeService.getMyEmployess(context.req.user.sub);
+  }
+
+  @Mutation(() => EmployeeResponse)
+  @Roles(Role.VETERINARIAN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async registerSpecialty(
+    addSpecialtyInput: AddSpecialtyInput,
+    @Context() context,
+  ): Promise<EmployeeResponse> {
+    const result = await this.employeeService.addSpecialty(
+      addSpecialtyInput,
+      context.req.user.sub,
+    );
+    return !result ? { result: Status.FAILED } : { result: Status.COMPLETED };
   }
 
   @Mutation(() => EmployeeResponse)
