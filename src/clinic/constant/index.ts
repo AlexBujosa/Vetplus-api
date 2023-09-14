@@ -1,15 +1,19 @@
 export type ServiceResult = {
-  service: {
-    name: string;
-  };
-} & {
-  id_clinic: string;
-  id_service: string;
+  services: string[];
+};
+
+export type ClinicType = {
+  id: string;
+  id_owner: string;
+  name: string;
+  telephone_number: string;
+  google_maps_url: string;
+  address: string;
+  image: string;
   created_at: Date;
   updated_at: Date;
   status: boolean;
 };
-
 export type FavoriteClinic = {
   clinic: {
     name: string;

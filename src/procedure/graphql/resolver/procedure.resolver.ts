@@ -49,12 +49,12 @@ export class ProcedureResolver {
     return result;
   }
 
-  @Query(() => [GetAllProcedureByClinicId])
+  @Query(() => GetAllProcedureByClinicId)
   @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.VETERINARIAN, Role.PET_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getAllProcedureByIdClinic(
     @Args('genericByIdInput') genericByIdInput: GenericByIdInput,
-  ): Promise<GetAllProcedureByClinicId[]> {
+  ): Promise<GetAllProcedureByClinicId> {
     const result = await this.procedureService.getAllProcedureByClinicId(
       genericByIdInput,
     );
