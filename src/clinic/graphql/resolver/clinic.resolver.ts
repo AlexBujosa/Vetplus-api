@@ -5,7 +5,6 @@ import { RolesGuard } from '@/global/guard/roles.guard';
 import { Roles } from '@/global/decorator/roles.decorator';
 import { Role } from '@prisma/client';
 import { AddClinicInput } from '../input/add-clinic.input';
-import { Clinic } from '../types/clinic.type';
 import { ClinicService } from '@/clinic/clinic.service';
 import { ClinicResponse } from '../types/clinic-response.type';
 import { ClinicServiceResult } from '../types/clinic-service-result.type';
