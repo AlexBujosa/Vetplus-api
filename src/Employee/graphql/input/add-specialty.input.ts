@@ -2,6 +2,6 @@ import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class AddSpecialtyInput {
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   specialties: string;
 }

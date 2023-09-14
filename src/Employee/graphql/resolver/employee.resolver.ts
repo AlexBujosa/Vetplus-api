@@ -45,7 +45,7 @@ export class EmployeeResolver {
   @Roles(Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async registerSpecialty(
-    addSpecialtyInput: AddSpecialtyInput,
+    @Args('addSpecialtyInput') addSpecialtyInput: AddSpecialtyInput,
     @Context() context,
   ): Promise<EmployeeResponse> {
     const result = await this.employeeService.addSpecialty(

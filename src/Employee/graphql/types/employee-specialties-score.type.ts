@@ -8,6 +8,6 @@ export class EmployeeSpecialtiesScore extends Employee {
   @Field(() => VeterinarianSummaryScore)
   VeterinarianSummaryScore: VeterinarianSummaryScore;
 
-  @Field(() => VeterinarianSpecialties)
+  @Field(() => VeterinarianSpecialties, { nullable: true })
   VeterinariaSpecialties: VeterinarianSpecialties;
 }
