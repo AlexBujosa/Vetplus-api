@@ -275,18 +275,23 @@ type GetAllEmployeeResult {
   employee: Employee!
 }
 
-type VeterinariaSummaryScore {
+type VeterinarianSummaryScore {
   total_points: Int!
   total_users: Int!
 }
 
-type EmployeeScore {
+type VeterinarianSpecialties {
+  specialties: String
+}
+
+type EmployeeSpecialtiesScore {
   names: String!
   surnames: String
   image: String
   email: String!
   status: Boolean!
-  VeterinarianSummaryScore: VeterinariaSummaryScore!
+  VeterinarianSummaryScore: VeterinarianSummaryScore!
+  VeterinariaSpecialties: VeterinarianSpecialties!
 }
 
 type GetMyEmployee {
@@ -296,7 +301,7 @@ type GetMyEmployee {
   created_at: DateTime!
   updated_at: DateTime!
   status: Boolean!
-  employee: EmployeeScore!
+  employee: EmployeeSpecialtiesScore!
 }
 
 type GetMyEmployeesResult {
@@ -358,6 +363,7 @@ type Mutation {
   scoreClinic(scoreClinicInput: ScoreClinicInput!): ScoreClinicResponse!
   registerProcedure(addProcedureInput: AddProcedureInput!): AddProcedureResponse!
   updateProcedure(updateProcedureInput: UpdateProcedureInput!): UpdateProcedureResponse!
+  registerSpecialty: EmployeeResponse!
   changeEmployeeStatus(turnEmployeeStatusInput: TurnEmployeeStatusInput!): EmployeeResponse!
   inviteToClinic(inviteToClinicInput: InviteToClinicInput!): EmployeeResponse!
   handleEmployeeRequest(handleEmployeeRequestInput: HandleEmployeeRequestInput!): HandleRequestResult!
