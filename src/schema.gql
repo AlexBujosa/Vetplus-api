@@ -187,6 +187,23 @@ type AppointmentSchedule {
   end_at: DateTime!
 }
 
+type PetBreed {
+  id: String!
+  id_owner: String!
+  id_specie: Int!
+  id_breed: Int!
+  name: String!
+  image: String
+  gender: String!
+  castrated: Boolean!
+  dob: DateTime
+  observations: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+  breed: Breed!
+}
+
 type GetAllClients {
   id: String!
   names: String!
@@ -201,7 +218,7 @@ type GetAllClients {
   created_at: DateTime!
   updated_at: DateTime!
   status: Boolean!
-  Pet: [Pet!]!
+  Pet: [PetBreed!]!
   AppointmentOwner: [AppointmentSchedule!]!
 }
 
@@ -252,6 +269,7 @@ type HandleRequestResult {
 type Employee {
   names: String!
   surnames: String
+  image: String
   email: String!
   status: Boolean!
 }
@@ -274,6 +292,7 @@ type VeterinariaSummaryScore {
 type EmployeeScore {
   names: String!
   surnames: String
+  image: String
   email: String!
   status: Boolean!
   VeterinarianSummaryScore: VeterinariaSummaryScore!

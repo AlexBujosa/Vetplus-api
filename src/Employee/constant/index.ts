@@ -8,6 +8,7 @@ export type EmployeeResult = {
   employee: {
     names: string;
     surnames: string;
+    image: string;
     email: string;
     status: boolean;
   };
@@ -25,6 +26,7 @@ export type GetMyEmployeeResult = {
     names: string;
     surnames: string;
     email: string;
+    image: string;
     status: boolean;
   } & {
     VeterinarianSummaryScore: {
