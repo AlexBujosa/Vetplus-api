@@ -361,6 +361,7 @@ type Mutation {
   changeEmployeeStatus(turnEmployeeStatusInput: TurnEmployeeStatusInput!): EmployeeResponse!
   inviteToClinic(inviteToClinicInput: InviteToClinicInput!): EmployeeResponse!
   handleEmployeeRequest(handleEmployeeRequestInput: HandleEmployeeRequestInput!): HandleRequestResult!
+  scoreVeterinarian(scoreVeterinarianInput: ScoreVeterinarianInput!): EmployeeResponse!
 }
 
 input SignUpInput {
@@ -500,4 +501,10 @@ input InviteToClinicInput {
 input HandleEmployeeRequestInput {
   id: String!
   employee_invitation_status: String!
+}
+
+input ScoreVeterinarianInput {
+  id_appointment: String!
+  id_veterinarian: String!
+  points: Int
 }
