@@ -8,6 +8,9 @@ export class Employee {
   @Field({ nullable: true })
   surnames: string;
 
+  @Field({ nullable: true })
+  image: string;
+
   @Field(() => String)
   email: string;
 

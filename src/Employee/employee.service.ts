@@ -29,6 +29,7 @@ export class EmployeeService {
             surnames: true,
             email: true,
             status: true,
+            image: true,
           },
         },
       },
