@@ -58,6 +58,7 @@ export enum CustomExceptionMessage {
   ALREADY_HAVE_CLINIC = 'ALREADY_HAVE_CLINIC',
   HANDLE_EMPLOYEE_REQUEST_FAILED = 'HANDLE_EMPLOYEE_REQUEST_FAILED',
   CREATION_CLINIC_FAILED = 'CREATION_CLINIC_FAILED',
+  SCORE_VETERINARIAN_FAILED = 'SCORE_VETERINARIAN_FAILED',
 }
 
 const {
@@ -74,6 +75,7 @@ const {
   ALREADY_HAVE_CLINIC,
   HANDLE_EMPLOYEE_REQUEST_FAILED,
   CREATION_CLINIC_FAILED,
+  SCORE_VETERINARIAN_FAILED,
 } = CustomExceptionMessage;
 
 export const customException = {
@@ -103,4 +105,13 @@ export const customException = {
     new CustomException(HANDLE_EMPLOYEE_REQUEST_FAILED, 200, options),
   CREATION_CLINIC_FAILED: (options: HttpExceptionOptions) =>
     new CustomException(CREATION_CLINIC_FAILED, 200, options),
+  SCORE_VETERINARIAN_FAILED: (options: HttpExceptionOptions) =>
+    new CustomException(SCORE_VETERINARIAN_FAILED, 200, options),
+};
+
+export type SummaryScore = {
+  _count: number;
+  _sum: {
+    points: number;
+  };
 };

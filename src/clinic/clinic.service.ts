@@ -1,16 +1,20 @@
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { Clinic } from '@prisma/client';
 import { AddClinicInput } from './graphql/input/add-clinic.input';
-import { FavoriteClinic, ServiceResult, SummaryScoreClinic } from './constant';
+import { ClinicType, FavoriteClinic, ServiceResult } from './constant';
 import { MarkAsFavoriteClinicInput } from './graphql/input/mark-as-favorite-clinic.input';
 import { ScoreClinicInput } from './graphql/input/score-clinic.input';
-import { customException } from '@/global/constant/constants';
+import { SummaryScore, customException } from '@/global/constant/constants';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { OmitTx } from '@/Employee/constant';
 import { GetAllClinic } from './graphql/types/get-all-clinic.type';
 import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
 import { GetAllClientsResult } from './graphql/types/get-all-clients-result.type';
+import { UpdateClinicInput } from './graphql/input/update-clinic.input';
+import { GetClinicResult } from './graphql/types/get-clinic-result.type';
+import { Schedule } from './graphql/types/schedule.type';
+import { Prisma } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class ClinicService {
@@ -56,12 +60,71 @@ export class ClinicService {
     }
   }
 
-  async getMyClinic(id_owner: string): Promise<Clinic> {
-    const result = await this.prismaService.clinic.findUnique({
+  async updateClinic(UpdateClinicInput: UpdateClinicInput, id_owner: string) {
+    const { services, ...rest } = UpdateClinicInput;
+    const result = await this.prismaService.clinic.update({
+      data: {
+        ...rest,
+        services: services ? JSON.stringify({ services: services }) : null,
+      },
       where: {
         id_owner,
       },
     });
+    return result ? true : false;
+  }
+
+  async getClinicById(id: string): Promise<GetClinicResult> {
+    const { services, schedule, ...rest } =
+      await this.prismaService.clinic.findFirst({
+        include: {
+          clinicSummaryScore: {
+            select: {
+              total_points: true,
+              total_users: true,
+            },
+          },
+        },
+        where: {
+          id,
+        },
+      });
+
+    const scheduleResult: Schedule = this.convertJsonObjectToScheduleType(
+      schedule as Prisma.JsonObject,
+    );
+
+    const clinicServices = this.getClinicServicesAsArray(services);
+    const result = this.addServiceResultToGetClinicResult(clinicServices, rest);
+    result.schedule = scheduleResult;
+
+    return result;
+  }
+
+  async getMyClinic(id_owner: string): Promise<GetClinicResult> {
+    const { services, schedule, ...rest } =
+      await this.prismaService.clinic.findUnique({
+        include: {
+          clinicSummaryScore: {
+            select: {
+              total_points: true,
+              total_users: true,
+            },
+          },
+        },
+        where: {
+          id_owner,
+        },
+      });
+
+    const scheduleResult: Schedule = this.convertJsonObjectToScheduleType(
+      schedule as Prisma.JsonObject,
+    );
+
+    const clinicServices = this.getClinicServicesAsArray(services);
+    const result = this.addServiceResultToGetClinicResult(clinicServices, rest);
+    result.schedule = scheduleResult;
+
     return result;
   }
 
@@ -71,32 +134,46 @@ export class ClinicService {
         clinicSummaryScore: true,
       },
     });
+
     return result;
   }
 
-  async getClinicById(id: string): Promise<Clinic> {
-    const result = await this.prismaService.clinic.findFirst({
-      where: {
-        id,
-      },
-    });
+  private convertJsonObjectToScheduleType(schedule: Prisma.JsonObject) {
+    const result = plainToInstance(Schedule, schedule);
     return result;
   }
 
-  async getAllServicesById(id_clinic: string): Promise<ServiceResult[]> {
-    const result = await this.prismaService.clinic_Service.findMany({
-      where: {
-        id_clinic,
+  async getAllServicesById(id_clinic: string): Promise<ServiceResult> {
+    const clinic = await this.prismaService.clinic.findFirst({
+      select: {
+        services: true,
       },
-      include: {
-        service: {
-          select: {
-            name: true,
-          },
-        },
+      where: {
+        id: id_clinic,
       },
     });
-    return result;
+
+    if (!clinic.services) return null;
+
+    return this.getClinicServicesAsArray(clinic.services);
+  }
+
+  private addServiceResultToGetClinicResult(
+    serviceResult: ServiceResult,
+    clinic: ClinicType,
+  ): GetClinicResult {
+    const getMyClinic: GetClinicResult = {
+      ...clinic,
+      services: serviceResult?.services,
+      schedule: null,
+    };
+    return getMyClinic;
+  }
+
+  private getClinicServicesAsArray(servicesStr: string): ServiceResult {
+    if (!servicesStr) return null;
+    const clinic_service: ServiceResult = JSON.parse(servicesStr);
+    return clinic_service;
   }
 
   async getAllFavoriteById(id_user: string): Promise<FavoriteClinic[]> {
@@ -177,13 +254,17 @@ export class ClinicService {
     const { id } = genericByIdInput;
     const result = await this.prismaService.clinic_User.findMany({
       where: {
-        id_clinic: id,
+        id_user: id,
         clientAttendance: true,
       },
       include: {
         user: {
           include: {
-            Pet: true,
+            Pet: {
+              include: {
+                breed: true,
+              },
+            },
             AppointmentOwner: {
               select: {
                 start_at: true,
@@ -224,7 +305,7 @@ export class ClinicService {
   }
 
   private async upsertSummaryScoreClinic(
-    summaryScoreClinic: SummaryScoreClinic,
+    summaryScoreClinic: SummaryScore,
     id_clinic: string,
   ): Promise<boolean> {
     const {

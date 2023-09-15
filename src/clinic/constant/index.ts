@@ -1,15 +1,33 @@
+import { Prisma } from '@prisma/client';
+import { ClinicSummaryScore } from '../graphql/types/clinic-summary-score.type';
+import { Schedule } from '../graphql/types/schedule.type';
+
 export type ServiceResult = {
-  service: {
-    name: string;
-  };
-} & {
-  id_clinic: string;
-  id_service: string;
+  services: string[];
+};
+export type ScheduleType = {
+  workingDays: {
+    day: string;
+    startTime: string;
+    endTime: string;
+  }[];
+  nonWorkingDays: string[];
+};
+
+export type ClinicType = {
+  id: string;
+  id_owner: string;
+  name: string;
+  telephone_number: string;
+  google_maps_url: string;
+  address: string;
+  email: string;
+  image: string;
   created_at: Date;
   updated_at: Date;
   status: boolean;
+  clinicSummaryScore: ClinicSummaryScore;
 };
-
 export type FavoriteClinic = {
   clinic: {
     name: string;
@@ -20,11 +38,4 @@ export type FavoriteClinic = {
   id_clinic: string;
   favorite: boolean;
   points: number;
-};
-
-export type SummaryScoreClinic = {
-  _count: number;
-  _sum: {
-    points: number;
-  };
 };
