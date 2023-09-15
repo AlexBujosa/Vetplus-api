@@ -2,7 +2,7 @@ import { createUnionType } from '@nestjs/graphql';
 import { EmployeeInvitationStatus, Prisma, PrismaClient } from '@prisma/client';
 import { DefaultArgs } from '@prisma/client/runtime/library';
 import { Employee } from '../graphql/types/employee.type';
-import { VeterinariaSummaryScore } from '../graphql/types/veterinarian-summary-score.type';
+import { VeterinarianSummaryScore } from '../graphql/types/veterinarian-summary-score.type';
 
 export type EmployeeResult = {
   employee: {
@@ -10,7 +10,17 @@ export type EmployeeResult = {
     surnames: string;
     image: string;
     email: string;
+    telephone_number: string;
     status: boolean;
+  } & {
+    VeterinarianSummaryScore: {
+      total_points: number;
+      total_users: number;
+    };
+  } & {
+    VeterinariaSpecialties: {
+      specialties: string;
+    };
   };
 } & {
   id_clinic: string;
@@ -28,10 +38,16 @@ export type GetMyEmployeeResult = {
     email: string;
     image: string;
     status: boolean;
+    address: string;
+    telephone_number: string;
   } & {
     VeterinarianSummaryScore: {
       total_points: number;
       total_users: number;
+    };
+  } & {
+    VeterinariaSpecialties: {
+      specialties: string;
     };
   };
 } & {
@@ -53,5 +69,5 @@ export type OmitTx = Omit<
 
 export const EmployeeVeterinarianSummaryScore = createUnionType({
   name: 'EmployeeVeterinarianSummaryScoreUnion',
-  types: () => [Employee, VeterinariaSummaryScore] as const,
+  types: () => [Employee, VeterinarianSummaryScore] as const,
 });

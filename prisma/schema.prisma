@@ -85,6 +85,7 @@ model User {
   Notification            Notification[]
   Clinic                  Clinic?
   VeterinarianSummaryScore Veterinarian_Summary_Score?
+  VeterinariaSpecialties   Veterinarian_Specialties?
   AppointmentOwner        Appointment[]  @relation("owner")
   AppointmentVeterinarian Appointment[]  @relation("veterinarian")
   ClinicUsers Clinic_User[]
@@ -232,7 +233,8 @@ model Clinic {
   address          String
   image            String?
   services         String?
-  email         String?
+  email            String?
+  schedule         Json?
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -312,10 +314,9 @@ model Clinic_Summary_Score {
 
 
 model Veterinarian_PetOwner {
-  id String @id @default(uuid())
+  id_appointment String @unique
   id_veterinarian String 
   id_petowner String
-  id_appointment String @unique
   points Int?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -341,4 +342,10 @@ model Veterinarian_Summary_Score {
   user  User?  @relation(fields: [id_veterinarian], references: [id])
  
   @@index([id_veterinarian])
+}
+
+model Veterinarian_Specialties{
+  id_veterinarian String @unique
+  specialties     String?
+  user  User?  @relation(fields: [id_veterinarian], references: [id])
 }
