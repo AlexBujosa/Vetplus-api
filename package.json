@@ -43,6 +43,7 @@
     "firebase-admin": "^11.10.1",
     "google-auth-library": "^9.0.0",
     "graphql": "^16.8.0",
+    "graphql-type-json": "^0.3.2",
     "graphql-upload": "^14.0.0",
     "graphql-upload-ts": "^2.1.0",
     "netlify-cli": "^16.0.1",
