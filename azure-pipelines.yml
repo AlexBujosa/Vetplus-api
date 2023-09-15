@@ -20,42 +20,12 @@ steps:
     displayName: 'npm install, lint and build'
 
   - task: Docker@2
-    displayName: 'Docker build for DEV'
     inputs:
-      command: build
       containerRegistry: 'docker-hub-connection'
       repository: 'chrissst/vetplus-api'
-      tags: |
-        alpha-$(Build.BuildNumber)
-      arguments: '--build-arg DATABASE_URL=$(DATABASE_URL) --build-arg GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) --build-arg GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET) --build-arg AWS_S3_ACCESS_KEY_ID=$(AWS_S3_ACCESS_KEY_ID) --build-arg AWS_S3_SECRET_ACCESS_KEY=$(AWS_S3_SECRET_ACCESS_KEY) --build-arg AWS_S3_BUCKET_NAME=$(AWS_S3_BUCKET_NAME) --build-arg AWS_S3_REGION=$(AWS_S3_REGION)'
-
-  - task: Docker@2
-    displayName: 'Docker push for DEV'
-    inputs:
-      command: push
-      containerRegistry: 'docker-hub-connection'
-      repository: 'chrissst/vetplus-api'
-      tags: |
-        alpha-$(Build.BuildNumber)
-
-  - task: Docker@2
-    displayName: 'Docker build for QA'
-    inputs:
-      command: build
-      containerRegistry: 'docker-hub-connection'
-      repository: 'chrissst/vetplus-api'
-      tags: |
-        beta-$(Build.BuildNumber)
-      arguments: '--build-arg DATABASE_URL=$(QA_DATABASE_URL) --build-arg GOOGLE_CLIENT_ID=$(GOOGLE_CLIENT_ID) --build-arg GOOGLE_CLIENT_SECRET=$(GOOGLE_CLIENT_SECRET) --build-arg AWS_S3_ACCESS_KEY_ID=$(AWS_S3_ACCESS_KEY_ID) --build-arg AWS_S3_SECRET_ACCESS_KEY=$(AWS_S3_SECRET_ACCESS_KEY) --build-arg AWS_S3_BUCKET_NAME=$(AWS_S3_BUCKET_NAME) --build-arg AWS_S3_REGION=$(AWS_S3_REGION)'
-
-  - task: Docker@2
-    displayName: 'Docker push for QA'
-    inputs:
-      command: push
-      containerRegistry: 'docker-hub-connection'
-      repository: 'chrissst/vetplus-api'
-      tags: |
-        beta-$(Build.BuildNumber)
+      command: 'buildAndPush'
+      Dockerfile: '**/Dockerfile'
+      tags: 'alpha-$(Build.BuildNumber)'
 
   - task: CopyFiles@2
     inputs:

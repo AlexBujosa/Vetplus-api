@@ -1,12 +1,12 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { User } from '@/user/graphql/types/user.type';
-import { Pet } from '@/pet/graphql/types/pet.type';
 import { AppointmentSchedule } from '@/appoinment/graphql/types/appointment-schedule.type';
+import { PetBreed } from '@/pet/graphql/types/pet-breed.type';
 
 @ObjectType()
 export class GetAllClients extends User {
-  @Field(() => [Pet])
-  Pet: Pet[];
+  @Field(() => [PetBreed])
+  Pet: PetBreed[];
 
   @Field(() => [AppointmentSchedule])
   AppointmentOwner: AppointmentSchedule[];
