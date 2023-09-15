@@ -270,7 +270,23 @@ type HandleRequestResult {
   access_token: String
 }
 
+type VeterinarianSummaryScore {
+  total_points: Int!
+  total_users: Int!
+}
+
+type VeterinarianSpecialties {
+  specialties: String
+}
+
+type EmployeeSpecialtiesScore {
+  VeterinarianSummaryScore: VeterinarianSummaryScore!
+  VeterinariaSpecialties: VeterinarianSpecialties
+}
+
 type Employee {
+  VeterinarianSummaryScore: VeterinarianSummaryScore!
+  VeterinariaSpecialties: VeterinarianSpecialties
   names: String!
   surnames: String
   image: String
@@ -286,25 +302,6 @@ type GetAllEmployeeResult {
   updated_at: DateTime!
   status: Boolean!
   employee: Employee!
-}
-
-type VeterinarianSummaryScore {
-  total_points: Int!
-  total_users: Int!
-}
-
-type VeterinarianSpecialties {
-  specialties: String
-}
-
-type EmployeeSpecialtiesScore {
-  names: String!
-  surnames: String
-  image: String
-  email: String!
-  status: Boolean!
-  VeterinarianSummaryScore: VeterinarianSummaryScore!
-  VeterinariaSpecialties: VeterinarianSpecialties
 }
 
 type GetMyEmployee {
