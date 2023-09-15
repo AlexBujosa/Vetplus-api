@@ -5,10 +5,8 @@ import { RolesGuard } from '@/global/guard/roles.guard';
 import { Roles } from '@/global/decorator/roles.decorator';
 import { Role } from '@prisma/client';
 import { AddClinicInput } from '../input/add-clinic.input';
-import { Clinic } from '../types/clinic.type';
 import { ClinicService } from '@/clinic/clinic.service';
 import { ClinicResponse } from '../types/clinic-response.type';
-import { GetAllServicesByIdInput } from '../input/get-all-services-by-id.input';
 import { ClinicServiceResult } from '../types/clinic-service-result.type';
 import { MarkAsFavoriteClinicInput } from '../input/mark-as-favorite-clinic.input';
 import { FavoriteClinicResult } from '../types/favorite-clinic-result.type';
@@ -21,6 +19,10 @@ import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
 import { Status } from '@/global/constant/constants';
 import { GetAllClinic } from '../types/get-all-clinic.type';
 import { GetAllClientsResult } from '../types/get-all-clients-result.type';
+import { UpdateClinicInput } from '../input/update-clinic.input';
+
+import { GetClinicResult } from '../types/get-clinic-result.type';
+import { UpdateClinicInputSchema } from '@/global/schema/update-clinic-input.schema';
 
 @Resolver()
 export class ClinicResolver {
@@ -42,12 +44,27 @@ export class ClinicResolver {
     return !result ? { result: Status.FAILED } : { result: Status.COMPLETED };
   }
 
-  @Query(() => Clinic)
+  @Mutation(() => ClinicResponse)
   @Roles(Role.ADMIN, Role.CLINIC_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async getMyClinic(@Context() context): Promise<Clinic> {
-    const result = await this.clinicService.getMyClinic(context.req.user.sub);
+  @UsePipes(new YupValidationPipe(UpdateClinicInputSchema))
+  async updateClinic(
+    @Args('updateClinicInput') updateClinicInput: UpdateClinicInput,
+    @Context() context,
+  ): Promise<ClinicResponse> {
+    const result = await this.clinicService.updateClinic(
+      updateClinicInput,
+      context.req.user.sub,
+    );
 
+    return !result ? { result: Status.FAILED } : { result: Status.COMPLETED };
+  }
+
+  @Query(() => GetClinicResult)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getMyClinic(@Context() context): Promise<GetClinicResult> {
+    const result = await this.clinicService.getMyClinic(context.req.user.sub);
     return result;
   }
 
@@ -58,24 +75,24 @@ export class ClinicResolver {
     return await this.clinicService.getAllClinic();
   }
 
-  @Query(() => Clinic)
+  @Query(() => GetClinicResult)
   @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getClinicById(
     @Args('getClinicByIdInput') getClinicByIdInput: GenericByIdInput,
-  ): Promise<Clinic> {
+  ): Promise<GetClinicResult> {
     const { id } = getClinicByIdInput;
     return await this.clinicService.getClinicById(id);
   }
 
-  @Query(() => [ClinicServiceResult])
+  @Query(() => ClinicServiceResult)
   @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getAllClinicServices(
-    @Args('getAllServicesByIdInput')
-    getAllServicesByIdInput: GetAllServicesByIdInput,
-  ): Promise<ClinicServiceResult[]> {
-    const { id } = getAllServicesByIdInput;
+    @Args('genericByIdInput')
+    genericByIdInput: GenericByIdInput,
+  ): Promise<ClinicServiceResult> {
+    const { id } = genericByIdInput;
     return await this.clinicService.getAllServicesById(id);
   }
 
@@ -123,10 +140,8 @@ export class ClinicResolver {
   @Roles(Role.ADMIN, Role.CLINIC_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @UsePipes(new YupValidationPipe(ScoreClinicInputSchema))
-  async getAllClients(
-    @Args('genericByIdInput') genericByIdInput: GenericByIdInput,
-  ): Promise<GetAllClientsResult[]> {
-    const result = await this.clinicService.GetAllClients(genericByIdInput);
+  async getAllClients(@Context() context): Promise<GetAllClientsResult[]> {
+    const result = await this.clinicService.GetAllClients(context.req.user.sub);
     return result;
   }
 }

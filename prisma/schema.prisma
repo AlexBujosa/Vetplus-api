@@ -85,6 +85,7 @@ model User {
   Notification            Notification[]
   Clinic                  Clinic?
   VeterinarianSummaryScore Veterinarian_Summary_Score?
+  VeterinariaSpecialties   Veterinarian_Specialties?
   AppointmentOwner        Appointment[]  @relation("owner")
   AppointmentVeterinarian Appointment[]  @relation("veterinarian")
   ClinicUsers Clinic_User[]
@@ -230,13 +231,16 @@ model Clinic {
   telephone_number String
   google_maps_url  String?
   address          String
+  image            String?
+  services         String?
+  email            String?
+  schedule         Json?
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
 
   Appointment    Appointment[]
-  Clinic_Service Clinic_Service[]
   clinicUsers Clinic_User[]
   clinicEmployees Clinic_Employee[]
   clinicSummaryScore Clinic_Summary_Score?
@@ -264,21 +268,7 @@ model Clinic_User {
   @@index([id_clinic])
 }
 
-model Clinic_Service {
-  id_clinic  String
-  id_service String
 
-  clinic  Clinic  @relation(fields: [id_clinic], references: [id])
-  service Service @relation(fields: [id_service], references: [id])
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  status     Boolean  @default(true)
-
-  @@id([id_clinic, id_service])
-  @@index([id_clinic])
-  @@index([id_service])
-}
 
 model Clinic_Employee {
   id_clinic  String
@@ -307,7 +297,6 @@ model Service {
   status     Boolean  @default(true)
 
   Appointment    Appointment[]
-  Clinic_Service Clinic_Service[]
 }
 
 model Clinic_Summary_Score {
@@ -325,10 +314,9 @@ model Clinic_Summary_Score {
 
 
 model Veterinarian_PetOwner {
-  id String @id @default(uuid())
+  id_appointment String @unique
   id_veterinarian String 
   id_petowner String
-  id_appointment String @unique
   points Int?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -354,4 +342,10 @@ model Veterinarian_Summary_Score {
   user  User?  @relation(fields: [id_veterinarian], references: [id])
  
   @@index([id_veterinarian])
+}
+
+model Veterinarian_Specialties{
+  id_veterinarian String @unique
+  specialties     String?
+  user  User?  @relation(fields: [id_veterinarian], references: [id])
 }

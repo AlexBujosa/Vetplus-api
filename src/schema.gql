@@ -118,33 +118,23 @@ type Breed {
   status: Boolean!
 }
 
-type Clinic {
-  id: String!
-  id_owner: String!
-  name: String!
-  telephone_number: String!
-  google_maps_url: String
-  address: String!
-  created_at: DateTime!
-  updated_at: DateTime!
-  status: Boolean!
+type WorkingDays {
+  day: String!
+  startTime: String!
+  endTime: String!
+}
+
+type Schedule {
+  workingDays: [WorkingDays!]!
+  nonWorkingDays: [String!]!
 }
 
 type ClinicResponse {
   result: String!
 }
 
-type Service {
-  name: String!
-}
-
 type ClinicServiceResult {
-  service: Service!
-  id_clinic: String!
-  id_service: String!
-  created_at: DateTime!
-  updated_at: DateTime!
-  status: Boolean!
+  services: [String!]
 }
 
 type ClinicInfo {
@@ -175,6 +165,8 @@ type GetAllClinic {
   name: String!
   telephone_number: String!
   google_maps_url: String
+  email: String
+  image: String
   address: String!
   created_at: DateTime!
   updated_at: DateTime!
@@ -185,6 +177,23 @@ type GetAllClinic {
 type AppointmentSchedule {
   start_at: DateTime!
   end_at: DateTime!
+}
+
+type PetBreed {
+  id: String!
+  id_owner: String!
+  id_specie: Int!
+  id_breed: Int!
+  name: String!
+  image: String
+  gender: String!
+  castrated: Boolean!
+  dob: DateTime
+  observations: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+  breed: Breed!
 }
 
 type GetAllClients {
@@ -201,7 +210,7 @@ type GetAllClients {
   created_at: DateTime!
   updated_at: DateTime!
   status: Boolean!
-  Pet: [Pet!]!
+  Pet: [PetBreed!]!
   AppointmentOwner: [AppointmentSchedule!]!
 }
 
@@ -214,6 +223,23 @@ type GetAllClientsResult {
   updated_at: DateTime!
   status: Boolean!
   user: GetAllClients
+}
+
+type GetClinicResult {
+  id: String!
+  id_owner: String!
+  name: String!
+  telephone_number: String!
+  google_maps_url: String
+  email: String
+  image: String
+  address: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+  services: [String!]
+  clinicSummaryScore: ClinicSummaryScore!
+  schedule: Schedule
 }
 
 type AddProcedureResponse {
@@ -233,12 +259,7 @@ type UpdateProcedureResponse {
 }
 
 type GetAllProcedureByClinicId {
-  id_clinic: String!
-  id_service: String!
-  created_at: DateTime!
-  updated_at: DateTime!
-  status: Boolean!
-  service: Procedure!
+  services: [String!]!
 }
 
 type EmployeeResponse {
@@ -249,9 +270,21 @@ type HandleRequestResult {
   access_token: String
 }
 
+type VeterinarianSummaryScore {
+  total_points: Int!
+  total_users: Int!
+}
+
+type VeterinarianSpecialties {
+  specialties: String
+}
+
 type Employee {
+  VeterinarianSummaryScore: VeterinarianSummaryScore!
+  VeterinariaSpecialties: VeterinarianSpecialties
   names: String!
   surnames: String
+  image: String
   email: String!
   status: Boolean!
 }
@@ -266,17 +299,16 @@ type GetAllEmployeeResult {
   employee: Employee!
 }
 
-type VeterinariaSummaryScore {
-  total_points: Int!
-  total_users: Int!
-}
-
-type EmployeeScore {
+type GetEmployeesFromClinic {
+  VeterinarianSummaryScore: VeterinarianSummaryScore!
+  VeterinariaSpecialties: VeterinarianSpecialties
   names: String!
   surnames: String
+  image: String
   email: String!
   status: Boolean!
-  VeterinarianSummaryScore: VeterinariaSummaryScore!
+  address: String
+  telephone_number: String
 }
 
 type GetMyEmployee {
@@ -286,7 +318,7 @@ type GetMyEmployee {
   created_at: DateTime!
   updated_at: DateTime!
   status: Boolean!
-  employee: EmployeeScore!
+  employee: GetEmployeesFromClinic!
 }
 
 type GetMyEmployeesResult {
@@ -303,14 +335,14 @@ type Query {
   getMyPets: [Pet!]!
   findAllPet: [Pet!]!
   getAllBreed: [Breed!]!
-  getMyClinic: Clinic!
+  getMyClinic: GetClinicResult!
   getAllClinic: [GetAllClinic!]!
-  getClinicById(getClinicByIdInput: GenericByIdInput!): Clinic!
-  getAllClinicServices(getAllServicesByIdInput: GetAllServicesByIdInput!): [ClinicServiceResult!]!
+  getClinicById(getClinicByIdInput: GenericByIdInput!): GetClinicResult!
+  getAllClinicServices(genericByIdInput: GenericByIdInput!): ClinicServiceResult!
   getAllFavoriteClinic: [FavoriteClinicResult!]!
-  getAllClients(genericByIdInput: GenericByIdInput!): [GetAllClientsResult!]!
+  getAllClients: [GetAllClientsResult!]!
   getAllProcedure: [Procedure!]!
-  getAllProcedureByIdClinic(genericByIdInput: GenericByIdInput!): [GetAllProcedureByClinicId!]!
+  getAllProcedureByIdClinic(genericByIdInput: GenericByIdInput!): GetAllProcedureByClinicId!
   getAllEmployee(getAllEmployeeByClinicIdInput: GetAllEmployeeByClinicIdInput!): [GetAllEmployeeResult!]!
   getMyEmployees: GetMyEmployeesResult!
 }
@@ -321,10 +353,6 @@ input SignInInput {
 }
 
 input GenericByIdInput {
-  id: String!
-}
-
-input GetAllServicesByIdInput {
   id: String!
 }
 
@@ -347,13 +375,16 @@ type Mutation {
   registerSpecie(addPetInput: AddSpecieInput!): AddSpecieResponse!
   registerBreed(addBreedInput: AddBreedInput!): AddBreedResponse!
   registerClinic(addClinicInput: AddClinicInput!): ClinicResponse!
+  updateClinic(updateClinicInput: UpdateClinicInput!): ClinicResponse!
   markAsFavoriteClinic(markAsFavoriteClinicInput: MarkAsFavoriteClinicInput!): [ClinicResponse!]!
   scoreClinic(scoreClinicInput: ScoreClinicInput!): ScoreClinicResponse!
   registerProcedure(addProcedureInput: AddProcedureInput!): AddProcedureResponse!
   updateProcedure(updateProcedureInput: UpdateProcedureInput!): UpdateProcedureResponse!
+  registerSpecialty(addSpecialtyInput: AddSpecialtyInput!): EmployeeResponse!
   changeEmployeeStatus(turnEmployeeStatusInput: TurnEmployeeStatusInput!): EmployeeResponse!
   inviteToClinic(inviteToClinicInput: InviteToClinicInput!): EmployeeResponse!
   handleEmployeeRequest(handleEmployeeRequestInput: HandleEmployeeRequestInput!): HandleRequestResult!
+  scoreVeterinarian(scoreVeterinarianInput: ScoreVeterinarianInput!): EmployeeResponse!
 }
 
 input SignUpInput {
@@ -443,7 +474,31 @@ input AddClinicInput {
   name: String!
   telephone_number: String!
   google_maps_url: String
+  email: String
+  image: String
   address: String!
+}
+
+input UpdateClinicInput {
+  name: String
+  telephone_number: String
+  google_maps_url: String
+  email: String
+  image: String
+  schedule: ScheduleInput
+  address: String
+  services: [String!]
+}
+
+input ScheduleInput {
+  nonWorkingDays: [String!]!
+  workingDays: [WorkingDaysInput!]!
+}
+
+input WorkingDaysInput {
+  day: String!
+  startTime: String!
+  endTime: String!
 }
 
 input MarkAsFavoriteClinicInput {
@@ -465,6 +520,10 @@ input UpdateProcedureInput {
   id: String!
 }
 
+input AddSpecialtyInput {
+  specialties: String
+}
+
 input TurnEmployeeStatusInput {
   id: String!
   id_employee: String!
@@ -480,4 +539,10 @@ input InviteToClinicInput {
 input HandleEmployeeRequestInput {
   id: String!
   employee_invitation_status: String!
+}
+
+input ScoreVeterinarianInput {
+  id_appointment: String!
+  id_veterinarian: String!
+  points: Int
 }
