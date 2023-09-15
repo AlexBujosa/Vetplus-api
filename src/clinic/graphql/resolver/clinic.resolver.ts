@@ -22,6 +22,7 @@ import { GetAllClientsResult } from '../types/get-all-clients-result.type';
 import { UpdateClinicInput } from '../input/update-clinic.input';
 
 import { GetClinicResult } from '../types/get-clinic-result.type';
+import { UpdateClinicInputSchema } from '@/global/schema/update-clinic-input.schema';
 
 @Resolver()
 export class ClinicResolver {
@@ -46,11 +47,15 @@ export class ClinicResolver {
   @Mutation(() => ClinicResponse)
   @Roles(Role.ADMIN, Role.CLINIC_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @UsePipes(new YupValidationPipe(AddClinicInputSchema))
+  @UsePipes(new YupValidationPipe(UpdateClinicInputSchema))
   async updateClinic(
     @Args('updateClinicInput') updateClinicInput: UpdateClinicInput,
+    @Context() context,
   ): Promise<ClinicResponse> {
-    const result = await this.clinicService.updateClinic(updateClinicInput);
+    const result = await this.clinicService.updateClinic(
+      updateClinicInput,
+      context.req.user.sub,
+    );
 
     return !result ? { result: Status.FAILED } : { result: Status.COMPLETED };
   }
@@ -60,7 +65,6 @@ export class ClinicResolver {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getMyClinic(@Context() context): Promise<GetClinicResult> {
     const result = await this.clinicService.getMyClinic(context.req.user.sub);
-
     return result;
   }
 

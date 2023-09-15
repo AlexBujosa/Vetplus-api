@@ -12,6 +12,9 @@ import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
 import { GetAllClientsResult } from './graphql/types/get-all-clients-result.type';
 import { UpdateClinicInput } from './graphql/input/update-clinic.input';
 import { GetClinicResult } from './graphql/types/get-clinic-result.type';
+import { Schedule } from './graphql/types/schedule.type';
+import { Prisma } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class ClinicService {
@@ -57,37 +60,72 @@ export class ClinicService {
     }
   }
 
-  async updateClinic(UpdateClinicInput: UpdateClinicInput) {
-    const { id, services, ...rest } = UpdateClinicInput;
+  async updateClinic(UpdateClinicInput: UpdateClinicInput, id_owner: string) {
+    const { services, ...rest } = UpdateClinicInput;
     const result = await this.prismaService.clinic.update({
       data: {
         ...rest,
         services: services ? JSON.stringify({ services: services }) : null,
       },
       where: {
-        id,
+        id_owner,
       },
     });
     return result ? true : false;
   }
 
-  async getMyClinic(id_owner: string): Promise<GetClinicResult> {
-    const { services, ...rest } = await this.prismaService.clinic.findUnique({
-      include: {
-        clinicSummaryScore: {
-          select: {
-            total_points: true,
-            total_users: true,
+  async getClinicById(id: string): Promise<GetClinicResult> {
+    const { services, schedule, ...rest } =
+      await this.prismaService.clinic.findFirst({
+        include: {
+          clinicSummaryScore: {
+            select: {
+              total_points: true,
+              total_users: true,
+            },
           },
         },
-      },
-      where: {
-        id_owner,
-      },
-    });
+        where: {
+          id,
+        },
+      });
+
+    const scheduleResult: Schedule = this.convertJsonObjectToScheduleType(
+      schedule as Prisma.JsonObject,
+    );
 
     const clinicServices = this.getClinicServicesAsArray(services);
-    return this.addServiceResultToGetClinicResult(clinicServices, rest);
+    const result = this.addServiceResultToGetClinicResult(clinicServices, rest);
+    result.schedule = scheduleResult;
+
+    return result;
+  }
+
+  async getMyClinic(id_owner: string): Promise<GetClinicResult> {
+    const { services, schedule, ...rest } =
+      await this.prismaService.clinic.findUnique({
+        include: {
+          clinicSummaryScore: {
+            select: {
+              total_points: true,
+              total_users: true,
+            },
+          },
+        },
+        where: {
+          id_owner,
+        },
+      });
+
+    const scheduleResult: Schedule = this.convertJsonObjectToScheduleType(
+      schedule as Prisma.JsonObject,
+    );
+
+    const clinicServices = this.getClinicServicesAsArray(services);
+    const result = this.addServiceResultToGetClinicResult(clinicServices, rest);
+    result.schedule = scheduleResult;
+
+    return result;
   }
 
   async getAllClinic(): Promise<GetAllClinic[]> {
@@ -100,24 +138,9 @@ export class ClinicService {
     return result;
   }
 
-  async getClinicById(id: string): Promise<GetClinicResult> {
-    const { services, ...rest } = await this.prismaService.clinic.findFirst({
-      include: {
-        clinicSummaryScore: {
-          select: {
-            total_points: true,
-            total_users: true,
-          },
-        },
-      },
-      where: {
-        id,
-      },
-    });
-
-    const clinicServices = this.getClinicServicesAsArray(services);
-
-    return this.addServiceResultToGetClinicResult(clinicServices, rest);
+  private convertJsonObjectToScheduleType(schedule: Prisma.JsonObject) {
+    const result = plainToInstance(Schedule, schedule);
+    return result;
   }
 
   async getAllServicesById(id_clinic: string): Promise<ServiceResult> {
@@ -142,6 +165,7 @@ export class ClinicService {
     const getMyClinic: GetClinicResult = {
       ...clinic,
       services: serviceResult?.services,
+      schedule: null,
     };
     return getMyClinic;
   }
