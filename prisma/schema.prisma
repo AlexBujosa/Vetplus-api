@@ -25,6 +25,7 @@ enum Role {
 
 // PET_OWNER is capable of using the mobile app and make appointments
 // PET_OWNER is default role
+//Comment Schema
 
 enum Sex {
   M
