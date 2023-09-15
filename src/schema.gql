@@ -279,11 +279,6 @@ type VeterinarianSpecialties {
   specialties: String
 }
 
-type EmployeeSpecialtiesScore {
-  VeterinarianSummaryScore: VeterinarianSummaryScore!
-  VeterinariaSpecialties: VeterinarianSpecialties
-}
-
 type Employee {
   VeterinarianSummaryScore: VeterinarianSummaryScore!
   VeterinariaSpecialties: VeterinarianSpecialties
@@ -304,6 +299,18 @@ type GetAllEmployeeResult {
   employee: Employee!
 }
 
+type GetEmployeesFromClinic {
+  VeterinarianSummaryScore: VeterinarianSummaryScore!
+  VeterinariaSpecialties: VeterinarianSpecialties
+  names: String!
+  surnames: String
+  image: String
+  email: String!
+  status: Boolean!
+  address: String
+  telephone_number: String
+}
+
 type GetMyEmployee {
   id_clinic: String!
   id_employee: String!
@@ -311,7 +318,7 @@ type GetMyEmployee {
   created_at: DateTime!
   updated_at: DateTime!
   status: Boolean!
-  employee: EmployeeSpecialtiesScore!
+  employee: GetEmployeesFromClinic!
 }
 
 type GetMyEmployeesResult {
