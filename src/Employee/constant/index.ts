@@ -10,7 +10,17 @@ export type EmployeeResult = {
     surnames: string;
     image: string;
     email: string;
+    telephone_number: string;
     status: boolean;
+  } & {
+    VeterinarianSummaryScore: {
+      total_points: number;
+      total_users: number;
+    };
+  } & {
+    VeterinariaSpecialties: {
+      specialties: string;
+    };
   };
 } & {
   id_clinic: string;
@@ -28,6 +38,8 @@ export type GetMyEmployeeResult = {
     email: string;
     image: string;
     status: boolean;
+    address: string;
+    telephone_number: string;
   } & {
     VeterinarianSummaryScore: {
       total_points: number;

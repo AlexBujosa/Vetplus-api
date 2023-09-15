@@ -26,12 +26,9 @@ export class EmployeeService {
       },
       include: {
         employee: {
-          select: {
-            names: true,
-            surnames: true,
-            email: true,
-            status: true,
-            image: true,
+          include: {
+            VeterinarianSummaryScore: true,
+            VeterinariaSpecialties: true,
           },
         },
       },
