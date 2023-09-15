@@ -118,6 +118,17 @@ type Breed {
   status: Boolean!
 }
 
+type WorkingDays {
+  day: String!
+  startTime: String!
+  endTime: String!
+}
+
+type Schedule {
+  workingDays: [WorkingDays!]!
+  nonWorkingDays: [String!]!
+}
+
 type ClinicResponse {
   result: String!
 }
@@ -228,6 +239,7 @@ type GetClinicResult {
   status: Boolean!
   services: [String!]
   clinicSummaryScore: ClinicSummaryScore!
+  schedule: Schedule
 }
 
 type AddProcedureResponse {
@@ -464,14 +476,25 @@ input AddClinicInput {
 }
 
 input UpdateClinicInput {
-  id: String!
   name: String
   telephone_number: String
   google_maps_url: String
   email: String
   image: String
+  schedule: ScheduleInput
   address: String
   services: [String!]
+}
+
+input ScheduleInput {
+  nonWorkingDays: [String!]!
+  workingDays: [WorkingDaysInput!]!
+}
+
+input WorkingDaysInput {
+  day: String!
+  startTime: String!
+  endTime: String!
 }
 
 input MarkAsFavoriteClinicInput {

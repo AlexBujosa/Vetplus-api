@@ -1,7 +1,17 @@
+import { Prisma } from '@prisma/client';
 import { ClinicSummaryScore } from '../graphql/types/clinic-summary-score.type';
+import { Schedule } from '../graphql/types/schedule.type';
 
 export type ServiceResult = {
   services: string[];
+};
+export type ScheduleType = {
+  workingDays: {
+    day: string;
+    startTime: string;
+    endTime: string;
+  }[];
+  nonWorkingDays: string[];
 };
 
 export type ClinicType = {
