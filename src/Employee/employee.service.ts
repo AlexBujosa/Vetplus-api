@@ -35,6 +35,42 @@ export class EmployeeService {
     });
     return result;
   }
+  async getMyEmployee(
+    id_owner: string,
+    id_employee: string,
+  ): Promise<MyEmployees> {
+    const result = await this.prismaService.clinic.findUnique({
+      where: {
+        id_owner,
+      },
+      include: {
+        clinicEmployees: {
+          where: {
+            id_employee,
+          },
+          include: {
+            employee: {
+              include: {
+                VeterinarianSummaryScore: {
+                  select: {
+                    total_points: true,
+                    total_users: true,
+                  },
+                },
+                VeterinariaSpecialties: {
+                  select: {
+                    specialties: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    return { clinicEmployees: result?.clinicEmployees };
+    return result;
+  }
 
   async getMyEmployess(id_owner: string): Promise<MyEmployees> {
     const result = await this.prismaService.clinic.findUnique({
