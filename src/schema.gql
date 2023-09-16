@@ -345,6 +345,7 @@ type Query {
   getAllProcedureByIdClinic(genericByIdInput: GenericByIdInput!): GetAllProcedureByClinicId!
   getAllEmployee(getAllEmployeeByClinicIdInput: GetAllEmployeeByClinicIdInput!): [GetAllEmployeeResult!]!
   getMyEmployees: GetMyEmployeesResult!
+  getMyEmployee(genericByIdInput: GenericByIdInput!): GetMyEmployeesResult!
 }
 
 input SignInInput {

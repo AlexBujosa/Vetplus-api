@@ -31,25 +31,27 @@ export type EmployeeResult = {
   status: boolean;
 };
 
-export type GetMyEmployeeResult = {
-  employee: {
-    names: string;
-    surnames: string;
-    email: string;
-    image: string;
-    status: boolean;
-    address: string;
-    telephone_number: string;
-  } & {
-    VeterinarianSummaryScore: {
-      total_points: number;
-      total_users: number;
-    };
-  } & {
-    VeterinariaSpecialties: {
-      specialties: string;
-    };
+export type EmployeeType = {
+  names: string;
+  surnames: string;
+  email: string;
+  image: string;
+  status: boolean;
+  address: string;
+  telephone_number: string;
+} & {
+  VeterinarianSummaryScore: {
+    total_points: number;
+    total_users: number;
   };
+} & {
+  VeterinariaSpecialties: {
+    specialties: string;
+  };
+};
+
+export type GetMyEmployeeResult = {
+  employee: EmployeeType;
 } & {
   id_clinic: string;
   id_employee: string;
@@ -60,6 +62,10 @@ export type GetMyEmployeeResult = {
 };
 export type MyEmployees = {
   clinicEmployees: GetMyEmployeeResult[];
+};
+
+export type MyEmployee = {
+  clinicEmployees: GetMyEmployeeResult;
 };
 
 export type OmitTx = Omit<

@@ -18,6 +18,8 @@ import { GetAllEmployeeResult } from '../types/get-all-employee-result.type';
 import { GetMyEmployeesResult } from '../types/get-my-employees-result.type';
 import { ScoreVeterinarianInput } from '../input/score-veterinarian.input';
 import { AddSpecialtyInput } from '../input/add-specialty.input';
+import { GetMyEmployee } from '../types/get-my-employees.type';
+import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
 
 @Resolver()
 export class EmployeeResolver {
@@ -39,6 +41,17 @@ export class EmployeeResolver {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getMyEmployees(@Context() context): Promise<GetMyEmployeesResult> {
     return await this.employeeService.getMyEmployess(context.req.user.sub);
+  }
+
+  @Query(() => GetMyEmployeesResult)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getMyEmployee(
+    @Args('genericByIdInput') genericByIdInput: GenericByIdInput,
+    @Context() context,
+  ): Promise<GetMyEmployeesResult> {
+    const { id } = genericByIdInput;
+    return await this.employeeService.getMyEmployee(context.req.user.sub, id);
   }
 
   @Mutation(() => EmployeeResponse)
