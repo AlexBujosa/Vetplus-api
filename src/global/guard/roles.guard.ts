@@ -2,7 +2,6 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
-import { customException } from '../constant/constants';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -18,7 +17,7 @@ export class RolesGuard implements CanActivate {
     const request = ctx.req;
 
     const { role } = request.user;
-    if (!roles.includes(role)) throw customException.FORBIDDEN(null);
+    if (!roles.includes(role)) return false;
 
     return true;
   }
