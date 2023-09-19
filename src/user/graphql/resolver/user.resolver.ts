@@ -49,12 +49,12 @@ export class UserResolver {
   async saveUserImage(
     @Args('saveUserImageInput') saveUserImageInput: SaveUserImageInput,
   ): Promise<SaveUserImageResponse> {
-    const { image } = saveUserImageInput;
+    const { image, old_image } = saveUserImageInput;
 
     if (image) this.awsS3Service.validateImages(await image);
 
     const s3Location = image
-      ? await this.awsS3Service.saveImageToS3(await image, 'users')
+      ? await this.awsS3Service.saveImageToS3(await image, 'users', old_image)
       : null;
 
     return !s3Location

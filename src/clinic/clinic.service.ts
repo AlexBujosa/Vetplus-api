@@ -15,6 +15,7 @@ import { GetClinicResult } from './graphql/types/get-clinic-result.type';
 import { Schedule } from './graphql/types/schedule.type';
 import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
+import { TurnClinicStatusInput } from './graphql/input/turn-clinic-status.input';
 
 @Injectable()
 export class ClinicService {
@@ -130,12 +131,32 @@ export class ClinicService {
 
   async getAllClinic(): Promise<GetAllClinic[]> {
     const result = await this.prismaService.clinic.findMany({
+      where: {
+        status: true,
+      },
       include: {
         clinicSummaryScore: true,
       },
     });
 
     return result;
+  }
+
+  async changeMyClinicStatus(
+    turnClinicStatusInput: TurnClinicStatusInput,
+    id_owner: string,
+  ): Promise<boolean> {
+    const { status } = turnClinicStatusInput;
+    const result = await this.prismaService.clinic.update({
+      data: {
+        status,
+      },
+      where: {
+        id_owner,
+      },
+    });
+
+    return result ? true : false;
   }
 
   private convertJsonObjectToScheduleType(schedule: Prisma.JsonObject) {

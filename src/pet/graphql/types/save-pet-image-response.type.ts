@@ -1,11 +1,5 @@
-import { Status } from '@/global/constant/constants';
-import { ObjectType, Field } from '@nestjs/graphql';
+import { SaveImageResponse } from '@/global/graphql/types/save-image-response.type';
+import { ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class SavePetImageResponse {
-  @Field()
-  result: Status;
-
-  @Field({ nullable: true })
-  image: string;
-}
+export class SavePetImageResponse extends SaveImageResponse {}

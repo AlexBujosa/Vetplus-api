@@ -242,6 +242,15 @@ type GetClinicResult {
   schedule: Schedule
 }
 
+type SaveClinicImageResponse {
+  result: String!
+  image: String
+}
+
+type DeleteClinicImageResponse {
+  result: String!
+}
+
 type AddProcedureResponse {
   result: String!
 }
@@ -377,6 +386,9 @@ type Mutation {
   registerBreed(addBreedInput: AddBreedInput!): AddBreedResponse!
   registerClinic(addClinicInput: AddClinicInput!): ClinicResponse!
   updateClinic(updateClinicInput: UpdateClinicInput!): ClinicResponse!
+  saveClinicImage(saveClinicImageInput: SaveClinicImageInput!): SaveClinicImageResponse!
+  deleteClinicImage(deleteClinicImageInput: DeleteClinicImageInput!): DeleteClinicImageResponse!
+  changeClinicStatus(turnClinicStatusInput: TurnClinicStatusInput!): ClinicResponse!
   markAsFavoriteClinic(markAsFavoriteClinicInput: MarkAsFavoriteClinicInput!): [ClinicResponse!]!
   scoreClinic(scoreClinicInput: ScoreClinicInput!): ScoreClinicResponse!
   registerProcedure(addProcedureInput: AddProcedureInput!): AddProcedureResponse!
@@ -415,6 +427,7 @@ input UpdateUserInput {
 
 input SaveUserImageInput {
   image: Upload!
+  old_image: String
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -500,6 +513,19 @@ input WorkingDaysInput {
   day: String!
   startTime: String!
   endTime: String!
+}
+
+input SaveClinicImageInput {
+  image: Upload!
+  old_image: String
+}
+
+input DeleteClinicImageInput {
+  image: String!
+}
+
+input TurnClinicStatusInput {
+  status: Boolean!
 }
 
 input MarkAsFavoriteClinicInput {

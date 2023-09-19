@@ -6,7 +6,7 @@ export enum Status {
   FAILED = 'FAILED',
 }
 
-export type ImageUploadFolder = 'pets' | 'users';
+export type ImageUploadFolder = 'pets' | 'users' | 'clinics';
 
 export enum SignUpCustomExceptionMessage {
   EMAIL_EXIST = 'EMAIL_EXIST',
