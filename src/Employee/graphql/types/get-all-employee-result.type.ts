@@ -5,5 +5,5 @@ import { ClinicEmployee } from './clinic-employee.type';
 @ObjectType()
 export class GetAllEmployeeResult extends ClinicEmployee {
   @Field(() => Employee)
-  employee: Employee;
+  Employee: Employee;
 }

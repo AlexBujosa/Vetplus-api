@@ -79,7 +79,7 @@ export class ClinicService {
     const { services, schedule, ...rest } =
       await this.prismaService.clinic.findFirst({
         include: {
-          clinicSummaryScore: {
+          ClinicSummaryScore: {
             select: {
               total_points: true,
               total_users: true,
@@ -106,7 +106,7 @@ export class ClinicService {
     const { services, schedule, ...rest } =
       await this.prismaService.clinic.findUnique({
         include: {
-          clinicSummaryScore: {
+          ClinicSummaryScore: {
             select: {
               total_points: true,
               total_users: true,
@@ -135,7 +135,7 @@ export class ClinicService {
         status: true,
       },
       include: {
-        clinicSummaryScore: true,
+        ClinicSummaryScore: true,
       },
     });
 
@@ -204,7 +204,7 @@ export class ClinicService {
         favorite: true,
       },
       include: {
-        clinic: {
+        Clinic: {
           select: {
             name: true,
             address: true,
@@ -269,6 +269,7 @@ export class ClinicService {
     });
     return result[0];
   }
+
   async GetAllClients(
     genericByIdInput: GenericByIdInput,
   ): Promise<GetAllClientsResult[]> {
@@ -279,11 +280,11 @@ export class ClinicService {
         clientAttendance: true,
       },
       include: {
-        user: {
+        User: {
           include: {
             Pet: {
               include: {
-                breed: true,
+                Breed: true,
               },
             },
             AppointmentOwner: {

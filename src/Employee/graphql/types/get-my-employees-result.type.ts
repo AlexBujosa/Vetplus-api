@@ -4,5 +4,5 @@ import { GetMyEmployee } from './get-my-employees.type';
 @ObjectType()
 export class GetMyEmployeesResult {
   @Field(() => [GetMyEmployee], { nullable: true })
-  clinicEmployees: GetMyEmployee[];
+  ClinicEmployees: GetMyEmployee[];
 }

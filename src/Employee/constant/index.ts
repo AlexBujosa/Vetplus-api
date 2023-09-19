@@ -5,7 +5,7 @@ import { Employee } from '../graphql/types/employee.type';
 import { VeterinarianSummaryScore } from '../graphql/types/veterinarian-summary-score.type';
 
 export type EmployeeResult = {
-  employee: {
+  Employee: {
     names: string;
     surnames: string;
     image: string;
@@ -51,7 +51,7 @@ export type EmployeeType = {
 };
 
 export type GetMyEmployeeResult = {
-  employee: EmployeeType;
+  Employee: EmployeeType;
 } & {
   id_clinic: string;
   id_employee: string;
@@ -61,7 +61,7 @@ export type GetMyEmployeeResult = {
   status: boolean;
 };
 export type MyEmployees = {
-  clinicEmployees: GetMyEmployeeResult[];
+  ClinicEmployees: GetMyEmployeeResult[];
 };
 
 export type MyEmployee = {
