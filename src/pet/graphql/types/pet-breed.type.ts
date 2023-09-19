@@ -5,5 +5,5 @@ import { Breed } from '@/breed/graphql/types/breed.type';
 @ObjectType()
 export class PetBreed extends Pet {
   @Field(() => Breed)
-  breed: Breed;
+  Breed: Breed;
 }

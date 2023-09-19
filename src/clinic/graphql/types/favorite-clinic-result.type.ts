@@ -4,7 +4,7 @@ import { ClinicInfo } from './clinic-info.type';
 @ObjectType()
 export class FavoriteClinicResult {
   @Field(() => ClinicInfo)
-  clinic: ClinicInfo;
+  Clinic: ClinicInfo;
 
   @Field(() => String)
   id_user: string;

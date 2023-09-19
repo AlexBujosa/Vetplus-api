@@ -5,5 +5,5 @@ import { GetAllClients } from './get-all-clients.type';
 @ObjectType()
 export class GetAllClientsResult extends ClinicUser {
   @Field(() => GetAllClients, { nullable: true })
-  user: GetAllClients;
+  User: GetAllClients;
 }

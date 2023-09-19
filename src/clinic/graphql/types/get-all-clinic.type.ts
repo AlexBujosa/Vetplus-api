@@ -5,5 +5,5 @@ import { ClinicSummaryScore } from './clinic-summary-score.type';
 @ObjectType()
 export class GetAllClinic extends Clinic {
   @Field(() => ClinicSummaryScore)
-  clinicSummaryScore: ClinicSummaryScore;
+  ClinicSummaryScore: ClinicSummaryScore;
 }

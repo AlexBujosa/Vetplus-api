@@ -143,7 +143,7 @@ type ClinicInfo {
 }
 
 type FavoriteClinicResult {
-  clinic: ClinicInfo!
+  Clinic: ClinicInfo!
   id_user: String!
   id_clinic: String!
   favorite: Boolean!
@@ -171,7 +171,7 @@ type GetAllClinic {
   created_at: DateTime!
   updated_at: DateTime!
   status: Boolean!
-  clinicSummaryScore: ClinicSummaryScore!
+  ClinicSummaryScore: ClinicSummaryScore!
 }
 
 type AppointmentSchedule {
@@ -193,7 +193,7 @@ type PetBreed {
   created_at: DateTime!
   updated_at: DateTime!
   status: Boolean!
-  breed: Breed!
+  Breed: Breed!
 }
 
 type GetAllClients {
@@ -222,7 +222,7 @@ type GetAllClientsResult {
   created_at: DateTime!
   updated_at: DateTime!
   status: Boolean!
-  user: GetAllClients
+  User: GetAllClients
 }
 
 type GetClinicResult {
@@ -238,7 +238,7 @@ type GetClinicResult {
   updated_at: DateTime!
   status: Boolean!
   services: [String!]
-  clinicSummaryScore: ClinicSummaryScore!
+  ClinicSummaryScore: ClinicSummaryScore!
   schedule: Schedule
 }
 
@@ -305,7 +305,7 @@ type GetAllEmployeeResult {
   created_at: DateTime!
   updated_at: DateTime!
   status: Boolean!
-  employee: Employee!
+  Employee: Employee!
 }
 
 type GetEmployeesFromClinic {
@@ -327,11 +327,37 @@ type GetMyEmployee {
   created_at: DateTime!
   updated_at: DateTime!
   status: Boolean!
-  employee: GetEmployeesFromClinic!
+  Employee: GetEmployeesFromClinic!
 }
 
 type GetMyEmployeesResult {
-  clinicEmployees: [GetMyEmployee!]
+  ClinicEmployees: [GetMyEmployee!]
+}
+
+type CommentResponse {
+  result: String!
+}
+
+type UserClinicPoint {
+  points: Int!
+}
+
+type CommentOwner {
+  names: String!
+  surnames: String!
+  image: String
+  ClinicUsers: [UserClinicPoint!]
+}
+
+type GetAllCommentByIdClinic {
+  id: String!
+  id_clinic: String!
+  id_owner: String!
+  comment: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+  Owner: CommentOwner!
 }
 
 type Query {
@@ -355,6 +381,8 @@ type Query {
   getAllEmployee(getAllEmployeeByClinicIdInput: GetAllEmployeeByClinicIdInput!): [GetAllEmployeeResult!]!
   getMyEmployees: GetMyEmployeesResult!
   getMyEmployee(genericByIdInput: GenericByIdInput!): GetMyEmployeesResult!
+  getAllCommentByIdClinic(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
+  getMyComments(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
 }
 
 input SignInInput {
@@ -398,6 +426,8 @@ type Mutation {
   inviteToClinic(inviteToClinicInput: InviteToClinicInput!): EmployeeResponse!
   handleEmployeeRequest(handleEmployeeRequestInput: HandleEmployeeRequestInput!): HandleRequestResult!
   scoreVeterinarian(scoreVeterinarianInput: ScoreVeterinarianInput!): EmployeeResponse!
+  registerComment(addCommentInput: AddCommentInput!): CommentResponse!
+  deleteComment(deleteCommentInput: DeleteCommentInput!): CommentResponse!
 }
 
 input SignUpInput {
@@ -572,4 +602,14 @@ input ScoreVeterinarianInput {
   id_appointment: String!
   id_veterinarian: String!
   points: Int
+}
+
+input AddCommentInput {
+  id: String!
+  comment: String!
+}
+
+input DeleteCommentInput {
+  id: String!
+  id_clinic: String!
 }

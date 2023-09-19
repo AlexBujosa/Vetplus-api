@@ -6,7 +6,7 @@ import { Schedule } from './schedule.type';
 @ObjectType()
 export class GetClinicResult extends ClinicServiceArray {
   @Field(() => ClinicSummaryScore)
-  clinicSummaryScore: ClinicSummaryScore;
+  ClinicSummaryScore: ClinicSummaryScore;
 
   @Field({ nullable: true })
   schedule: Schedule;

@@ -25,7 +25,7 @@ export class EmployeeService {
         employee_invitation_status: 'ACCEPTED',
       },
       include: {
-        employee: {
+        Employee: {
           include: {
             VeterinarianSummaryScore: true,
             VeterinariaSpecialties: true,
@@ -44,12 +44,12 @@ export class EmployeeService {
         id_owner,
       },
       include: {
-        clinicEmployees: {
+        ClinicEmployees: {
           where: {
             id_employee,
           },
           include: {
-            employee: {
+            Employee: {
               include: {
                 VeterinarianSummaryScore: {
                   select: {
@@ -68,7 +68,7 @@ export class EmployeeService {
         },
       },
     });
-    return { clinicEmployees: result?.clinicEmployees };
+    return { ClinicEmployees: result?.ClinicEmployees };
     return result;
   }
 
@@ -78,12 +78,12 @@ export class EmployeeService {
         id_owner,
       },
       include: {
-        clinicEmployees: {
+        ClinicEmployees: {
           where: {
             employee_invitation_status: 'ACCEPTED',
           },
           include: {
-            employee: {
+            Employee: {
               include: {
                 VeterinarianSummaryScore: {
                   select: {
@@ -102,7 +102,7 @@ export class EmployeeService {
         },
       },
     });
-    return { clinicEmployees: result?.clinicEmployees };
+    return { ClinicEmployees: result?.ClinicEmployees };
   }
 
   async addSpecialty(

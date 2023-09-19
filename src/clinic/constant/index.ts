@@ -26,10 +26,10 @@ export type ClinicType = {
   created_at: Date;
   updated_at: Date;
   status: boolean;
-  clinicSummaryScore: ClinicSummaryScore;
+  ClinicSummaryScore: ClinicSummaryScore;
 };
 export type FavoriteClinic = {
-  clinic: {
+  Clinic: {
     name: string;
     address: string;
   };

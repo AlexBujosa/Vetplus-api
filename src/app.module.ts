@@ -18,6 +18,7 @@ import { AwsS3Module } from './aws_s3/aws_s3.module';
 import { ClinicModule } from './clinic/clinic.module';
 import { ProcedureModule } from './procedure/procedure.module';
 import { EmployeeModule } from './Employee/employee.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { EmployeeModule } from './Employee/employee.module';
     ClinicModule,
     ProcedureModule,
     EmployeeModule,
+    CommentModule,
   ],
   providers: [PrismaService, BcryptService, UserService, CredentialsService],
 })

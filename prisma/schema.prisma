@@ -81,29 +81,30 @@ model User {
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
 
-  Credentials Credentials[]
-  Pet                     Pet[]
-  Notification            Notification[]
-  Clinic                  Clinic?
-  VeterinarianSummaryScore Veterinarian_Summary_Score?
-  VeterinariaSpecialties   Veterinarian_Specialties?
-  AppointmentOwner        Appointment[]  @relation("owner")
-  AppointmentVeterinarian Appointment[]  @relation("veterinarian")
-  ClinicUsers Clinic_User[]
-  ClinicEmployees Clinic_Employee[]
-  Veterinarian         Veterinarian_PetOwner[] @relation("veterinarian")
-  PetOwner             Veterinarian_PetOwner[] @relation("pet_owner")
+  Credentials               Credentials[]
+  Pet                       Pet[]
+  Notification              Notification[]
+  Clinic                    Clinic?
+  VeterinarianSummaryScore  Veterinarian_Summary_Score?
+  VeterinariaSpecialties    Veterinarian_Specialties?
+  AppointmentOwner          Appointment[]  @relation("owner")
+  AppointmentVeterinarian   Appointment[]  @relation("veterinarian")
+  ClinicUsers               Clinic_User[]
+  ClinicEmployees           Clinic_Employee[]
+  Veterinarian              Veterinarian_PetOwner[] @relation("veterinarian")
+  PetOwner                  Veterinarian_PetOwner[] @relation("pet_owner")
+  Comment                   Comment[] 
 }
 
 model Credentials {
   id_user  String @id
   password String
 
-  user User @relation(fields: [id_user], references: [id])
-
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
+
+   User User @relation(fields: [id_user], references: [id])
 
   @@index([id_user])
 }
@@ -114,10 +115,6 @@ model Pet {
   id_owner  String
   id_specie Int
   id_breed  Int
-
-  owner  User @relation(fields: [id_owner], references: [id])
-  specie Specie @relation(fields: [id_specie], references: [id])
-  breed  Breed  @relation(fields: [id_breed], references: [id])
 
   name         String
   image        String?
@@ -132,6 +129,10 @@ model Pet {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
+
+  Owner  User @relation(fields: [id_owner], references: [id]) 
+  Specie Specie @relation(fields: [id_specie], references: [id])
+  Breed  Breed  @relation(fields: [id_breed], references: [id])
 
   Appointment Appointment[]
 
@@ -156,15 +157,13 @@ model Specie {
 model Breed {
   id        Int @id @default(autoincrement())
   id_specie Int
-
-  specie Specie @relation(fields: [id_specie], references: [id])
-
   name String
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
 
+  Specie Specie @relation(fields: [id_specie], references: [id])
   Pet Pet[]
 
   @@index([id_specie])
@@ -172,10 +171,7 @@ model Breed {
 
 model Notification {
   id String @id @default(uuid())
-
   id_user String
-
-  user User @relation(fields: [id_user], references: [id])
 
   title    String
   subtitle String
@@ -184,6 +180,8 @@ model Notification {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
+
+  User User @relation(fields: [id_user], references: [id])
 
   @@index([id_user])
 }
@@ -197,21 +195,21 @@ model Appointment {
   id_service      String
   id_clinic       String
 
+  start_at     DateTime
+  end_at       DateTime
+  observations String?           @db.Text
+  state        AppointmentState @default(PENDING)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+
   Owner        User  @relation("owner", fields: [id_owner], references: [id])
   Veterinarian User  @relation("veterinarian", fields: [id_veterinarian], references: [id])
   Pet          Pet     @relation(fields: [id_pet], references: [id])
   Service      Service @relation(fields: [id_service], references: [id])
   Clinic       Clinic  @relation(fields: [id_clinic], references: [id])
   Veterinarian_PetOwner Veterinarian_PetOwner? 
-
-  start_at     DateTime
-  end_at       DateTime
-  observations String?           @db.Text
-  State        AppointmentState @default(PENDING)
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  status     Boolean  @default(true)
 
   @@index([id_owner])
   @@index([id_veterinarian])
@@ -241,14 +239,32 @@ model Clinic {
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
 
-  Appointment    Appointment[]
-  clinicUsers Clinic_User[]
-  clinicEmployees Clinic_Employee[]
-  clinicSummaryScore Clinic_Summary_Score?
+  Appointment           Appointment[]
+  ClinicUsers           Clinic_User[]
+  ClinicEmployees       Clinic_Employee[]
+  Comment               Comment[] 
+  ClinicSummaryScore    Clinic_Summary_Score?
   // TODO: Read google maps map url
   // TODO: Add Clinic Schedule tables for Days and Hours
 
   @@index([id_owner])
+}
+
+model Comment {
+  id String @id @default(uuid())
+  id_clinic   String
+  id_owner    String 
+  comment     String
+
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  status      Boolean  @default(true)
+
+  Owner  User @relation(fields: [id_owner], references: [id])
+  Clinic Clinic @relation(fields: [id_clinic], references: [id])
+
+  @@index([id_owner])
+  @@index([id_clinic])
 }
 
 model Clinic_User {
@@ -261,8 +277,8 @@ model Clinic_User {
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
 
-  user User @relation(fields: [id_user], references: [id])
-  clinic Clinic @relation(fields: [id_clinic], references: [id])
+  User User @relation(fields: [id_user], references: [id])
+  Clinic Clinic @relation(fields: [id_clinic], references: [id])
 
   @@id([id_user, id_clinic])
   @@index([id_user])
@@ -276,8 +292,8 @@ model Clinic_Employee {
   id_employee String
   employee_invitation_status EmployeeInvitationStatus @default(PENDING)
 
-  clinic  Clinic  @relation(fields: [id_clinic], references: [id])
-  employee User @relation(fields: [id_employee], references: [id])
+  Clinic  Clinic  @relation(fields: [id_clinic], references: [id])
+  Employee User @relation(fields: [id_employee], references: [id])
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -308,7 +324,7 @@ model Clinic_Summary_Score {
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
 
-  clinic  Clinic?  @relation(fields: [id_clinic], references: [id])
+  Clinic  Clinic?  @relation(fields: [id_clinic], references: [id])
   
   @@index([id_clinic])
 }
@@ -340,7 +356,7 @@ model Veterinarian_Summary_Score {
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
 
-  user  User?  @relation(fields: [id_veterinarian], references: [id])
+  User  User?  @relation(fields: [id_veterinarian], references: [id])
  
   @@index([id_veterinarian])
 }
@@ -348,5 +364,5 @@ model Veterinarian_Summary_Score {
 model Veterinarian_Specialties{
   id_veterinarian String @unique
   specialties     String?
-  user  User?  @relation(fields: [id_veterinarian], references: [id])
+  User  User?  @relation(fields: [id_veterinarian], references: [id])
 }
