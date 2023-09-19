@@ -2,4 +2,4 @@ import { SaveImageResponse } from '@/global/graphql/types/save-image-response.ty
 import { ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class SaveUserImageResponse extends SaveImageResponse {}
+export class SaveClinicImageResponse extends SaveImageResponse {}

@@ -49,7 +49,12 @@ export class AwsS3Service {
     folder: ImageUploadFolder,
   ): Promise<boolean> {
     const regex =
-      folder == 'pets' ? /\/pets\/([a-f0-9-]+)\b/ : /\/users\/([a-f0-9-]+)\b/;
+      folder == 'pets'
+        ? /\/pets\/([a-f0-9-]+)\b/
+        : folder == 'clinics'
+        ? /\/clinics\/([a-f0-9-]+)\b/
+        : /\/users\/([a-f0-9-]+)\b/;
+
     const [, id] = url.match(regex);
 
     const result = new DeleteObjectCommand({
