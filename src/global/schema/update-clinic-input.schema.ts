@@ -1,9 +1,10 @@
 import * as yup from 'yup';
+import { namesOrSurnamesRegex, telephoneRegex } from '.';
 const timeFormatRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
 export const UpdateClinicInputSchema = yup.object().shape({
-  name: yup.string(),
+  name: yup.string().matches(namesOrSurnamesRegex),
   image: yup.string().nullable(),
-  telephone_number: yup.string().matches(/^\d{10}$/),
+  telephone_number: yup.string().matches(telephoneRegex),
   google_maps_url: yup.string().nullable(),
   address: yup.string(),
   services: yup.array().of(yup.string()).nullable(),
