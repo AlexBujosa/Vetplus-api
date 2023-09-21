@@ -1,13 +1,9 @@
 import * as yup from 'yup';
+import { emailRegex, namesOrSurnamesRegex, telephoneRegex } from '.';
 export const AddClinicInputSchema = yup.object().shape({
-  name: yup.string(),
-  email: yup
-    .string()
-    .matches(
-      /^(?:[a-zA-Z0-9._%+-]+@gmail\.com|[^@]+@(?:hotmail\.com|outlook\.com))$/,
-    )
-    .nullable(),
-  telephone_number: yup.string().matches(/^\d{10}$/),
+  name: yup.string().matches(namesOrSurnamesRegex),
+  email: yup.string().matches(emailRegex).nullable(),
+  telephone_number: yup.string().matches(telephoneRegex),
   google_maps_url: yup.string().nullable(),
   address: yup.string(),
 });

@@ -3,7 +3,7 @@ import { UserService } from '../../user.service';
 import { User } from '../types/user.type';
 import { CreatedUserResponse } from '../types/created-user-response.type';
 import { CreateUserInput } from '../input/create-user.input';
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, UsePipes } from '@nestjs/common';
 import { RolesGuard } from '@/global/guard/roles.guard';
 import { Roles } from '@/global/decorator/roles.decorator';
 import { Role } from '@prisma/client';
@@ -16,6 +16,8 @@ import { AwsS3Service } from '@/aws_s3/aws_s3.service';
 import { Status } from '@/global/constant/constants';
 import { DeleteUserImageResponse } from '../types/delete-user-image-response.type';
 import { DeleteUserImageInput } from '../input/delete-user-image.input';
+import { YupValidationPipe } from '@/global/pipe/yup-validation.pipe';
+import { UpdateUserInputSchema } from '@/global/schema/update-user-input.schema';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -32,6 +34,7 @@ export class UserResolver {
   @Mutation(() => UpdateUserResponse)
   @Roles(Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @UsePipes(new YupValidationPipe(UpdateUserInputSchema))
   async updateUser(
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
     @Context() context,
