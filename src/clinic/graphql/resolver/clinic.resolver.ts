@@ -125,15 +125,11 @@ export class ClinicResolver {
   }
 
   @Query(() => [GetAllClinic])
-  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async getAllClinic(): Promise<GetAllClinic[]> {
     return await this.clinicService.getAllClinic();
   }
 
   @Query(() => GetClinicResult)
-  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async getClinicById(
     @Args('getClinicByIdInput') getClinicByIdInput: GenericByIdInput,
   ): Promise<GetClinicResult> {
@@ -142,8 +138,6 @@ export class ClinicResolver {
   }
 
   @Query(() => ClinicServiceResult)
-  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async getAllClinicServices(
     @Args('genericByIdInput')
     genericByIdInput: GenericByIdInput,
