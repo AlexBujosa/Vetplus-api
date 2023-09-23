@@ -50,8 +50,6 @@ export class CommentResolver {
   }
 
   @Query(() => [GetAllCommentByIdClinic])
-  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async getAllCommentByIdClinic(
     @Args('genericByIdInput')
     genericByIdInput: GenericByIdInput,

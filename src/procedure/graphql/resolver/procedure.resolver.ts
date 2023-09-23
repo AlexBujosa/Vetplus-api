@@ -50,8 +50,6 @@ export class ProcedureResolver {
   }
 
   @Query(() => GetAllProcedureByClinicId)
-  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.VETERINARIAN, Role.PET_OWNER)
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async getAllProcedureByIdClinic(
     @Args('genericByIdInput') genericByIdInput: GenericByIdInput,
   ): Promise<GetAllProcedureByClinicId> {
