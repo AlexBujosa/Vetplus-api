@@ -26,8 +26,6 @@ export class EmployeeResolver {
   constructor(private readonly employeeService: EmployeeService) {}
 
   @Query(() => [GetAllEmployeeResult])
-  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async getAllEmployee(
     @Args('getAllEmployeeByClinicIdInput')
     getAllEmployeeByClinicIdInput: GetAllEmployeeByClinicIdInput,
