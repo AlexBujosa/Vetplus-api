@@ -140,6 +140,7 @@ type ClinicServiceResult {
 type ClinicInfo {
   name: String!
   address: String!
+  image: String
 }
 
 type FavoriteClinicResult {
