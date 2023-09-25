@@ -378,7 +378,6 @@ type Query {
   getAllClinicServices(genericByIdInput: GenericByIdInput!): ClinicServiceResult!
   getAllFavoriteClinic: [FavoriteClinicResult!]!
   getAllClients: [GetAllClientsResult!]!
-  hello: ScoreClinicResponse!
   getAllProcedure: [Procedure!]!
   getAllProcedureByIdClinic(genericByIdInput: GenericByIdInput!): GetAllProcedureByClinicId!
   getAllEmployee(getAllEmployeeByClinicIdInput: GetAllEmployeeByClinicIdInput!): [GetAllEmployeeResult!]!

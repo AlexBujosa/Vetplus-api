@@ -194,8 +194,4 @@ export class ClinicResolver {
     const result = await this.clinicService.GetAllClients(context.req.user.sub);
     return result;
   }
-  @Query(() => ScoreClinicResponse)
-  async hello(): Promise<ScoreClinicResponse> {
-    return { result: Status.COMPLETED };
-  }
 }
