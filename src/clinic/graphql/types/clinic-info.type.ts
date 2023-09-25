@@ -7,4 +7,7 @@ export class ClinicInfo {
 
   @Field(() => String)
   address: string;
+
+  @Field(() => String, { nullable: true })
+  image: string;
 }

@@ -208,6 +208,7 @@ export class ClinicService {
           select: {
             name: true,
             address: true,
+            image: true,
           },
         },
       },
