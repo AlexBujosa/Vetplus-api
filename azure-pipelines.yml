@@ -1,6 +1,5 @@
 trigger:
   - main
-  - dev
 
 pool:
   vmImage: ubuntu-22.04
