@@ -26,6 +26,7 @@ import { CommentModule } from './comment/comment.module';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
+    CommentModule,
     PrismaModule,
     BcryptModule,
     AuthModule,
@@ -38,7 +39,6 @@ import { CommentModule } from './comment/comment.module';
     ClinicModule,
     ProcedureModule,
     EmployeeModule,
-    CommentModule,
   ],
   providers: [PrismaService, BcryptService, UserService, CredentialsService],
 })

@@ -361,6 +361,8 @@ type GetAllCommentByIdClinic {
 }
 
 type Query {
+  getAllCommentByIdClinic(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
+  getMyComments(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
   signInWithEmail(signInInput: SignInInput!): SignInResponse!
   googleLogin: SignInResponse!
   findUserById: User!
@@ -381,8 +383,10 @@ type Query {
   getAllEmployee(getAllEmployeeByClinicIdInput: GetAllEmployeeByClinicIdInput!): [GetAllEmployeeResult!]!
   getMyEmployees: GetMyEmployeesResult!
   getMyEmployee(genericByIdInput: GenericByIdInput!): GetMyEmployeesResult!
-  getAllCommentByIdClinic(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
-  getMyComments(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
+}
+
+input GenericByIdInput {
+  id: String!
 }
 
 input SignInInput {
@@ -390,15 +394,13 @@ input SignInInput {
   password: String!
 }
 
-input GenericByIdInput {
-  id: String!
-}
-
 input GetAllEmployeeByClinicIdInput {
   id: String!
 }
 
 type Mutation {
+  registerComment(addCommentInput: AddCommentInput!): CommentResponse!
+  deleteComment(deleteCommentInput: DeleteCommentInput!): CommentResponse!
   signUp(signUpInput: SignUpInput!): SignUpResponse!
   googleRegister(signUpInput: SignUpInput!): SignInResponse!
   createUser(createUserInput: CreateUserInput!): CreatedUserResponse!
@@ -426,8 +428,16 @@ type Mutation {
   inviteToClinic(inviteToClinicInput: InviteToClinicInput!): EmployeeResponse!
   handleEmployeeRequest(handleEmployeeRequestInput: HandleEmployeeRequestInput!): HandleRequestResult!
   scoreVeterinarian(scoreVeterinarianInput: ScoreVeterinarianInput!): EmployeeResponse!
-  registerComment(addCommentInput: AddCommentInput!): CommentResponse!
-  deleteComment(deleteCommentInput: DeleteCommentInput!): CommentResponse!
+}
+
+input AddCommentInput {
+  id: String!
+  comment: String!
+}
+
+input DeleteCommentInput {
+  id: String!
+  id_clinic: String!
 }
 
 input SignUpInput {
@@ -602,14 +612,4 @@ input ScoreVeterinarianInput {
   id_appointment: String!
   id_veterinarian: String!
   points: Int
-}
-
-input AddCommentInput {
-  id: String!
-  comment: String!
-}
-
-input DeleteCommentInput {
-  id: String!
-  id_clinic: String!
 }
