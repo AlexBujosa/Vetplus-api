@@ -3,9 +3,8 @@ import { documentRegex, namesOrSurnamesRegex, telephoneRegex } from '.';
 export const UpdateUserInputSchema = yup.object().shape({
   names: yup.string().matches(/^[A-Za-záéíóúÁÉÍÓÚñÑüÜ\s'-]+$/),
   surnames: yup.string().matches(namesOrSurnamesRegex).nullable(),
-  document: yup.string().matches(documentRegex),
+  document: yup.string().matches(documentRegex).nullable(),
   address: yup.string().nullable(),
-  email: yup.string(),
   telephone_number: yup.string().matches(telephoneRegex).nullable(),
   image: yup.string().nullable(),
 });
