@@ -1,0 +1,3 @@
+{
+  "conventionalCommits.scopes": ["googleUrl field string to longtext"]
+}

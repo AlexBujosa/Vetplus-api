@@ -228,7 +228,7 @@ model Clinic {
 
   name             String
   telephone_number String
-  google_maps_url  String?
+  google_maps_url  String? @db.LongText
   address          String
   image            String?
   services         String?
