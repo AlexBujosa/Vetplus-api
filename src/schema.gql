@@ -148,7 +148,7 @@ type FavoriteClinicResult {
   id_user: String!
   id_clinic: String!
   favorite: Boolean!
-  points: Float!
+  points: Int
 }
 
 type ScoreClinicResponse {
@@ -418,7 +418,7 @@ type Mutation {
   saveClinicImage(saveClinicImageInput: SaveClinicImageInput!): SaveClinicImageResponse!
   deleteClinicImage(deleteClinicImageInput: DeleteClinicImageInput!): DeleteClinicImageResponse!
   changeClinicStatus(turnClinicStatusInput: TurnClinicStatusInput!): ClinicResponse!
-  markAsFavoriteClinic(markAsFavoriteClinicInput: MarkAsFavoriteClinicInput!): [ClinicResponse!]!
+  markAsFavoriteClinic(markAsFavoriteClinicInput: MarkAsFavoriteClinicInput!): ClinicResponse!
   scoreClinic(scoreClinicInput: ScoreClinicInput!): ScoreClinicResponse!
   registerProcedure(addProcedureInput: AddProcedureInput!): AddProcedureResponse!
   updateProcedure(updateProcedureInput: UpdateProcedureInput!): UpdateProcedureResponse!

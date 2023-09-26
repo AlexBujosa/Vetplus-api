@@ -146,7 +146,7 @@ export class ClinicResolver {
     return await this.clinicService.getAllServicesById(id);
   }
 
-  @Mutation(() => [ClinicResponse])
+  @Mutation(() => ClinicResponse)
   @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.VETERINARIAN, Role.PET_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async markAsFavoriteClinic(

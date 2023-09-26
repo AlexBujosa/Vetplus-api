@@ -1,4 +1,4 @@
-import { ObjectType, Field, Float } from '@nestjs/graphql';
+import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { ClinicInfo } from './clinic-info.type';
 
 @ObjectType()
@@ -15,6 +15,6 @@ export class FavoriteClinicResult {
   @Field(() => Boolean)
   favorite: boolean;
 
-  @Field(() => Float)
+  @Field(() => Int, { nullable: true })
   points: number;
 }
