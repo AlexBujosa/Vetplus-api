@@ -11,7 +11,9 @@ import { GqlAuthGuard } from '@/auth/guard/gql-auth.guard';
 import { customException } from '@/global/constant/constants';
 import { YupValidationPipe } from '@/global/pipe/yup-validation.pipe';
 import { SignUpInputSchema } from '@/global/schema/sign-up-input.schema';
-
+import { SignUpVerificationCode } from '../types/sign-up-verification-code.type';
+import { VerificationCodeInput } from '../inputs/verification-code.input';
+import { SignUpMessage, SignUpResult } from '@/auth/constant/contants';
 @Resolver()
 export class AuthResolver {
   constructor(
@@ -21,8 +23,27 @@ export class AuthResolver {
 
   @Mutation(() => SignUpResponse)
   @UsePipes(new YupValidationPipe(SignUpInputSchema))
-  signUp(@Args('signUpInput') signUpInput: SignUpInput) {
-    return this.authService.register(signUpInput);
+  async signUp(
+    @Args('verificationCodeInput') verificationCodeInput: VerificationCodeInput,
+  ): Promise<SignUpResponse> {
+    const { verificationCode, room } = verificationCodeInput;
+    const { result, signUpInput } = await this.authService.verificationCode(
+      verificationCode,
+      room,
+    );
+
+    return result
+      ? this.authService.register(signUpInput)
+      : { result: SignUpResult.FAILED, message: SignUpMessage.USER_FAILED };
+  }
+
+  @Mutation(() => SignUpVerificationCode)
+  @UsePipes(new YupValidationPipe(SignUpInputSchema))
+  async signUpVerificationCode(
+    @Args('signUpInput') signUpInput: SignUpInput,
+  ): Promise<SignUpVerificationCode> {
+    const room = await this.authService.signUpVerificationCode(signUpInput);
+    return { room };
   }
 
   @Query(() => SignInResponse)

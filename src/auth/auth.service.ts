@@ -1,10 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { BcryptService } from '@/bcrypt/bcrypt.service';
 import { UserService } from '@/user/user.service';
 import { SignUpInput } from './graphql/inputs/sign-up.input';
 import { CredentialsService } from '@/credentials/credentials.service';
 import { PrismaService } from '@/prisma/prisma.service';
-import { SignUpMessage, SignUpResult } from './constant/contants';
+import {
+  SignUpMessage,
+  SignUpResult,
+  SignUpVerificationCodeType,
+  SignUpVerificationResult,
+} from './constant/contants';
 import {
   signInCustomException,
   customException,
@@ -13,6 +18,13 @@ import {
 import { AuthProvider, User } from '@prisma/client';
 import { SignInResponse } from './graphql/types/sign-in-result.type';
 import { JwtService } from '@nestjs/jwt';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { v4 as uuidv4 } from 'uuid';
+import { AuthGateWay } from '@/auth/auth.gateway';
+import { generateRandomSixDigitNumber } from './constant/generate-random';
+import { NotificationService } from '@/notification/notification.service';
+import { NotificationKind } from '@/notification/constant';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +35,9 @@ export class AuthService {
     private credentialsService: CredentialsService,
     private prismaService: PrismaService,
     private jwtService: JwtService,
+    private readonly authGateWay: AuthGateWay,
+    private readonly notificationService: NotificationService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async register(signUpInput: SignUpInput) {
@@ -62,6 +77,42 @@ export class AuthService {
     );
     if (!coincidence) throw customException.INVALID_CREDENTIALS;
     return coincidence ? user : null;
+  }
+
+  async signUpVerificationCode(signUpInput: SignUpInput): Promise<string> {
+    const randomKey = uuidv4();
+
+    const sixDigitNumberPassword = generateRandomSixDigitNumber();
+
+    this.notificationService.sendMail(
+      signUpInput.email,
+      sixDigitNumberPassword,
+      NotificationKind.ACCOUNT_CREATION,
+    );
+
+    await this.cacheManager.set(
+      randomKey,
+      { signUpValue: signUpInput, password: sixDigitNumberPassword },
+      90000,
+    );
+
+    await this.authGateWay.emitTimeRemaining(randomKey, 90000);
+    return randomKey;
+  }
+
+  async verificationCode(
+    verificationCode: number,
+    room: string,
+  ): Promise<SignUpVerificationResult> {
+    const result: SignUpVerificationCodeType = await this.cacheManager.get(
+      room,
+    );
+
+    if (!result) return { signUpInput: null, result: false };
+
+    if (result.password != verificationCode)
+      return { signUpInput: null, result: false };
+    return { signUpInput: result.signUpValue, result: true };
   }
 
   login(user: User): SignInResponse {

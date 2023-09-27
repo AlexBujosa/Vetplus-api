@@ -11,9 +11,16 @@ import { jwtConstant } from './constant/contants';
 import { GoogleAuthService } from './google-auth/google-auth.service';
 import { CredentialsModule } from '@/credentials/credentials.module';
 import { LocalStrategy } from './strategies/local.strategy';
-
+import { AuthGateWay } from './auth.gateway';
+import { CacheModule } from '@nestjs/cache-manager';
+import { NotificationService } from '@/notification/notification.service';
+//import * as redisStore from 'cache-manager-redis-store';
 @Module({
   imports: [
+    CacheModule.register({
+      host: 'localhost',
+      port: 6379,
+    }),
     BcryptModule,
     PassportModule,
     UserModule,
@@ -30,6 +37,8 @@ import { LocalStrategy } from './strategies/local.strategy';
     LocalStrategy,
     JwtStrategy,
     GoogleAuthService,
+    AuthGateWay,
+    NotificationService,
   ],
   exports: [AuthService, JwtStrategy],
 })

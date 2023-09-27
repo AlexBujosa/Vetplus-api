@@ -19,12 +19,16 @@ import { ClinicModule } from './clinic/clinic.module';
 import { ProcedureModule } from './procedure/procedure.module';
 import { EmployeeModule } from './Employee/employee.module';
 import { CommentModule } from './comment/comment.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      subscriptions: {
+        'graphql-ws': true,
+      },
     }),
     PrismaModule,
     BcryptModule,
@@ -39,6 +43,7 @@ import { CommentModule } from './comment/comment.module';
     ProcedureModule,
     EmployeeModule,
     CommentModule,
+    NotificationModule,
   ],
   providers: [PrismaService, BcryptService, UserService, CredentialsService],
 })
