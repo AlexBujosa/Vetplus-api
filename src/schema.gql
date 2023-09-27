@@ -16,6 +16,10 @@ type SignInResponse {
   access_token: String
 }
 
+type SignUpVerificationCode {
+  room: String!
+}
+
 type User {
   id: String!
   names: String!
@@ -400,7 +404,8 @@ input GetAllEmployeeByClinicIdInput {
 }
 
 type Mutation {
-  signUp(signUpInput: SignUpInput!): SignUpResponse!
+  signUp(verificationCodeInput: VerificationCodeInput!): SignUpResponse!
+  signUpVerificationCode(signUpInput: SignUpInput!): SignUpVerificationCode!
   googleRegister(signUpInput: SignUpInput!): SignInResponse!
   createUser(createUserInput: CreateUserInput!): CreatedUserResponse!
   updateUser(updateUserInput: UpdateUserInput!): UpdateUserResponse!
@@ -429,6 +434,11 @@ type Mutation {
   scoreVeterinarian(scoreVeterinarianInput: ScoreVeterinarianInput!): EmployeeResponse!
   registerComment(addCommentInput: AddCommentInput!): CommentResponse!
   deleteComment(deleteCommentInput: DeleteCommentInput!): CommentResponse!
+}
+
+input VerificationCodeInput {
+  verificationCode: Int!
+  room: String!
 }
 
 input SignUpInput {
