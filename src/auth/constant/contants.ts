@@ -1,9 +1,5 @@
 import { SignUpInput } from '../graphql/inputs/sign-up.input';
 
-export const jwtConstant = {
-  secret: 'Hbk13Adj@m8491vhdie2',
-};
-
 export enum SignUpResult {
   COMPLETED = 'COMPLETED',
   PENDING = 'PENDING',
