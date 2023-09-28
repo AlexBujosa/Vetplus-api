@@ -68,6 +68,10 @@ type RecoveryAccount {
   access_token: String!
 }
 
+type CredentialsResponse {
+  result: String!
+}
+
 type AddPetResponse {
   result: String!
 }
@@ -421,6 +425,7 @@ type Mutation {
   deleteUserImage(deleteUserImageInput: DeleteUserImageInput!): DeleteUserImageResponse!
   recoveryPasswordSendVerificationCode(recoveryCredentialsInput: RecoveryCredentialsInput!): VerificationCode!
   recoveryAccount(verificationCodeInput: VerificationCodeInput!): RecoveryAccount!
+  updateCredentials(updateCredentialsInput: UpdateCredentialsInput!): CredentialsResponse!
   deletePetImage(deletePetImageInput: DeletePetImageInput!): DeletePetImageResponse!
   savePetImage(savePetImageInput: SavePetImageInput!): SavePetImageResponse!
   registerPet(addPetInput: AddPetInput!): AddPetResponse!
@@ -490,6 +495,10 @@ input DeleteUserImageInput {
 
 input RecoveryCredentialsInput {
   email: String!
+}
+
+input UpdateCredentialsInput {
+  password: String!
 }
 
 input DeletePetImageInput {
