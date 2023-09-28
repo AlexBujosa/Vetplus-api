@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { BcryptService } from '@/bcrypt/bcrypt.service';
 import { UserService } from '@/user/user.service';
 import { SignUpInput } from './graphql/inputs/sign-up.input';
@@ -22,7 +22,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { v4 as uuidv4 } from 'uuid';
 import { AuthGateWay } from '@/auth/auth.gateway';
-import { generateRandomSixDigitNumber } from './constant/generate-random';
+import { generateRandomSixDigitNumber } from '../global/constant/generate-random';
 import { NotificationService } from '@/notification/notification.service';
 import { NotificationKind } from '@/notification/constant';
 
@@ -32,6 +32,7 @@ export class AuthService {
   constructor(
     private userService: UserService,
     private bcryptService: BcryptService,
+    @Inject(forwardRef(() => CredentialsService))
     private credentialsService: CredentialsService,
     private prismaService: PrismaService,
     private jwtService: JwtService,
@@ -93,10 +94,10 @@ export class AuthService {
     await this.cacheManager.set(
       randomKey,
       { signUpValue: signUpInput, password: sixDigitNumberPassword },
-      90000,
+      120000,
     );
 
-    await this.authGateWay.emitTimeRemaining(randomKey, 90000);
+    await this.authGateWay.emitTimeRemaining(randomKey, 120000);
     return randomKey;
   }
 

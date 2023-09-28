@@ -12,8 +12,8 @@ import { customException } from '@/global/constant/constants';
 import { YupValidationPipe } from '@/global/pipe/yup-validation.pipe';
 import { SignUpInputSchema } from '@/global/schema/sign-up-input.schema';
 import { SignUpVerificationCode } from '../types/sign-up-verification-code.type';
-import { VerificationCodeInput } from '../inputs/verification-code.input';
 import { SignUpMessage, SignUpResult } from '@/auth/constant/contants';
+import { VerificationCodeInput } from '@/global/graphql/input/verification-code.input';
 @Resolver()
 export class AuthResolver {
   constructor(

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthResolver } from './graphql/resolvers/auth.resolver';
 import { BcryptModule } from '@/bcrypt/bcrypt.module';
@@ -24,11 +24,11 @@ import { NotificationService } from '@/notification/notification.service';
     BcryptModule,
     PassportModule,
     UserModule,
-    CredentialsModule,
     JwtModule.register({
       secret: jwtConstant.secret,
       signOptions: { expiresIn: '7d' },
     }),
+    forwardRef(() => CredentialsModule),
   ],
   providers: [
     AuthService,

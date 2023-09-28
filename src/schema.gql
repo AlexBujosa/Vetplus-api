@@ -60,6 +60,14 @@ type Credentials {
   Status: Boolean!
 }
 
+type VerificationCode {
+  room: String!
+}
+
+type RecoveryAccount {
+  access_token: String!
+}
+
 type AddPetResponse {
   result: String!
 }
@@ -411,6 +419,8 @@ type Mutation {
   updateUser(updateUserInput: UpdateUserInput!): UpdateUserResponse!
   saveUserImage(saveUserImageInput: SaveUserImageInput!): SaveUserImageResponse!
   deleteUserImage(deleteUserImageInput: DeleteUserImageInput!): DeleteUserImageResponse!
+  recoveryPasswordSendVerificationCode(recoveryCredentialsInput: RecoveryCredentialsInput!): VerificationCode!
+  recoveryAccount(verificationCodeInput: VerificationCodeInput!): RecoveryAccount!
   deletePetImage(deletePetImageInput: DeletePetImageInput!): DeletePetImageResponse!
   savePetImage(savePetImageInput: SavePetImageInput!): SavePetImageResponse!
   registerPet(addPetInput: AddPetInput!): AddPetResponse!
@@ -476,6 +486,10 @@ scalar Upload
 
 input DeleteUserImageInput {
   image: String!
+}
+
+input RecoveryCredentialsInput {
+  email: String!
 }
 
 input DeletePetImageInput {

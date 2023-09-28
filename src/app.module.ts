@@ -20,9 +20,15 @@ import { ProcedureModule } from './procedure/procedure.module';
 import { EmployeeModule } from './Employee/employee.module';
 import { CommentModule } from './comment/comment.module';
 import { NotificationModule } from './notification/notification.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { AuthGateWay } from './auth/auth.gateway';
 
 @Module({
   imports: [
+    CacheModule.register({
+      host: 'localhost',
+      port: 6379,
+    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -45,6 +51,12 @@ import { NotificationModule } from './notification/notification.module';
     CommentModule,
     NotificationModule,
   ],
-  providers: [PrismaService, BcryptService, UserService, CredentialsService],
+  providers: [
+    PrismaService,
+    BcryptService,
+    UserService,
+    CredentialsService,
+    AuthGateWay,
+  ],
 })
 export class AppModule {}
