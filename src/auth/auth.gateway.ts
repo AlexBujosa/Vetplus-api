@@ -26,7 +26,7 @@ export class AuthGateWay implements OnGatewayInit {
       this.server.emit(room, {
         timeLeft: `${(timeRemaining - timeSpent) / 1000} sec`,
       });
-      if (timeSpent > 89000) clearInterval(intervalId);
+      if (timeSpent > timeRemaining - 1) clearInterval(intervalId);
     }, 1000);
   }
 
