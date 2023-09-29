@@ -1,21 +1,17 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
 import { CreateCredentialsInput } from './graphql/input/create-credentials.input';
-import { v4 as uuidv4 } from 'uuid';
 import {
   customException,
   signUpCustomException,
 } from '@/global/constant/constants';
-import { generateRandomSixDigitNumber } from '@/global/constant/generate-random';
 import { NotificationService } from '@/notification/notification.service';
-import { NotificationKind } from '@/notification/constant';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { AuthGateWay } from '@/auth/auth.gateway';
 import { RecoveryAccount } from './constant';
 import { AuthService } from '@/auth/auth.service';
 import { UserService } from '@/user/user.service';
-import { BcryptService } from '@/bcrypt/bcrypt.service';
 import { UpdateCredentialsInput } from './graphql/input/update-credentials.input';
 
 @Injectable()
@@ -28,7 +24,6 @@ export class CredentialsService {
     private readonly userService: UserService,
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
-    private readonly bcryptService: BcryptService,
   ) {}
 
   async create(createCredentialsInput: CreateCredentialsInput) {
@@ -67,27 +62,6 @@ export class CredentialsService {
     } catch (error) {
       throw customException.SOMETHING_WRONG_FIND_CREDENTIALS(null);
     }
-  }
-
-  async recoveryPasswordSendVerificationCode(email: string): Promise<string> {
-    const randomKey = uuidv4();
-
-    const sixDigitNumberPassword = generateRandomSixDigitNumber();
-
-    this.notificationService.sendMail(
-      email,
-      sixDigitNumberPassword,
-      NotificationKind.PASSWORD_RECOVERY,
-    );
-
-    await this.cacheManager.set(
-      randomKey,
-      { email, password: sixDigitNumberPassword },
-      120000,
-    );
-
-    await this.authGateWay.emitTimeRemaining(randomKey, 120000);
-    return randomKey;
   }
 
   async verificationCode(

@@ -14,11 +14,13 @@ import { SignUpInputSchema } from '@/global/schema/sign-up-input.schema';
 import { SignUpVerificationCode } from '../types/sign-up-verification-code.type';
 import { SignUpMessage, SignUpResult } from '@/auth/constant/contants';
 import { VerificationCodeInput } from '@/global/graphql/input/verification-code.input';
+import { NotificationService } from '@/notification/notification.service';
 @Resolver()
 export class AuthResolver {
   constructor(
     private readonly authService: AuthService,
     private readonly googleAuthService: GoogleAuthService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   @Mutation(() => SignUpResponse)
@@ -42,7 +44,9 @@ export class AuthResolver {
   async signUpVerificationCode(
     @Args('signUpInput') signUpInput: SignUpInput,
   ): Promise<SignUpVerificationCode> {
-    const room = await this.authService.signUpVerificationCode(signUpInput);
+    const room = await this.notificationService.sendSignUpVerificationCode(
+      signUpInput,
+    );
     return { room };
   }
 
