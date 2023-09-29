@@ -20,11 +20,8 @@ import { SignInResponse } from './graphql/types/sign-in-result.type';
 import { JwtService } from '@nestjs/jwt';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { v4 as uuidv4 } from 'uuid';
 import { AuthGateWay } from '@/auth/auth.gateway';
-import { generateRandomSixDigitNumber } from '../global/constant/generate-random';
 import { NotificationService } from '@/notification/notification.service';
-import { NotificationKind } from '@/notification/constant';
 
 @Injectable()
 export class AuthService {
@@ -78,27 +75,6 @@ export class AuthService {
     );
     if (!coincidence) throw customException.INVALID_CREDENTIALS;
     return coincidence ? user : null;
-  }
-
-  async signUpVerificationCode(signUpInput: SignUpInput): Promise<string> {
-    const randomKey = uuidv4();
-
-    const sixDigitNumberPassword = generateRandomSixDigitNumber();
-
-    this.notificationService.sendMail(
-      signUpInput.email,
-      sixDigitNumberPassword,
-      NotificationKind.ACCOUNT_CREATION,
-    );
-
-    await this.cacheManager.set(
-      randomKey,
-      { signUpValue: signUpInput, password: sixDigitNumberPassword },
-      120000,
-    );
-
-    await this.authGateWay.emitTimeRemaining(randomKey, 120000);
-    return randomKey;
   }
 
   async verificationCode(

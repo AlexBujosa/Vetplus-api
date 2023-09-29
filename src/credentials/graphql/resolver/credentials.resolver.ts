@@ -13,10 +13,14 @@ import { RolesGuard } from '@/global/guard/roles.guard';
 import { JwtAuthGuard } from '@/global/guard/jwt-auth.guard';
 import { Roles } from '@/global/decorator/roles.decorator';
 import { UseGuards } from '@nestjs/common';
+import { NotificationService } from '@/notification/notification.service';
 
 @Resolver(() => Credentials)
 export class CredentialsResolver {
-  constructor(private readonly credentialservice: CredentialsService) {}
+  constructor(
+    private readonly credentialservice: CredentialsService,
+    private readonly notificationService: NotificationService,
+  ) {}
 
   @Query(() => Credentials)
   findCredentialsById(person_id: string) {
@@ -30,7 +34,9 @@ export class CredentialsResolver {
   ): Promise<VerificationCode> {
     const { email } = recoveryCredentialsInput;
     const room =
-      await this.credentialservice.recoveryPasswordSendVerificationCode(email);
+      await this.notificationService.sendPasswordRecoveryVerificationCode(
+        email,
+      );
     return { room };
   }
 
