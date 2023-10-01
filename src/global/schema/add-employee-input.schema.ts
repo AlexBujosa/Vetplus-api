@@ -1,12 +1,11 @@
 import { EmployeeInvitationStatus } from '@prisma/client';
 import * as yup from 'yup';
-const { ACCEPTED, CANCELED, DECLINED, EXPIRED, PENDING } =
-  EmployeeInvitationStatus;
+const { CANCELED, PENDING } = EmployeeInvitationStatus;
 export const InviteToClinicInputSchema = yup.object().shape({
   id: yup.string(),
   id_employee: yup.string(),
   employee_invitation_status: yup
     .string()
-    .oneOf([ACCEPTED, CANCELED, DECLINED, EXPIRED, PENDING])
+    .oneOf([CANCELED, PENDING])
     .nullable(),
 });

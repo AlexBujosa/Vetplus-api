@@ -101,4 +101,14 @@ export class AuthService {
       }),
     };
   }
+  recoveryAccount(user: User): SignInResponse {
+    return {
+      access_token: this.jwtService.sign({
+        username: user.email,
+        sub: user.id,
+        role: user.role,
+        password: true,
+      }),
+    };
+  }
 }
