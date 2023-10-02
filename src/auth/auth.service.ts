@@ -69,7 +69,7 @@ export class AuthService {
     if (!result) throw customException.CREDENTIALS_NOT_FOUND(null);
     const { password: hash } = result;
 
-    const coincidence = await this.bcryptService.decryptPassword(
+    const coincidence = await this.bcryptService.comparePassword(
       hash,
       password,
     );

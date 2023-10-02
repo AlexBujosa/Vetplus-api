@@ -13,6 +13,7 @@ import { RecoveryAccount } from './constant';
 import { AuthService } from '@/auth/auth.service';
 import { UserService } from '@/user/user.service';
 import { UpdateCredentialsInput } from './graphql/input/update-credentials.input';
+import { BcryptService } from '@/bcrypt/bcrypt.service';
 
 @Injectable()
 export class CredentialsService {
@@ -24,6 +25,7 @@ export class CredentialsService {
     private readonly userService: UserService,
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
+    private readonly bcryptService: BcryptService,
   ) {}
 
   async create(createCredentialsInput: CreateCredentialsInput) {
@@ -36,11 +38,7 @@ export class CredentialsService {
     }
   }
 
-  async updateCredentials(
-    updateCredentialsInput: UpdateCredentialsInput,
-    id_user: string,
-  ): Promise<boolean> {
-    const { password } = updateCredentialsInput;
+  async updateCredentials(password: string, id_user: string): Promise<boolean> {
     const passwordUpdated = await this.prisma.credentials.update({
       data: {
         password,
@@ -62,6 +60,19 @@ export class CredentialsService {
     } catch (error) {
       throw customException.SOMETHING_WRONG_FIND_CREDENTIALS(null);
     }
+  }
+
+  async passwordCoincidence(
+    old_password: string,
+    id_user: string,
+  ): Promise<boolean> {
+    const userCredentials = await this.findById(id_user);
+    if (!userCredentials) return false;
+    const comparePassword = this.bcryptService.comparePassword(
+      userCredentials.password,
+      old_password,
+    );
+    return comparePassword;
   }
 
   async verificationCode(
