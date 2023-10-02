@@ -130,7 +130,7 @@ export class ClinicService {
   }
 
   async getAllClinic(): Promise<GetAllClinic[]> {
-    const result = await this.prismaService.clinic.findMany({
+    const clinicsData = await this.prismaService.clinic.findMany({
       where: {
         status: true,
       },
@@ -138,8 +138,16 @@ export class ClinicService {
         ClinicSummaryScore: true,
       },
     });
+    const getAllClinic: GetAllClinic[] = clinicsData.map((row) => {
+      const { services, ...rest } = row;
+      const servicesArray = this.getClinicServicesAsArray(services);
+      return {
+        ...rest,
+        services: servicesArray?.services,
+      };
+    });
 
-    return result;
+    return getAllClinic;
   }
 
   async changeMyClinicStatus(

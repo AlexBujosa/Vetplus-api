@@ -188,6 +188,7 @@ type GetAllClinic {
   created_at: DateTime!
   updated_at: DateTime!
   status: Boolean!
+  services: [String!]
   ClinicSummaryScore: ClinicSummaryScore!
 }
 
