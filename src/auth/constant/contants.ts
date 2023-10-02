@@ -13,7 +13,7 @@ export enum SignUpMessage {
 }
 
 export type SignUpVerificationCodeType = {
-  signUpValue: SignUpInput;
+  signUpInput: SignUpInput;
   password: number;
 };
 

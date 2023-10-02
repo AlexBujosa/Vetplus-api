@@ -89,7 +89,7 @@ export class AuthService {
 
     if (result.password != verificationCode)
       return { signUpInput: null, result: false };
-    return { signUpInput: result.signUpValue, result: true };
+    return { signUpInput: result.signUpInput, result: true };
   }
 
   login(user: User): SignInResponse {
