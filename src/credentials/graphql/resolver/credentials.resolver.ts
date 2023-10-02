@@ -7,7 +7,7 @@ import { VerificationCodeInput } from '@/global/graphql/input/verification-code.
 import { RecoveryAccount } from '../types/recovery-account.type';
 import { UpdateCredentialsInput } from '../input/update-credentials.input';
 import { CredentialsResponse } from '../types/credentials-response.type';
-import { Status } from '@/global/constant/constants';
+import { Status, customException } from '@/global/constant/constants';
 import { Role } from '@prisma/client';
 import { RolesGuard } from '@/global/guard/roles.guard';
 import { JwtAuthGuard } from '@/global/guard/jwt-auth.guard';
@@ -49,6 +49,27 @@ export class CredentialsResolver {
       verificationCode,
       room,
     );
+  }
+
+  @Mutation(() => CredentialsResponse)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async updateCredentialsRecoveryAccount(
+    @Args('updateCredentialsInput')
+    updateCredentialsInput: UpdateCredentialsInput,
+    @Context() context,
+  ): Promise<CredentialsResponse> {
+    if (
+      context.req.user.password != undefined ||
+      context.req.user.password != null
+    )
+      throw customException.FORBIDDEN(null);
+    const result = await this.credentialservice.updateCredentials(
+      updateCredentialsInput,
+      context.req.user.sub,
+    );
+
+    return result ? { result: Status.COMPLETED } : { result: Status.FAILED };
   }
 
   @Mutation(() => CredentialsResponse)

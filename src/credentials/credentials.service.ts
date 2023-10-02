@@ -75,7 +75,7 @@ export class CredentialsService {
     if (result.password != verificationCode) return { access_token: null };
 
     const user = await this.userService.findByEmail(result.email);
-    const { access_token } = this.authService.login(user);
+    const { access_token } = this.authService.recoveryAccount(user);
 
     return { access_token };
   }
