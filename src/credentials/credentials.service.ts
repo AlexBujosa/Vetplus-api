@@ -71,8 +71,9 @@ export class CredentialsService {
     const result: { email: string; password: number } =
       await this.cacheManager.get(room);
 
-    if (!result || result?.password != verificationCode)
-      return { access_token: null };
+    if (!result) return { access_token: null };
+    if (result.password != verificationCode) return { access_token: null };
+
     const user = await this.userService.findByEmail(result.email);
     const { access_token } = this.authService.login(user);
 
