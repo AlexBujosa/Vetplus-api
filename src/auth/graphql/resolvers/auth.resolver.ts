@@ -35,7 +35,7 @@ export class AuthResolver {
     );
 
     return result
-      ? this.authService.register(signUpInput)
+      ? await this.authService.register(signUpInput)
       : { result: SignUpResult.FAILED, message: SignUpMessage.USER_FAILED };
   }
 
