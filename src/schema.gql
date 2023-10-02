@@ -426,6 +426,7 @@ type Mutation {
   deleteUserImage(deleteUserImageInput: DeleteUserImageInput!): DeleteUserImageResponse!
   recoveryPasswordSendVerificationCode(recoveryCredentialsInput: RecoveryCredentialsInput!): VerificationCode!
   recoveryAccount(verificationCodeInput: VerificationCodeInput!): RecoveryAccount!
+  updateCredentialsRecoveryAccount(updateCredentialsRecoveryAccountInput: UpdateCredentialsRecoveryAccountInput!): CredentialsResponse!
   updateCredentials(updateCredentialsInput: UpdateCredentialsInput!): CredentialsResponse!
   deletePetImage(deletePetImageInput: DeletePetImageInput!): DeletePetImageResponse!
   savePetImage(savePetImageInput: SavePetImageInput!): SavePetImageResponse!
@@ -498,7 +499,12 @@ input RecoveryCredentialsInput {
   email: String!
 }
 
+input UpdateCredentialsRecoveryAccountInput {
+  password: String!
+}
+
 input UpdateCredentialsInput {
+  old_password: String!
   password: String!
 }
 

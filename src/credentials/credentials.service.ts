@@ -39,9 +39,10 @@ export class CredentialsService {
   }
 
   async updateCredentials(password: string, id_user: string): Promise<boolean> {
+    const passwordHash = await this.bcryptService.hashPassword(password);
     const passwordUpdated = await this.prisma.credentials.update({
       data: {
-        password,
+        password: passwordHash,
       },
       where: {
         id_user,

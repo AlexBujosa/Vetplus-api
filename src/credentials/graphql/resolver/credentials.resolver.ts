@@ -68,6 +68,7 @@ export class CredentialsResolver {
     )
       throw customException.FORBIDDEN(null);
     const { password } = updateCredentialsRecoveryAccountInput;
+    console.log(password);
     const result = await this.credentialservice.updateCredentials(
       password,
       context.req.user.sub,
