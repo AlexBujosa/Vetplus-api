@@ -57,7 +57,10 @@ export class NotificationService {
     this.sendMail(email, sixDigitNumberPassword, kind);
 
     const data = additionalData
-      ? { ...additionalData, password: sixDigitNumberPassword }
+      ? {
+          signUpInput: { ...additionalData },
+          password: sixDigitNumberPassword,
+        }
       : { email, password: sixDigitNumberPassword };
 
     await Promise.all([
