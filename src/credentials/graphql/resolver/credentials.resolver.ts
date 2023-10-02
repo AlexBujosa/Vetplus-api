@@ -5,7 +5,10 @@ import { RecoveryCredentialsInput } from '../input/recovery-credentials.input';
 import { VerificationCode } from '@/global/graphql/types/sign-up-verification-code.type';
 import { VerificationCodeInput } from '@/global/graphql/input/verification-code.input';
 import { RecoveryAccount } from '../types/recovery-account.type';
-import { UpdateCredentialsInput } from '../input/update-credentials.input';
+import {
+  UpdateCredentialsInput,
+  UpdateCredentialsRecoveryAccountInput,
+} from '../input/update-credentials.input';
 import { CredentialsResponse } from '../types/credentials-response.type';
 import { Status, customException } from '@/global/constant/constants';
 import { Role } from '@prisma/client';
@@ -55,8 +58,8 @@ export class CredentialsResolver {
   @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updateCredentialsRecoveryAccount(
-    @Args('updateCredentialsInput')
-    updateCredentialsInput: UpdateCredentialsInput,
+    @Args('updateCredentialsRecoveryAccountInput')
+    updateCredentialsRecoveryAccountInput: UpdateCredentialsRecoveryAccountInput,
     @Context() context,
   ): Promise<CredentialsResponse> {
     if (
@@ -64,8 +67,9 @@ export class CredentialsResolver {
       context.req.user.password != null
     )
       throw customException.FORBIDDEN(null);
+    const { password } = updateCredentialsRecoveryAccountInput;
     const result = await this.credentialservice.updateCredentials(
-      updateCredentialsInput,
+      password,
       context.req.user.sub,
     );
 
@@ -80,8 +84,18 @@ export class CredentialsResolver {
     updateCredentialsInput: UpdateCredentialsInput,
     @Context() context,
   ): Promise<CredentialsResponse> {
+    const { old_password, password } = updateCredentialsInput;
+    const coincidence = await this.credentialservice.passwordCoincidence(
+      old_password,
+      context.req.user.sub,
+    );
+    if (!coincidence)
+      throw customException.INVALID_CREDENTIALS({
+        cause: new Error(),
+        description: 'Current Password did not match',
+      });
     const result = await this.credentialservice.updateCredentials(
-      updateCredentialsInput,
+      password,
       context.req.user.sub,
     );
 

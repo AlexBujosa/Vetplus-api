@@ -9,7 +9,7 @@ export class BcryptService {
     return await bcrypt.hash(password, SALT_ROUNDS);
   }
 
-  async decryptPassword(
+  async comparePassword(
     hashedPassword: string,
     password: string,
   ): Promise<boolean> {
