@@ -65,7 +65,7 @@ type VerificationCode {
 }
 
 type RecoveryAccount {
-  access_token: String!
+  access_token: String
 }
 
 type CredentialsResponse {
