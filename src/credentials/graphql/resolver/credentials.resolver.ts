@@ -63,12 +63,12 @@ export class CredentialsResolver {
     @Context() context,
   ): Promise<CredentialsResponse> {
     if (
-      context.req.user.password != undefined ||
-      context.req.user.password != null
+      context.req.user.password == undefined ||
+      context.req.user.password == null
     )
       throw customException.FORBIDDEN(null);
     const { password } = updateCredentialsRecoveryAccountInput;
-    console.log(password);
+
     const result = await this.credentialservice.updateCredentials(
       password,
       context.req.user.sub,
