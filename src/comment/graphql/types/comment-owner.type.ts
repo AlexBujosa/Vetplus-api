@@ -6,7 +6,7 @@ export class CommentOwner {
   @Field(() => String)
   names: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   surnames: string;
 
   @Field(() => String, { nullable: true })
