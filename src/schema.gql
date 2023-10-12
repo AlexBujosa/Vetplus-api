@@ -72,6 +72,22 @@ type CredentialsResponse {
   result: String!
 }
 
+type Notification {
+  id: String!
+  id_user: String!
+  title: String!
+  subtitle: String!
+  category: String!
+  read: Boolean!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+type NotificationResponse {
+  result: String!
+}
+
 type AddPetResponse {
   result: String!
 }
@@ -357,12 +373,12 @@ type CommentResponse {
 }
 
 type UserClinicPoint {
-  points: Int!
+  points: Int
 }
 
 type CommentOwner {
   names: String!
-  surnames: String!
+  surnames: String
   image: String
   ClinicUsers: [UserClinicPoint!]
 }
@@ -428,6 +444,7 @@ type Mutation {
   recoveryAccount(verificationCodeInput: VerificationCodeInput!): RecoveryAccount!
   updateCredentialsRecoveryAccount(updateCredentialsRecoveryAccountInput: UpdateCredentialsRecoveryAccountInput!): CredentialsResponse!
   updateCredentials(updateCredentialsInput: UpdateCredentialsInput!): CredentialsResponse!
+  markNotificationAsRead(markNotificationAsReadInput: MarkNotificationAsReadInput!): NotificationResponse!
   deletePetImage(deletePetImageInput: DeletePetImageInput!): DeletePetImageResponse!
   savePetImage(savePetImageInput: SavePetImageInput!): SavePetImageResponse!
   registerPet(addPetInput: AddPetInput!): AddPetResponse!
@@ -506,6 +523,10 @@ input UpdateCredentialsRecoveryAccountInput {
 input UpdateCredentialsInput {
   old_password: String!
   password: String!
+}
+
+input MarkNotificationAsReadInput {
+  id: String!
 }
 
 input DeletePetImageInput {
@@ -653,4 +674,9 @@ input AddCommentInput {
 input DeleteCommentInput {
   id: String!
   id_clinic: String!
+}
+
+type Subscription {
+  getNewNotification: Notification!
+  getAllNotification: [Notification!]!
 }

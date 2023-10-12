@@ -33,7 +33,20 @@ import { AuthGateWay } from './auth/auth.gateway';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       subscriptions: {
-        'graphql-ws': true,
+        'subscriptions-transport-ws': {
+          path: '/graphql',
+          onConnect: (connectionParams) => {
+            return {
+              req: {
+                headers: {
+                  authorization:
+                    connectionParams.Authorization ??
+                    connectionParams.authorization,
+                },
+              },
+            };
+          },
+        },
       },
     }),
     PrismaModule,

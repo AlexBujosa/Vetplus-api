@@ -8,6 +8,12 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { AuthGateWay } from '@/auth/auth.gateway';
 import { SignUpInput } from '@/auth/graphql/inputs/sign-up.input';
+import { Notification } from './graphql/types/notification.type';
+import { PubSub } from 'graphql-subscriptions';
+import { MarkNotificationAsReadInput } from './graphql/input/markNotificationAsRead.input';
+import { SendNotificationInput } from './graphql/input/sendNotification.input';
+import { OmitTx } from '@/Employee/constant';
+import { customException } from '@/global/constant/constants';
 
 @Injectable()
 export class NotificationService {
@@ -16,6 +22,7 @@ export class NotificationService {
     private readonly mailerService: MailerService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly authGateWay: AuthGateWay,
+    @Inject('PUB_SUB') private readonly pubSub: PubSub,
   ) {}
 
   sendMail(
@@ -69,5 +76,53 @@ export class NotificationService {
     ]);
 
     return randomKey;
+  }
+
+  async saveNotification(
+    sendNotificationInput: SendNotificationInput,
+    tx?: OmitTx,
+  ): Promise<Notification> {
+    try {
+      const data = { data: { ...sendNotificationInput } };
+      const result = !tx
+        ? await this.prismaService.notification.create({
+            ...data,
+          })
+        : tx.notification.create({ ...data });
+      return result;
+    } catch (error) {
+      throw customException.NOTIFICATION_FAILED(null);
+    }
+  }
+
+  async sendNotificationToUser(id_user: string, notification: Notification) {
+    this.pubSub.publish(id_user, { getNewNotification: notification });
+  }
+
+  async getAllNotification(id_user: string): Promise<Notification[]> {
+    return await this.prismaService.notification.findMany({
+      where: {
+        id_user,
+        read: false,
+      },
+    });
+  }
+
+  async markNotificationAsRead(
+    markNotificationAsReadInput: MarkNotificationAsReadInput,
+    id_user: string,
+  ): Promise<boolean> {
+    const { id } = markNotificationAsReadInput;
+    const result = await this.prismaService.notification.update({
+      data: {
+        read: true,
+      },
+      where: {
+        id,
+        id_user,
+      },
+    });
+
+    return result ? true : false;
   }
 }
