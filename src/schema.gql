@@ -2,6 +2,17 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type NotificationAD {
+  id: String
+  id_pet: String
+}
+
+type NotificationInvitation {
+  id: String
+  id_owner: String
+  id_clinic: String
+}
+
 type CreatedUserResponse {
   result: String!
   message: String!
@@ -86,6 +97,20 @@ type Notification {
 
 type NotificationResponse {
   result: String!
+}
+
+type AllNotification {
+  id: String!
+  id_user: String!
+  title: String!
+  subtitle: String!
+  category: String!
+  read: Boolean!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+  notificationInvitation: NotificationInvitation
+  notificationAD: NotificationAD
 }
 
 type AddPetResponse {
@@ -677,6 +702,6 @@ input DeleteCommentInput {
 }
 
 type Subscription {
-  getNewNotification: Notification!
+  getNewNotification: AllNotification!
   getAllNotification: [Notification!]!
 }

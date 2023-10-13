@@ -249,12 +249,21 @@ export class EmployeeService {
       });
       if (!employeeRequest) throw customException.INVITATION_FAILED(null);
 
-      const NotificationCreated =
+      const notificationCreated =
         await this.notificationService.saveNotification(sendNotification, tx);
 
-      await this.notificationService.sendNotificationToUser(
+      const { id: id_notificationCreated } = notificationCreated;
+
+      const notificationInvitation =
+        await this.notificationService.saveNotificationInvitation(
+          { id: id_notificationCreated, id_clinic: id, id_owner },
+          tx,
+        );
+
+      await this.notificationService.sendNotificationInvitationToUser(
         id_employee,
-        NotificationCreated,
+        notificationCreated,
+        notificationInvitation,
       );
     });
 

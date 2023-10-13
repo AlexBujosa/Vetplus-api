@@ -17,6 +17,7 @@ import { PubSub } from 'graphql-subscriptions';
 import { MarkNotificationAsReadInput } from '../input/markNotificationAsRead.input';
 import { NotificationResponse } from '../types/notification-response.type';
 import { Status } from '@/global/constant/constants';
+import { AllNotification } from '../types/all-notification.type';
 
 @Resolver()
 export class NotificationResolver {
@@ -27,7 +28,7 @@ export class NotificationResolver {
 
   @Roles(Role.CLINIC_OWNER, Role.ADMIN, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Subscription((returns) => Notification)
+  @Subscription((returns) => AllNotification)
   async getNewNotification(@Context() context) {
     return this.pubSub.asyncIterator(context.req.user.sub);
   }
