@@ -10,6 +10,8 @@ import { AuthService } from '@/auth/auth.service';
 import { InviteToClinicInput } from './graphql/input/invite-employee.input';
 import { ScoreVeterinarianInput } from './graphql/input/score-veterinarian.input';
 import { AddSpecialtyInput } from './graphql/input/add-specialty.input';
+import { NotificationService } from '@/notification/notification.service';
+import { SendNotificationInput } from '@/notification/graphql/input/sendNotification.input';
 
 @Injectable()
 export class EmployeeService {
@@ -17,6 +19,7 @@ export class EmployeeService {
     private readonly prismaService: PrismaService,
     private readonly clinicService: ClinicService,
     private readonly authService: AuthService,
+    private readonly notificationService: NotificationService,
   ) {}
   async getAllEmployeeById(id_clinic: string): Promise<EmployeeResult[]> {
     const result = await this.prismaService.clinic_Employee.findMany({
@@ -178,6 +181,7 @@ export class EmployeeService {
           if (!score) throw Error('Did not create veterinarian score');
 
           const token = this.authService.login(user);
+
           return { token: token.access_token };
         },
       );
@@ -218,15 +222,52 @@ export class EmployeeService {
     id_owner: string,
   ): Promise<boolean> {
     const my_clinic = await this.clinicService.getMyClinic(id_owner);
-    const { id, ...rest } = InviteToClinicInput;
-    if (my_clinic.id != id) throw customException.FORBIDDEN(null);
-    const result = await this.prismaService.clinic_Employee.create({
-      data: {
-        ...rest,
-        id_clinic: id,
-      },
+    const { id, id_employee, employee_invitation_status } = InviteToClinicInput;
+
+    if (my_clinic?.id != id) throw customException.FORBIDDEN(null);
+
+    const sendNotification: SendNotificationInput = {
+      id_user: id_employee,
+      category: 'INVITE_TO_CLINIC',
+      title: 'Invitation to Clinic',
+      subtitle: `${my_clinic.name} has invited you to join of them`,
+    };
+
+    await this.prismaService.$transaction(async (tx: OmitTx) => {
+      const employeeRequest = await tx.clinic_Employee.upsert({
+        create: {
+          id_employee,
+          employee_invitation_status,
+          id_clinic: id,
+        },
+        update: {
+          employee_invitation_status,
+        },
+        where: {
+          id_clinic_id_employee: { id_employee, id_clinic: id },
+        },
+      });
+      if (!employeeRequest) throw customException.INVITATION_FAILED(null);
+
+      const notificationCreated =
+        await this.notificationService.saveNotification(sendNotification, tx);
+
+      const { id: id_notificationCreated } = notificationCreated;
+
+      const notificationInvitation =
+        await this.notificationService.saveNotificationInvitation(
+          { id: id_notificationCreated, id_clinic: id, id_owner },
+          tx,
+        );
+
+      await this.notificationService.sendNotificationInvitationToUser(
+        id_employee,
+        notificationCreated,
+        notificationInvitation,
+      );
     });
-    return result ? true : false;
+
+    return true;
   }
 
   async scoreEmployee(

@@ -15,8 +15,8 @@ export class Appointment extends AppointmentSchedule {
   @Field(() => String)
   id_pet: string;
 
-  @Field(() => String)
-  id_service: string;
+  @Field(() => [String, String])
+  services: string | string[];
 
   @Field(() => String)
   id_clinic: string;

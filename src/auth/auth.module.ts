@@ -13,6 +13,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { AuthGateWay } from './auth.gateway';
 import { CacheModule } from '@nestjs/cache-manager';
 import { NotificationService } from '@/notification/notification.service';
+import { PubSubModule } from '@/pubsub/pubsub.module';
 //import * as redisStore from 'cache-manager-redis-store';
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { NotificationService } from '@/notification/notification.service';
       signOptions: { expiresIn: '7d' },
     }),
     forwardRef(() => CredentialsModule),
+    PubSubModule,
   ],
   providers: [
     AuthService,

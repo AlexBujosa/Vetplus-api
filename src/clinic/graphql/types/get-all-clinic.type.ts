@@ -1,9 +1,9 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Clinic } from './clinic.type';
 import { ClinicSummaryScore } from './clinic-summary-score.type';
+import { ClinicServiceArray } from './clinic-services-array.type';
 
 @ObjectType()
-export class GetAllClinic extends Clinic {
+export class GetAllClinic extends ClinicServiceArray {
   @Field(() => ClinicSummaryScore)
   ClinicSummaryScore: ClinicSummaryScore;
 }

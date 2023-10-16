@@ -44,6 +44,7 @@ enum NotificationCategory {
   APPOINTMENT
   HISTORY_ACCESS
   AUTHENTICATION
+  INVITE_TO_CLINIC
 }
 
 enum AppointmentState {
@@ -94,6 +95,7 @@ model User {
   Veterinarian              Veterinarian_PetOwner[] @relation("veterinarian")
   PetOwner                  Veterinarian_PetOwner[] @relation("pet_owner")
   Comment                   Comment[] 
+  Notification_Invitation   Notification_Invitation[]
 }
 
 model Credentials {
@@ -133,6 +135,8 @@ model Pet {
   Owner  User @relation(fields: [id_owner], references: [id]) 
   Specie Specie @relation(fields: [id_specie], references: [id])
   Breed  Breed  @relation(fields: [id_breed], references: [id])
+  Notification_AD Notification_AD[]
+
 
   Appointment Appointment[]
 
@@ -176,14 +180,41 @@ model Notification {
   title    String
   subtitle String
   category NotificationCategory
+  read     Boolean @default(false)
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
 
   User User @relation(fields: [id_user], references: [id])
+  Notification_AD Notification_AD?
+  Notification_Invitation Notification_Invitation?
 
   @@index([id_user])
+}
+
+model Notification_Invitation{
+  id String @id 
+  id_owner String 
+  id_clinic String
+  Clinic Clinic @relation(fields: [id_clinic], references: [id]) 
+  User  User @relation(fields: [id_owner], references: [id]) 
+  Notification Notification @relation(fields: [id], references: [id])
+
+  @@index([id])
+  @@index([id_clinic])
+  @@index([id_owner])
+}
+
+
+model Notification_AD{
+  id String @id 
+  id_pet String 
+  Pet  Pet @relation(fields: [id_pet], references: [id]) 
+  Notification Notification @relation(fields: [id], references: [id])
+
+  @@index([id])
+  @@index([id_pet])
 }
 
 model Appointment {
@@ -192,7 +223,7 @@ model Appointment {
   id_owner        String
   id_veterinarian String
   id_pet          String
-  id_service      String
+  services        String
   id_clinic       String
 
   start_at     DateTime
@@ -207,13 +238,11 @@ model Appointment {
   Owner        User  @relation("owner", fields: [id_owner], references: [id])
   Veterinarian User  @relation("veterinarian", fields: [id_veterinarian], references: [id])
   Pet          Pet     @relation(fields: [id_pet], references: [id])
-  Service      Service @relation(fields: [id_service], references: [id])
   Clinic       Clinic  @relation(fields: [id_clinic], references: [id])
   Veterinarian_PetOwner Veterinarian_PetOwner? 
 
   @@index([id_owner])
   @@index([id_veterinarian])
-  @@index([id_service])
   @@index([id_pet])
   @@index([id_clinic])
   @@index([id])
@@ -243,6 +272,7 @@ model Clinic {
   ClinicUsers           Clinic_User[]
   ClinicEmployees       Clinic_Employee[]
   Comment               Comment[] 
+  Notification_Invitation  Notification_Invitation[]
   ClinicSummaryScore    Clinic_Summary_Score?
   // TODO: Read google maps map url
   // TODO: Add Clinic Schedule tables for Days and Hours
@@ -313,7 +343,6 @@ model Service {
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
 
-  Appointment    Appointment[]
 }
 
 model Clinic_Summary_Score {

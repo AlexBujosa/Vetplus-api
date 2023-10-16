@@ -22,6 +22,7 @@ import { CommentModule } from './comment/comment.module';
 import { NotificationModule } from './notification/notification.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { AuthGateWay } from './auth/auth.gateway';
+import { AppointmentModule } from './appoinment/appointment.module';
 
 @Module({
   imports: [
@@ -33,7 +34,20 @@ import { AuthGateWay } from './auth/auth.gateway';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       subscriptions: {
-        'graphql-ws': true,
+        'subscriptions-transport-ws': {
+          path: '/graphql',
+          onConnect: (connectionParams) => {
+            return {
+              req: {
+                headers: {
+                  authorization:
+                    connectionParams.Authorization ??
+                    connectionParams.authorization,
+                },
+              },
+            };
+          },
+        },
       },
     }),
     PrismaModule,
@@ -50,6 +64,7 @@ import { AuthGateWay } from './auth/auth.gateway';
     EmployeeModule,
     CommentModule,
     NotificationModule,
+    AppointmentModule,
   ],
   providers: [
     PrismaService,

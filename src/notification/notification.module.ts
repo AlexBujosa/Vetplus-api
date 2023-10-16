@@ -4,10 +4,18 @@ import { NotificationService } from './notification.service';
 import { NotificationResolver } from './graphql/resolver/notification.resolver';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule } from '@nestjs/config';
+import { CacheModule } from '@nestjs/cache-manager';
+import { AuthGateWay } from '@/auth/auth.gateway';
+import { PubSub } from 'graphql-subscriptions';
+import { PubSubModule } from '@/pubsub/pubsub.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    CacheModule.register({
+      host: 'localhost',
+      port: 6379,
+    }),
     MailerModule.forRoot({
       transport: {
         host: 'smtp.gmail.com',
@@ -19,8 +27,14 @@ import { ConfigModule } from '@nestjs/config';
         },
       },
     }),
+    PubSubModule,
   ],
-  providers: [NotificationService, NotificationResolver, PrismaService],
+  providers: [
+    NotificationService,
+    NotificationResolver,
+    PrismaService,
+    AuthGateWay,
+  ],
   exports: [NotificationService],
 })
 export class NotificationModule {}

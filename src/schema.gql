@@ -2,6 +2,17 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type NotificationAD {
+  id: String
+  id_pet: String
+}
+
+type NotificationInvitation {
+  id: String
+  id_owner: String
+  id_clinic: String
+}
+
 type CreatedUserResponse {
   result: String!
   message: String!
@@ -65,11 +76,41 @@ type VerificationCode {
 }
 
 type RecoveryAccount {
-  access_token: String!
+  access_token: String
 }
 
 type CredentialsResponse {
   result: String!
+}
+
+type Notification {
+  id: String!
+  id_user: String!
+  title: String!
+  subtitle: String!
+  category: String!
+  read: Boolean!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
+type NotificationResponse {
+  result: String!
+}
+
+type AllNotification {
+  id: String!
+  id_user: String!
+  title: String!
+  subtitle: String!
+  category: String!
+  read: Boolean!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+  notificationInvitation: NotificationInvitation
+  notificationAD: NotificationAD
 }
 
 type AddPetResponse {
@@ -188,6 +229,7 @@ type GetAllClinic {
   created_at: DateTime!
   updated_at: DateTime!
   status: Boolean!
+  services: [String!]
   ClinicSummaryScore: ClinicSummaryScore!
 }
 
@@ -356,12 +398,12 @@ type CommentResponse {
 }
 
 type UserClinicPoint {
-  points: Int!
+  points: Int
 }
 
 type CommentOwner {
   names: String!
-  surnames: String!
+  surnames: String
   image: String
   ClinicUsers: [UserClinicPoint!]
 }
@@ -375,6 +417,25 @@ type GetAllCommentByIdClinic {
   updated_at: DateTime!
   status: Boolean!
   Owner: CommentOwner!
+}
+
+type AppointmentResponse {
+  result: String!
+}
+
+type Appointment {
+  start_at: DateTime!
+  end_at: DateTime!
+  id: String!
+  id_owner: String!
+  id_veterinarian: String!
+  id_pet: String!
+  services: [String!]!
+  id_clinic: String!
+  observations: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
 }
 
 type Query {
@@ -400,6 +461,7 @@ type Query {
   getMyEmployee(genericByIdInput: GenericByIdInput!): GetMyEmployeesResult!
   getAllCommentByIdClinic(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
   getMyComments(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
+  getAppoinmentCompletedPerPet(genericByIdInput: GenericByIdInput!): [Appointment!]!
 }
 
 input SignInInput {
@@ -425,7 +487,9 @@ type Mutation {
   deleteUserImage(deleteUserImageInput: DeleteUserImageInput!): DeleteUserImageResponse!
   recoveryPasswordSendVerificationCode(recoveryCredentialsInput: RecoveryCredentialsInput!): VerificationCode!
   recoveryAccount(verificationCodeInput: VerificationCodeInput!): RecoveryAccount!
+  updateCredentialsRecoveryAccount(updateCredentialsRecoveryAccountInput: UpdateCredentialsRecoveryAccountInput!): CredentialsResponse!
   updateCredentials(updateCredentialsInput: UpdateCredentialsInput!): CredentialsResponse!
+  markNotificationAsRead(markNotificationAsReadInput: MarkNotificationAsReadInput!): NotificationResponse!
   deletePetImage(deletePetImageInput: DeletePetImageInput!): DeletePetImageResponse!
   savePetImage(savePetImageInput: SavePetImageInput!): SavePetImageResponse!
   registerPet(addPetInput: AddPetInput!): AddPetResponse!
@@ -449,6 +513,7 @@ type Mutation {
   scoreVeterinarian(scoreVeterinarianInput: ScoreVeterinarianInput!): EmployeeResponse!
   registerComment(addCommentInput: AddCommentInput!): CommentResponse!
   deleteComment(deleteCommentInput: DeleteCommentInput!): CommentResponse!
+  scheduleAppoinment(scheduleAppointmentInput: ScheduleAppointmentInput!): AppointmentResponse!
 }
 
 input VerificationCodeInput {
@@ -497,8 +562,17 @@ input RecoveryCredentialsInput {
   email: String!
 }
 
-input UpdateCredentialsInput {
+input UpdateCredentialsRecoveryAccountInput {
   password: String!
+}
+
+input UpdateCredentialsInput {
+  old_password: String!
+  password: String!
+}
+
+input MarkNotificationAsReadInput {
+  id: String!
 }
 
 input DeletePetImageInput {
@@ -646,4 +720,18 @@ input AddCommentInput {
 input DeleteCommentInput {
   id: String!
   id_clinic: String!
+}
+
+input ScheduleAppointmentInput {
+  id_veterinarian: String!
+  id_pet: String!
+  services: [String!]!
+  id_clinic: String!
+  start_at: DateTime!
+  end_at: DateTime!
+}
+
+type Subscription {
+  getNewNotification: AllNotification!
+  getAllNotification: [Notification!]!
 }

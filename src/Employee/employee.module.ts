@@ -4,8 +4,9 @@ import { EmployeeResolver } from './graphql/resolver/employee.resolver';
 import { ClinicService } from '@/clinic/clinic.service';
 import { AuthModule } from '@/auth/auth.module';
 import { EmployeeService } from './employee.service';
+import { NotificationModule } from '@/notification/notification.module';
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, NotificationModule],
   providers: [EmployeeService, EmployeeResolver, PrismaService, ClinicService],
   exports: [EmployeeService],
 })

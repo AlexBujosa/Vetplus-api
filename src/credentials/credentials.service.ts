@@ -1,22 +1,19 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
 import { CreateCredentialsInput } from './graphql/input/create-credentials.input';
-import { v4 as uuidv4 } from 'uuid';
 import {
   customException,
   signUpCustomException,
 } from '@/global/constant/constants';
-import { generateRandomSixDigitNumber } from '@/global/constant/generate-random';
 import { NotificationService } from '@/notification/notification.service';
-import { NotificationKind } from '@/notification/constant';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { AuthGateWay } from '@/auth/auth.gateway';
 import { RecoveryAccount } from './constant';
 import { AuthService } from '@/auth/auth.service';
 import { UserService } from '@/user/user.service';
-import { BcryptService } from '@/bcrypt/bcrypt.service';
 import { UpdateCredentialsInput } from './graphql/input/update-credentials.input';
+import { BcryptService } from '@/bcrypt/bcrypt.service';
 
 @Injectable()
 export class CredentialsService {
@@ -41,14 +38,11 @@ export class CredentialsService {
     }
   }
 
-  async updateCredentials(
-    updateCredentialsInput: UpdateCredentialsInput,
-    id_user: string,
-  ): Promise<boolean> {
-    const { password } = updateCredentialsInput;
+  async updateCredentials(password: string, id_user: string): Promise<boolean> {
+    const passwordHash = await this.bcryptService.hashPassword(password);
     const passwordUpdated = await this.prisma.credentials.update({
       data: {
-        password,
+        password: passwordHash,
       },
       where: {
         id_user,
@@ -69,25 +63,17 @@ export class CredentialsService {
     }
   }
 
-  async recoveryPasswordSendVerificationCode(email: string): Promise<string> {
-    const randomKey = uuidv4();
-
-    const sixDigitNumberPassword = generateRandomSixDigitNumber();
-
-    this.notificationService.sendMail(
-      email,
-      sixDigitNumberPassword,
-      NotificationKind.PASSWORD_RECOVERY,
+  async passwordCoincidence(
+    old_password: string,
+    id_user: string,
+  ): Promise<boolean> {
+    const userCredentials = await this.findById(id_user);
+    if (!userCredentials) return false;
+    const comparePassword = this.bcryptService.comparePassword(
+      userCredentials.password,
+      old_password,
     );
-
-    await this.cacheManager.set(
-      randomKey,
-      { email, password: sixDigitNumberPassword },
-      120000,
-    );
-
-    await this.authGateWay.emitTimeRemaining(randomKey, 120000);
-    return randomKey;
+    return comparePassword;
   }
 
   async verificationCode(
@@ -97,10 +83,11 @@ export class CredentialsService {
     const result: { email: string; password: number } =
       await this.cacheManager.get(room);
 
-    if (!result || result?.password != verificationCode)
-      return { access_token: null };
+    if (!result) return { access_token: null };
+    if (result.password != verificationCode) return { access_token: null };
+
     const user = await this.userService.findByEmail(result.email);
-    const { access_token } = this.authService.login(user);
+    const { access_token } = this.authService.recoveryAccount(user);
 
     return { access_token };
   }

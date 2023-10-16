@@ -39,9 +39,11 @@
     "@nestjs/passport": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/platform-socket.io": "^10.2.6",
+    "@nestjs/platform-ws": "^10.2.7",
     "@nestjs/websockets": "^10.2.6",
     "@prisma/client": "^5.0.0",
     "@types/cache-manager": "^4.0.3",
+    "@types/ws": "^8.5.7",
     "apollo-server-express": "^3.12.0",
     "bcrypt": "^5.1.0",
     "cache-manager": "^5.2.3",
@@ -55,7 +57,7 @@
     "graphql-type-json": "^0.3.2",
     "graphql-upload": "^14.0.0",
     "graphql-upload-ts": "^2.1.0",
-    "graphql-ws": "^5.14.0",
+    "graphql-ws": "^5.14.1",
     "netlify-cli": "^16.0.1",
     "node-cache-manager": "^1.2.0",
     "nodemailer": "^6.9.5",
@@ -67,6 +69,7 @@
     "prisma": "^5.1.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
+    "ws": "^8.14.2",
     "yup": "^1.2.0"
   },
   "devDependencies": {

@@ -20,11 +20,8 @@ import { SignInResponse } from './graphql/types/sign-in-result.type';
 import { JwtService } from '@nestjs/jwt';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { v4 as uuidv4 } from 'uuid';
 import { AuthGateWay } from '@/auth/auth.gateway';
-import { generateRandomSixDigitNumber } from '../global/constant/generate-random';
 import { NotificationService } from '@/notification/notification.service';
-import { NotificationKind } from '@/notification/constant';
 
 @Injectable()
 export class AuthService {
@@ -72,33 +69,12 @@ export class AuthService {
     if (!result) throw customException.CREDENTIALS_NOT_FOUND(null);
     const { password: hash } = result;
 
-    const coincidence = await this.bcryptService.decryptPassword(
+    const coincidence = await this.bcryptService.comparePassword(
       hash,
       password,
     );
-    if (!coincidence) throw customException.INVALID_CREDENTIALS;
+    if (!coincidence) throw customException.INVALID_CREDENTIALS(null);
     return coincidence ? user : null;
-  }
-
-  async signUpVerificationCode(signUpInput: SignUpInput): Promise<string> {
-    const randomKey = uuidv4();
-
-    const sixDigitNumberPassword = generateRandomSixDigitNumber();
-
-    this.notificationService.sendMail(
-      signUpInput.email,
-      sixDigitNumberPassword,
-      NotificationKind.ACCOUNT_CREATION,
-    );
-
-    await this.cacheManager.set(
-      randomKey,
-      { signUpValue: signUpInput, password: sixDigitNumberPassword },
-      120000,
-    );
-
-    await this.authGateWay.emitTimeRemaining(randomKey, 120000);
-    return randomKey;
   }
 
   async verificationCode(
@@ -113,7 +89,7 @@ export class AuthService {
 
     if (result.password != verificationCode)
       return { signUpInput: null, result: false };
-    return { signUpInput: result.signUpValue, result: true };
+    return { signUpInput: result.signUpInput, result: true };
   }
 
   login(user: User): SignInResponse {
@@ -123,6 +99,19 @@ export class AuthService {
         sub: user.id,
         role: user.role,
       }),
+    };
+  }
+  recoveryAccount(user: User): SignInResponse {
+    return {
+      access_token: this.jwtService.sign(
+        {
+          username: user.email,
+          sub: user.id,
+          role: user.role,
+          password: true,
+        },
+        { expiresIn: '5m' },
+      ),
     };
   }
 }
