@@ -419,6 +419,25 @@ type GetAllCommentByIdClinic {
   Owner: CommentOwner!
 }
 
+type AppointmentResponse {
+  result: String!
+}
+
+type Appointment {
+  start_at: DateTime!
+  end_at: DateTime!
+  id: String!
+  id_owner: String!
+  id_veterinarian: String!
+  id_pet: String!
+  services: [String!]!
+  id_clinic: String!
+  observations: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
 type Query {
   signInWithEmail(signInInput: SignInInput!): SignInResponse!
   googleLogin: SignInResponse!
@@ -442,6 +461,7 @@ type Query {
   getMyEmployee(genericByIdInput: GenericByIdInput!): GetMyEmployeesResult!
   getAllCommentByIdClinic(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
   getMyComments(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
+  getAppoinmentCompletedPerPet(genericByIdInput: GenericByIdInput!): [Appointment!]!
 }
 
 input SignInInput {
@@ -493,6 +513,7 @@ type Mutation {
   scoreVeterinarian(scoreVeterinarianInput: ScoreVeterinarianInput!): EmployeeResponse!
   registerComment(addCommentInput: AddCommentInput!): CommentResponse!
   deleteComment(deleteCommentInput: DeleteCommentInput!): CommentResponse!
+  scheduleAppoinment(scheduleAppointmentInput: ScheduleAppointmentInput!): AppointmentResponse!
 }
 
 input VerificationCodeInput {
@@ -699,6 +720,15 @@ input AddCommentInput {
 input DeleteCommentInput {
   id: String!
   id_clinic: String!
+}
+
+input ScheduleAppointmentInput {
+  id_veterinarian: String!
+  id_pet: String!
+  services: [String!]!
+  id_clinic: String!
+  start_at: DateTime!
+  end_at: DateTime!
 }
 
 type Subscription {

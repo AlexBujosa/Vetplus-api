@@ -223,7 +223,7 @@ model Appointment {
   id_owner        String
   id_veterinarian String
   id_pet          String
-  id_service      String
+  services        String
   id_clinic       String
 
   start_at     DateTime
@@ -238,13 +238,11 @@ model Appointment {
   Owner        User  @relation("owner", fields: [id_owner], references: [id])
   Veterinarian User  @relation("veterinarian", fields: [id_veterinarian], references: [id])
   Pet          Pet     @relation(fields: [id_pet], references: [id])
-  Service      Service @relation(fields: [id_service], references: [id])
   Clinic       Clinic  @relation(fields: [id_clinic], references: [id])
   Veterinarian_PetOwner Veterinarian_PetOwner? 
 
   @@index([id_owner])
   @@index([id_veterinarian])
-  @@index([id_service])
   @@index([id_pet])
   @@index([id_clinic])
   @@index([id])
@@ -345,7 +343,6 @@ model Service {
   updated_at DateTime @updatedAt
   status     Boolean  @default(true)
 
-  Appointment    Appointment[]
 }
 
 model Clinic_Summary_Score {
