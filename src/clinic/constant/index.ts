@@ -2,6 +2,7 @@ import { ClinicSummaryScore } from '../graphql/types/clinic-summary-score.type';
 export type ServiceResult = {
   services: string[];
 };
+
 export type ScheduleType = {
   workingDays: {
     day: string;
