@@ -24,6 +24,12 @@ export class Appointment extends AppointmentSchedule {
   @Field(() => String, { nullable: true })
   observations: string;
 
+  @Field(() => String, { nullable: true })
+  appointment_status: 'ACCEPTED' | 'DENIED';
+
+  @Field(() => String, { nullable: true })
+  state: 'PENDING' | 'IN_PROGRESS' | 'FINISHED' | 'DELAYED' | 'CANCELLED';
+
   @Field(() => Date)
   created_at: Date;
 

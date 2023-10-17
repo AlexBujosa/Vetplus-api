@@ -217,6 +217,20 @@ type ClinicSummaryScore {
   total_users: Int!
 }
 
+type Clinic {
+  id: String!
+  id_owner: String!
+  name: String!
+  telephone_number: String!
+  google_maps_url: String
+  email: String
+  image: String
+  address: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+}
+
 type GetAllClinic {
   id: String!
   id_owner: String!
@@ -433,9 +447,50 @@ type Appointment {
   services: [String!]!
   id_clinic: String!
   observations: String
+  appointment_status: String
+  state: String
   created_at: DateTime!
   updated_at: DateTime!
   status: Boolean!
+}
+
+type AppointmentHistory {
+  start_at: DateTime!
+  end_at: DateTime!
+  id: String!
+  id_owner: String!
+  id_veterinarian: String!
+  id_pet: String!
+  services: [String!]!
+  id_clinic: String!
+  observations: String
+  appointment_status: String
+  state: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+  Clinic: Clinic
+  Pet: Pet
+  Veterinarian: User
+  Owner: User
+}
+
+type AppointmentVerified {
+  start_at: DateTime!
+  end_at: DateTime!
+  id: String!
+  id_owner: String!
+  id_veterinarian: String!
+  id_pet: String!
+  services: [String!]!
+  id_clinic: String!
+  observations: String
+  appointment_status: String
+  state: String
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+  Owner: User
 }
 
 type Query {
@@ -461,7 +516,10 @@ type Query {
   getMyEmployee(genericByIdInput: GenericByIdInput!): GetMyEmployeesResult!
   getAllCommentByIdClinic(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
   getMyComments(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
-  getAppoinmentCompletedPerPet(genericByIdInput: GenericByIdInput!): [Appointment!]!
+  getAppointmentPerPet(filterAppointmentByIdInput: FilterAppointmentByIdInput!): [AppointmentHistory!]!
+  getAppointmentDetails(filterAppointmentByIdInput: FilterAppointmentByIdInput!): [AppointmentHistory!]!
+  getAppointmentPerRangeDateTime(filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput!): [Appointment!]!
+  getAppointmentsVerified(filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput!): [AppointmentVerified!]!
 }
 
 input SignInInput {
@@ -475,6 +533,17 @@ input GenericByIdInput {
 
 input GetAllEmployeeByClinicIdInput {
   id: String!
+}
+
+input FilterAppointmentByIdInput {
+  id: String!
+  state: String
+}
+
+input FilterAppointmentByDateRangeInput {
+  id: String!
+  start_at: DateTime
+  end_at: DateTime
 }
 
 type Mutation {
@@ -514,6 +583,7 @@ type Mutation {
   registerComment(addCommentInput: AddCommentInput!): CommentResponse!
   deleteComment(deleteCommentInput: DeleteCommentInput!): CommentResponse!
   scheduleAppoinment(scheduleAppointmentInput: ScheduleAppointmentInput!): AppointmentResponse!
+  updateAppointmentDetail(updateAppointmentInput: UpdateAppointmentInput!): AppointmentResponse!
 }
 
 input VerificationCodeInput {
@@ -729,6 +799,13 @@ input ScheduleAppointmentInput {
   id_clinic: String!
   start_at: DateTime!
   end_at: DateTime!
+}
+
+input UpdateAppointmentInput {
+  id: String!
+  id_clinic: String!
+  appointment_status: String
+  end_at: DateTime
 }
 
 type Subscription {
