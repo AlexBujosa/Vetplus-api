@@ -40,6 +40,11 @@ enum EmployeeInvitationStatus {
   CANCELED
 }
 
+enum AppointmentStatus {
+  ACCEPTED
+  DENIED
+}
+
 enum NotificationCategory {
   APPOINTMENT
   HISTORY_ACCESS
@@ -227,9 +232,10 @@ model Appointment {
   id_clinic       String
 
   start_at     DateTime
-  end_at       DateTime
+  end_at       DateTime?
   observations String?           @db.Text
   state        AppointmentState @default(PENDING)
+  appointment_status AppointmentStatus?
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

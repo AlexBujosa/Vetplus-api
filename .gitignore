@@ -42,3 +42,5 @@ lerna-debug.log*
 !.vscode/extensions.json
 # Local Netlify folder
 .netlify
+
+credentials.json

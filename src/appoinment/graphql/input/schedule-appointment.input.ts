@@ -1,4 +1,3 @@
-import { StringOrArrayStringUnion } from '@/appoinment/constant';
 import { InputType, Field, Int } from '@nestjs/graphql';
 
 @InputType()
