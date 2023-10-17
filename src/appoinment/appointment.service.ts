@@ -7,7 +7,6 @@ import { FilterAppointmentByIdInput } from './graphql/input/filter-appointment-b
 import { UpdateAppointmentInput } from './graphql/input/update-appointment.type';
 import { FilterAppointmentByDateRangeInput } from './graphql/input/filter-appointment-by-range-date.input';
 import { Appointment } from './graphql/types/appointment.type';
-import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
 import { AppointmentVerified } from './graphql/types/appointment-verified.type';
 
 @Injectable()
