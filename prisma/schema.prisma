@@ -101,6 +101,16 @@ model User {
   PetOwner                  Veterinarian_PetOwner[] @relation("pet_owner")
   Comment                   Comment[] 
   Notification_Invitation   Notification_Invitation[]
+  User_Fmc                  User_Fmc?
+}
+
+model User_Fmc {
+  id_user       String     @id
+  token_fmc     String
+  
+  User        User  @relation(fields: [id_user], references: [id])
+
+  @@index([id_user])
 }
 
 model Credentials {

@@ -8,7 +8,7 @@ async function bootstrap() {
   const httpAdapterHost = app.get(HttpAdapterHost);
   app.useGlobalFilters(new CustomExceptionFilter(httpAdapterHost));
   app.use(passport.initialize());
-  app.use(graphqlUploadExpress({ maxFileSize: 1000000, maxFiles: 10 }));
+  app.use(graphqlUploadExpress({ maxFileSize: 3000000, maxFiles: 10 }));
   app.enableCors({
     allowedHeaders: ['Authorization', 'Content-Type'],
     origin: '*',

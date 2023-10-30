@@ -17,6 +17,6 @@ export class ScheduleAppointmentInput {
   @Field(() => Date)
   start_at: Date;
 
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   end_at: Date;
 }

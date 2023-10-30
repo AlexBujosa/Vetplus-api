@@ -164,6 +164,7 @@ export class NotificationService {
       },
     });
   }
+
   async sendNotificationToUser(id_user: string, notification: Notification) {
     this.pubSub.publish(id_user, {
       getNewNotification: { ...notification },

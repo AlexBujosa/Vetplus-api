@@ -3,9 +3,6 @@ import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
 export class UpdateAppointmentInput extends GenericByIdInput {
-  @Field(() => String)
-  id_clinic: string;
-
   @Field(() => String, { nullable: true })
   appointment_status: 'ACCEPTED' | 'DENIED';
 

@@ -23,6 +23,7 @@ import { NotificationModule } from './notification/notification.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { AuthGateWay } from './auth/auth.gateway';
 import { AppointmentModule } from './appoinment/appointment.module';
+import { ReminderModule } from './reminder/reminder.module';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { AppointmentModule } from './appoinment/appointment.module';
     CommentModule,
     NotificationModule,
     AppointmentModule,
+    ReminderModule,
   ],
   providers: [
     PrismaService,
