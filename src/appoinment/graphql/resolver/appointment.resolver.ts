@@ -14,6 +14,7 @@ import { UpdateAppointmentInput } from '../input/update-appointment.type';
 import { FilterAppointmentByDateRangeInput } from '../input/filter-appointment-by-range-date.input';
 import { Appointment } from '../types/appointment.type';
 import { AppointmentVerified } from '../types/appointment-verified.type';
+import { FilterAppointmentBySSInput } from '../input/filter-appointment-by-ss.input';
 
 @Resolver()
 export class AppointmentResolver {
@@ -55,13 +56,13 @@ export class AppointmentResolver {
   @Roles(Role.CLINIC_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getAppointmentDetails(
-    @Args('filterAppointmentByIdInput')
-    filterAppointmentByIdInput: FilterAppointmentByIdInput,
+    @Args('filterAppointmentByStateInput')
+    filterAppointmentBySSInput: FilterAppointmentBySSInput,
     @Context() context,
   ): Promise<AppointmentHistory[]> {
     const getAppointmentDetails =
       await this.appointmentService.getAppointmentDetail(
-        filterAppointmentByIdInput,
+        filterAppointmentBySSInput,
         context.req.user.sub,
       );
     return getAppointmentDetails;

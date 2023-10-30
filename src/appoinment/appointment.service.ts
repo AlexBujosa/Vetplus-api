@@ -8,17 +8,25 @@ import { UpdateAppointmentInput } from './graphql/input/update-appointment.type'
 import { FilterAppointmentByDateRangeInput } from './graphql/input/filter-appointment-by-range-date.input';
 import { Appointment } from './graphql/types/appointment.type';
 import { AppointmentVerified } from './graphql/types/appointment-verified.type';
+import { ReminderAppointment } from '@/reminder/reminder';
+import { Cron } from '@nestjs/schedule';
+import { FilterAppointmentBySSInput } from './graphql/input/filter-appointment-by-ss.input';
+import { tz } from 'moment-timezone';
+import { AppointmentUserFmc } from './graphql/types/appointment-user-fmc.type';
 
+tz.setDefault('America/Santo_Domingo');
 @Injectable()
 export class AppointmentService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly reminderAppointment: ReminderAppointment,
+  ) {}
 
   async scheduleAppointment(
     scheduleAppointmentInput: ScheduleAppointmentInput,
     id_owner: string,
   ): Promise<boolean> {
-    const { services, ...rest } = scheduleAppointmentInput;
-
+    const { services, start_at, ...rest } = scheduleAppointmentInput;
     const serviceResult =
       typeof services == 'string'
         ? services
@@ -27,6 +35,7 @@ export class AppointmentService {
     const appoinmentCreated = await this.prismaService.appointment.create({
       data: {
         ...rest,
+        start_at,
         services: serviceResult,
         id_owner,
       },
@@ -59,15 +68,18 @@ export class AppointmentService {
   }
 
   async getAppointmentDetail(
-    filterAppointmentByIdInput: FilterAppointmentByIdInput,
+    filterAppointmentBySSInput: FilterAppointmentBySSInput,
     id_owner: string,
   ): Promise<AppointmentHistory[]> {
-    const { id: id_clinic, state } = filterAppointmentByIdInput;
-    const result = state ? { state } : {};
+    const { state, appointment_status } = filterAppointmentBySSInput;
+    const stateResult = state ? { state } : {};
+    const appointmentStatusResult = appointment_status
+      ? { appointment_status }
+      : {};
     const getAllAppointment = await this.prismaService.appointment.findMany({
       where: {
-        id_clinic,
-        ...result,
+        ...stateResult,
+        ...appointmentStatusResult,
         Clinic: {
           id_owner,
         },
@@ -88,9 +100,7 @@ export class AppointmentService {
     updateAppointmentInput: UpdateAppointmentInput,
     id_owner: string,
   ) {
-    const { id, id_clinic, appointment_status, end_at } =
-      updateAppointmentInput;
-
+    const { id, appointment_status, end_at } = updateAppointmentInput;
     const appointmentUpdated = await this.prismaService.appointment.update({
       data: {
         appointment_status,
@@ -98,7 +108,6 @@ export class AppointmentService {
       },
       where: {
         id,
-        id_clinic,
         Clinic: {
           id_owner,
         },
@@ -112,16 +121,11 @@ export class AppointmentService {
     filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput,
     id_owner: string,
   ): Promise<Appointment[]> {
-    const {
-      start_at,
-      end_at,
-      id: id_clinic,
-    } = filterAppointmentByDateRangeInput;
+    const { start_at, end_at } = filterAppointmentByDateRangeInput;
 
     const getAppointmentsByDateRange: Appointment[] =
       await this.prismaService.appointment.findMany({
         where: {
-          id_clinic,
           Clinic: {
             id_owner,
           },
@@ -141,15 +145,10 @@ export class AppointmentService {
     filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput,
     id_owner: string,
   ): Promise<AppointmentVerified[]> {
-    const {
-      id: id_clinic,
-      start_at,
-      end_at,
-    } = filterAppointmentByDateRangeInput;
+    const { start_at, end_at } = filterAppointmentByDateRangeInput;
     const getAppointmentsVerified: AppointmentVerified[] =
       await this.prismaService.appointment.findMany({
         where: {
-          id_clinic,
           Clinic: {
             id_owner,
           },
@@ -169,6 +168,45 @@ export class AppointmentService {
     );
 
     return getAppointmentsByDateRangeResult;
+  }
+
+  async getAppointmentToScheduleTask(): Promise<AppointmentUserFmc[]> {
+    const today = new Date();
+
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const nextDay = String(today.getDate() + 1).padStart(2, '0');
+
+    const todayformattedDate = `${year}-${month}-${day}`;
+    const tomorrowformattedDate = `${year}-${month}-${nextDay}`;
+
+    const incomingAppointmentForNotification: AppointmentUserFmc[] =
+      await this.prismaService.appointment.findMany({
+        include: {
+          Owner: {
+            include: {
+              User_Fmc: true,
+            },
+          },
+        },
+        where: {
+          appointment_status: 'ACCEPTED',
+          AND: [
+            { start_at: { gte: new Date(todayformattedDate) } },
+            { end_at: { lte: new Date(tomorrowformattedDate) } },
+          ],
+        },
+      });
+
+    return incomingAppointmentForNotification;
+  }
+
+  @Cron('0 0 4 * * *', { timeZone: 'America/Santo_Domingo' })
+  async handleCron() {
+    const appointmentToScheduleTask = await this.getAppointmentToScheduleTask();
+
+    await this.reminderAppointment.setScheduleFormat(appointmentToScheduleTask);
   }
 
   private getAllApointment(getAllApointment: any[]) {

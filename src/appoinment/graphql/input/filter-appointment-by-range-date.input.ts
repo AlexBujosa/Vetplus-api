@@ -1,8 +1,7 @@
-import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
 import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
-export class FilterAppointmentByDateRangeInput extends GenericByIdInput {
+export class FilterAppointmentByDateRangeInput {
   @Field(() => Date, { nullable: true })
   start_at: Date;
 

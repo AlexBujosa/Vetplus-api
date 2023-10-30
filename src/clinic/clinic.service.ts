@@ -279,13 +279,10 @@ export class ClinicService {
     return result[0];
   }
 
-  async GetAllClients(
-    genericByIdInput: GenericByIdInput,
-  ): Promise<GetAllClientsResult[]> {
-    const { id } = genericByIdInput;
+  async GetAllClients(id_user: string): Promise<GetAllClientsResult[]> {
     const result = await this.prismaService.clinic_User.findMany({
       where: {
-        id_user: id,
+        id_user,
         clientAttendance: true,
       },
       include: {

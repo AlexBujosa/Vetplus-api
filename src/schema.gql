@@ -249,7 +249,7 @@ type GetAllClinic {
 
 type AppointmentSchedule {
   start_at: DateTime!
-  end_at: DateTime!
+  end_at: DateTime
 }
 
 type PetBreed {
@@ -439,7 +439,7 @@ type AppointmentResponse {
 
 type Appointment {
   start_at: DateTime!
-  end_at: DateTime!
+  end_at: DateTime
   id: String!
   id_owner: String!
   id_veterinarian: String!
@@ -456,7 +456,7 @@ type Appointment {
 
 type AppointmentHistory {
   start_at: DateTime!
-  end_at: DateTime!
+  end_at: DateTime
   id: String!
   id_owner: String!
   id_veterinarian: String!
@@ -477,7 +477,7 @@ type AppointmentHistory {
 
 type AppointmentVerified {
   start_at: DateTime!
-  end_at: DateTime!
+  end_at: DateTime
   id: String!
   id_owner: String!
   id_veterinarian: String!
@@ -517,7 +517,7 @@ type Query {
   getAllCommentByIdClinic(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
   getMyComments(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
   getAppointmentPerPet(filterAppointmentByIdInput: FilterAppointmentByIdInput!): [AppointmentHistory!]!
-  getAppointmentDetails(filterAppointmentByIdInput: FilterAppointmentByIdInput!): [AppointmentHistory!]!
+  getAppointmentDetails(filterAppointmentByStateInput: FilterAppointmentBySSInput!): [AppointmentHistory!]!
   getAppointmentPerRangeDateTime(filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput!): [Appointment!]!
   getAppointmentsVerified(filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput!): [AppointmentVerified!]!
 }
@@ -540,8 +540,12 @@ input FilterAppointmentByIdInput {
   state: String
 }
 
+input FilterAppointmentBySSInput {
+  state: String
+  appointment_status: String
+}
+
 input FilterAppointmentByDateRangeInput {
-  id: String!
   start_at: DateTime
   end_at: DateTime
 }
@@ -798,12 +802,11 @@ input ScheduleAppointmentInput {
   services: [String!]!
   id_clinic: String!
   start_at: DateTime!
-  end_at: DateTime!
+  end_at: DateTime
 }
 
 input UpdateAppointmentInput {
   id: String!
-  id_clinic: String!
   appointment_status: String
   end_at: DateTime
 }
