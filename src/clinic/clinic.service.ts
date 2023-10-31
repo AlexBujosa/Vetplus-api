@@ -16,6 +16,7 @@ import { Schedule } from './graphql/types/schedule.type';
 import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { TurnClinicStatusInput } from './graphql/input/turn-clinic-status.input';
+import { Console } from 'console';
 
 @Injectable()
 export class ClinicService {
@@ -282,8 +283,10 @@ export class ClinicService {
   async GetAllClients(id_user: string): Promise<GetAllClientsResult[]> {
     const result = await this.prismaService.clinic_User.findMany({
       where: {
-        id_user,
         clientAttendance: true,
+        Clinic: {
+          id_owner: id_user,
+        },
       },
       include: {
         User: {
