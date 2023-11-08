@@ -74,7 +74,7 @@ export class UserService {
       },
     });
 
-    if (!result) throw customException.INVALID_CREDENTIALS(null);
+    if (!result) throw customException.EMAIL_NOT_FOUND(null);
 
     return result;
   }

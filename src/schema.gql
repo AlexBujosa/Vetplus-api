@@ -771,7 +771,7 @@ input TurnEmployeeStatusInput {
 
 input InviteToClinicInput {
   id: String!
-  id_employee: String!
+  email: String!
   employee_invitation_status: String
 }
 

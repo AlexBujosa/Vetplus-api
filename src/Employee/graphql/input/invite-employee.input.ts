@@ -3,7 +3,7 @@ import { GenericByIdInput } from '@/global/graphql/input/generic-by-id.input';
 @InputType()
 export class InviteToClinicInput extends GenericByIdInput {
   @Field(() => String)
-  id_employee: string;
+  email: string;
 
   @Field({ nullable: true })
   employee_invitation_status: 'PENDING' | 'CANCELED';

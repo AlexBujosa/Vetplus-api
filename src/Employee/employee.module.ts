@@ -5,8 +5,9 @@ import { ClinicService } from '@/clinic/clinic.service';
 import { AuthModule } from '@/auth/auth.module';
 import { EmployeeService } from './employee.service';
 import { NotificationModule } from '@/notification/notification.module';
+import { UserModule } from '@/user/user.module';
 @Module({
-  imports: [AuthModule, NotificationModule],
+  imports: [AuthModule, NotificationModule, UserModule],
   providers: [EmployeeService, EmployeeResolver, PrismaService, ClinicService],
   exports: [EmployeeService],
 })
