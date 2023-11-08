@@ -109,7 +109,7 @@ export class ReminderAppointment extends BaseReminder<
     return await this.scheduled(add);
   }
 
-  @Cron('* */15 5-19 * * *', { timeZone: 'America/Santo_Domingo' })
+  @Cron('0 */15 5-19 * * *', { timeZone: 'America/Santo_Domingo' })
   async remindUsers() {
     const reminderSchedule: Record<TimeSlots, IReminderAppointment[]> =
       JSON.parse(await client.get('schedule'));

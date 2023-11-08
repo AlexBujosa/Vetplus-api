@@ -40,6 +40,7 @@ export class EmployeeService {
     });
     return result;
   }
+
   async getMyEmployee(
     id_owner: string,
     id_employee: string,
@@ -168,7 +169,7 @@ export class EmployeeService {
             return { token: null };
 
           const user = await tx.user.update({
-            data: { role: 'VETERINARIAN' },
+            data: { role: Role.VETERINARIAN },
             where: { id: id_employee },
           });
 
@@ -237,43 +238,45 @@ export class EmployeeService {
     const sendNotification: SendNotificationInput = {
       id_user,
       category: 'INVITE_TO_CLINIC',
-      title: 'Invitation to Clinic',
+      title: 'Clinic Invitation',
       subtitle: `${my_clinic.name} has invited you to join of them`,
     };
 
-    await this.prismaService.$transaction(async (tx: OmitTx) => {
-      const employeeRequest = await tx.clinic_Employee.upsert({
-        create: {
-          id_employee: id_user,
-          employee_invitation_status,
-          id_clinic,
-        },
-        update: {
-          employee_invitation_status,
-        },
-        where: {
-          id_clinic_id_employee: { id_employee: id_user, id_clinic },
-        },
+    const { notificationCreated, notificationInvitation } =
+      await this.prismaService.$transaction(async (tx: OmitTx) => {
+        const employeeRequest = await tx.clinic_Employee.upsert({
+          create: {
+            id_employee: id_user,
+            employee_invitation_status,
+            id_clinic,
+          },
+          update: {
+            employee_invitation_status,
+          },
+          where: {
+            id_clinic_id_employee: { id_employee: id_user, id_clinic },
+          },
+        });
+        if (!employeeRequest) throw customException.INVITATION_FAILED(null);
+
+        const notificationCreated =
+          await this.notificationService.saveNotification(sendNotification, tx);
+
+        const { id: id_notificationCreated } = notificationCreated;
+
+        const notificationInvitation =
+          await this.notificationService.saveNotificationInvitation(
+            { id: id_notificationCreated, id_clinic, id_owner },
+            tx,
+          );
+        return { notificationCreated, notificationInvitation };
       });
-      if (!employeeRequest) throw customException.INVITATION_FAILED(null);
 
-      const notificationCreated =
-        await this.notificationService.saveNotification(sendNotification, tx);
-
-      const { id: id_notificationCreated } = notificationCreated;
-
-      const notificationInvitation =
-        await this.notificationService.saveNotificationInvitation(
-          { id: id_notificationCreated, id_clinic, id_owner },
-          tx,
-        );
-
-      await this.notificationService.sendNotificationInvitationToUser(
-        id_user,
-        notificationCreated,
-        notificationInvitation,
-      );
-    });
+    await this.notificationService.sendNotificationInvitationToUser(
+      id_user,
+      notificationCreated,
+      notificationInvitation,
+    );
 
     return true;
   }

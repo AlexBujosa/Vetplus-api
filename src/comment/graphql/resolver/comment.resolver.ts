@@ -64,11 +64,10 @@ export class CommentResolver {
   @Query(() => [GetAllCommentByIdClinic])
   @Roles(Role.CLINIC_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async getMyComments(
-    @Args('genericByIdInput')
-    genericByIdInput: GenericByIdInput,
-  ): Promise<GetMyComment[]> {
-    const result = await this.commentService.getMyComments(genericByIdInput);
+  async getMyComments(@Context() context): Promise<GetMyComment[]> {
+    const result = await this.commentService.getMyComments(
+      context.req.user.sub,
+    );
 
     return result;
   }

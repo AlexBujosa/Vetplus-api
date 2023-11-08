@@ -500,6 +500,7 @@ type Query {
   getMyProfile: User!
   findAll: [User!]!
   findCredentialsById: Credentials!
+  getAllNotification: [Notification!]!
   getMyPets: [Pet!]!
   findAllPet: [Pet!]!
   getAllBreed: [Breed!]!
@@ -515,7 +516,7 @@ type Query {
   getMyEmployees: GetMyEmployeesResult!
   getMyEmployee(genericByIdInput: GenericByIdInput!): GetMyEmployeesResult!
   getAllCommentByIdClinic(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
-  getMyComments(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
+  getMyComments: [GetAllCommentByIdClinic!]!
   getAppointmentPerPet(filterAppointmentByIdInput: FilterAppointmentByIdInput!): [AppointmentHistory!]!
   getAppointmentDetails(filterAppointmentByStateInput: FilterAppointmentBySSInput!): [AppointmentHistory!]!
   getAppointmentPerRangeDateTime(filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput!): [Appointment!]!
@@ -813,5 +814,4 @@ input UpdateAppointmentInput {
 
 type Subscription {
   getNewNotification: AllNotification!
-  getAllNotification: [Notification!]!
 }

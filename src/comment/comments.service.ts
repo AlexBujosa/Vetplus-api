@@ -25,13 +25,12 @@ export class CommentService {
     return result ? true : false;
   }
 
-  async getMyComments(
-    genericByIdInput: GenericByIdInput,
-  ): Promise<GetMyComment[]> {
-    const { id } = genericByIdInput;
+  async getMyComments(id_owner: string): Promise<GetMyComment[]> {
     const result = await this.prismaService.comment.findMany({
       where: {
-        id_clinic: id,
+        Clinic: {
+          id_owner,
+        },
       },
       include: {
         Owner: {
@@ -51,7 +50,9 @@ export class CommentService {
                 points: true,
               },
               where: {
-                id_clinic: id,
+                Clinic: {
+                  id_owner,
+                },
               },
             },
           },

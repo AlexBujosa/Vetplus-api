@@ -16,7 +16,6 @@ import { Schedule } from './graphql/types/schedule.type';
 import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { TurnClinicStatusInput } from './graphql/input/turn-clinic-status.input';
-import { Console } from 'console';
 
 @Injectable()
 export class ClinicService {

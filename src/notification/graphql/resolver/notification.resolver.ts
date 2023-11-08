@@ -35,7 +35,7 @@ export class NotificationResolver {
 
   @Roles(Role.CLINIC_OWNER, Role.ADMIN, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Subscription(() => [Notification])
+  @Query(() => [Notification])
   async getAllNotification(@Context() context): Promise<Notification[]> {
     return await this.notificationService.getAllNotification(
       context.req.user.sub,

@@ -348,6 +348,7 @@ model Clinic_Employee {
   @@id([id_clinic, id_employee])
   @@index([id_clinic])
   @@index([id_employee])
+
 }
 
 model Service {
