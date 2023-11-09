@@ -83,6 +83,7 @@ export class AppointmentService {
     filterAppointmentBySSInput: FilterAppointmentBySSInput,
     id_owner: string,
   ) {
+    console.log(filterAppointmentBySSInput);
     return await this.getAppointmentDetail(
       filterAppointmentBySSInput,
       id_owner,

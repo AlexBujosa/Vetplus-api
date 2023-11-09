@@ -1,5 +1,5 @@
 import { Args, Context, Mutation, Resolver, Query } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, UsePipes } from '@nestjs/common';
 import { JwtAuthGuard } from '@/global/guard/jwt-auth.guard';
 import { RolesGuard } from '@/global/guard/roles.guard';
 import { Roles } from '@/global/decorator/roles.decorator';
@@ -15,6 +15,8 @@ import { FilterAppointmentByDateRangeInput } from '../input/filter-appointment-b
 import { Appointment } from '../types/appointment.type';
 import { AppointmentVerified } from '../types/appointment-verified.type';
 import { FilterAppointmentBySSInput } from '../input/filter-appointment-by-ss.input';
+import { YupValidationPipe } from '@/global/pipe/yup-validation.pipe';
+import { FilterAppointmentSSInputSchema } from '@/global/schema/filter-appointment-ss-input.schema';
 
 @Resolver()
 export class AppointmentResolver {
@@ -55,6 +57,7 @@ export class AppointmentResolver {
   @Query(() => [AppointmentHistory])
   @Roles(Role.CLINIC_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @UsePipes(new YupValidationPipe(FilterAppointmentSSInputSchema))
   async getAppointmentDetailClinicOwner(
     @Args('filterAppointmentBySSInput')
     filterAppointmentBySSInput: FilterAppointmentBySSInput,
@@ -71,6 +74,7 @@ export class AppointmentResolver {
   @Query(() => [AppointmentHistory])
   @Roles(Role.CLINIC_OWNER, Role.ADMIN, Role.VETERINARIAN, Role.PET_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @UsePipes(new YupValidationPipe(FilterAppointmentSSInputSchema))
   async getAppointmentDetailAllRoles(
     @Args('filterAppointmentBySSInput')
     filterAppointmentBySSInput: FilterAppointmentBySSInput,
