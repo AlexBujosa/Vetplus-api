@@ -7,6 +7,9 @@ export class SendNotificationInput {
   id_user: string;
 
   @Field(() => String)
+  id_entity: string;
+
+  @Field(() => String)
   title: string;
 
   @Field(() => String)

@@ -87,12 +87,13 @@ export class NotificationService {
     tx?: OmitTx,
   ): Promise<Notification> {
     try {
-      const data = { data: { ...sendNotificationInput } };
       const result = !tx
         ? await this.prismaService.notification.create({
-            ...data,
+            data: sendNotificationInput,
           })
-        : tx.notification.create({ ...data });
+        : tx.notification.create({
+            data: sendNotificationInput,
+          });
       return result;
     } catch (error) {
       throw customException.NOTIFICATION_FAILED(null);

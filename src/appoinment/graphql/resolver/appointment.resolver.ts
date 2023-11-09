@@ -55,13 +55,29 @@ export class AppointmentResolver {
   @Query(() => [AppointmentHistory])
   @Roles(Role.CLINIC_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async getAppointmentDetails(
-    @Args('filterAppointmentByStateInput')
+  async getAppointmentDetailClinicOwner(
+    @Args('filterAppointmentBySSInput')
     filterAppointmentBySSInput: FilterAppointmentBySSInput,
     @Context() context,
   ): Promise<AppointmentHistory[]> {
     const getAppointmentDetails =
-      await this.appointmentService.getAppointmentDetail(
+      await this.appointmentService.getAppointmentDetailClinicOwner(
+        filterAppointmentBySSInput,
+        context.req.user.sub,
+      );
+    return getAppointmentDetails;
+  }
+
+  @Query(() => [AppointmentHistory])
+  @Roles(Role.CLINIC_OWNER, Role.ADMIN, Role.VETERINARIAN, Role.PET_OWNER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getAppointmentDetailAllRoles(
+    @Args('filterAppointmentBySSInput')
+    filterAppointmentBySSInput: FilterAppointmentBySSInput,
+    @Context() context,
+  ): Promise<AppointmentHistory[]> {
+    const getAppointmentDetails =
+      await this.appointmentService.getAppointmentDetailClinicOwner(
         filterAppointmentBySSInput,
         context.req.user.sub,
       );

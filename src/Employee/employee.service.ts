@@ -5,7 +5,11 @@ import { TurnEmployeeStatusInput } from './graphql/input/turn-employee-status.in
 import { ClinicService } from '@/clinic/clinic.service';
 import { SummaryScore, customException } from '@/global/constant/constants';
 import { HandleEmployeeRequestInput } from './graphql/input/handle-employee-request.input';
-import { EmployeeInvitationStatus, Role } from '@prisma/client';
+import {
+  EmployeeInvitationStatus,
+  NotificationCategory,
+  Role,
+} from '@prisma/client';
 import { AuthService } from '@/auth/auth.service';
 import { InviteToClinicInput } from './graphql/input/invite-employee.input';
 import { ScoreVeterinarianInput } from './graphql/input/score-veterinarian.input';
@@ -235,9 +239,11 @@ export class EmployeeService {
     if (my_clinic?.id != id_clinic) throw customException.FORBIDDEN(null);
 
     const { id: id_user } = await this.userService.findByEmail(email);
+
     const sendNotification: SendNotificationInput = {
-      id_user,
-      category: 'INVITE_TO_CLINIC',
+      id_user: id_user,
+      id_entity: my_clinic.id_owner,
+      category: NotificationCategory.INVITE_TO_CLINIC,
       title: 'Clinic Invitation',
       subtitle: `${my_clinic.name} has invited you to join of them`,
     };

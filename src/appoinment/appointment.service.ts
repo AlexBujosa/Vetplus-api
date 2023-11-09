@@ -67,11 +67,42 @@ export class AppointmentService {
     return getAllAppoinmentResult;
   }
 
-  async getAppointmentDetail(
+  async getAppointmentDetailClinicOwner(
     filterAppointmentBySSInput: FilterAppointmentBySSInput,
     id_owner: string,
   ): Promise<AppointmentHistory[]> {
+    return await this.getAppointmentDetail(
+      filterAppointmentBySSInput,
+      id_owner,
+      false,
+    );
+  }
+
+  async getAppointmentDetailByAllRole(
+    filterAppointmentBySSInput: FilterAppointmentBySSInput,
+    id_owner: string,
+  ) {
+    return await this.getAppointmentDetail(
+      filterAppointmentBySSInput,
+      id_owner,
+      true,
+    );
+  }
+
+  private async getAppointmentDetail(
+    filterAppointmentBySSInput: FilterAppointmentBySSInput,
+    id_owner: string,
+    asEveryOne: boolean,
+  ): Promise<AppointmentHistory[]> {
+    const filterByAllOrClinic = asEveryOne
+      ? { id_owner }
+      : {
+          Clinic: {
+            id_owner,
+          },
+        };
     const { state, appointment_status } = filterAppointmentBySSInput;
+
     const stateResult = state ? { state } : {};
     const appointmentStatusResult = appointment_status
       ? { appointment_status }
@@ -80,9 +111,7 @@ export class AppointmentService {
       where: {
         ...stateResult,
         ...appointmentStatusResult,
-        Clinic: {
-          id_owner,
-        },
+        ...filterByAllOrClinic,
       },
       include: {
         Pet: true,

@@ -48,8 +48,8 @@ enum AppointmentStatus {
 enum NotificationCategory {
   APPOINTMENT
   HISTORY_ACCESS
-  AUTHENTICATION
   INVITE_TO_CLINIC
+  AUTHENTICATION
 }
 
 enum AppointmentState {
@@ -191,7 +191,7 @@ model Breed {
 model Notification {
   id String @id @default(uuid())
   id_user String
-
+  id_entity String
   title    String
   subtitle String
   category NotificationCategory

@@ -518,7 +518,8 @@ type Query {
   getAllCommentByIdClinic(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
   getMyComments: [GetAllCommentByIdClinic!]!
   getAppointmentPerPet(filterAppointmentByIdInput: FilterAppointmentByIdInput!): [AppointmentHistory!]!
-  getAppointmentDetails(filterAppointmentByStateInput: FilterAppointmentBySSInput!): [AppointmentHistory!]!
+  getAppointmentDetailClinicOwner(filterAppointmentBySSInput: FilterAppointmentBySSInput!): [AppointmentHistory!]!
+  getAppointmentDetailAllRoles(filterAppointmentBySSInput: FilterAppointmentBySSInput!): [AppointmentHistory!]!
   getAppointmentPerRangeDateTime(filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput!): [Appointment!]!
   getAppointmentsVerified(filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput!): [AppointmentVerified!]!
 }
