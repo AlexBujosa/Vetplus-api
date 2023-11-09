@@ -18,6 +18,7 @@ import { SendNotificationInvitationInput } from './graphql/input/sendNotificatio
 import { SendNotificationADInput } from './graphql/input/sendNotificationAD.input';
 import { NotificationInvitation } from './graphql/types/notification-invitation.type';
 import { NotificationAD } from './graphql/types/notification-ad.type';
+import { EmployeeInvitationStatus } from '@prisma/client';
 
 @Injectable()
 export class NotificationService {
@@ -85,8 +86,23 @@ export class NotificationService {
   async saveNotification(
     sendNotificationInput: SendNotificationInput,
     tx?: OmitTx,
+    employee_invitation_status?: EmployeeInvitationStatus,
   ): Promise<Notification> {
+    const { id_user, category, id_entity } = sendNotificationInput;
     try {
+      const isActiveInvitation =
+        category == 'INVITE_TO_CLINIC' &&
+        employee_invitation_status == 'PENDING'
+          ? await this.prismaService.clinic_Employee.findFirst({
+              where: {
+                employee_invitation_status: 'PENDING',
+                id_employee: id_user,
+                id_clinic: id_entity,
+              },
+            })
+          : null;
+
+      if (isActiveInvitation) return null;
       const result = !tx
         ? await this.prismaService.notification.create({
             data: sendNotificationInput,
@@ -98,72 +114,6 @@ export class NotificationService {
     } catch (error) {
       throw customException.NOTIFICATION_FAILED(null);
     }
-  }
-
-  async saveNotificationInvitation(
-    sendNotificationInvitation: SendNotificationInvitationInput,
-    tx?: OmitTx,
-  ): Promise<NotificationInvitation> {
-    try {
-      const data = { data: { ...sendNotificationInvitation } };
-      const result = !tx
-        ? await this.prismaService.notification_Invitation.create({
-            ...data,
-          })
-        : tx.notification_Invitation.create({ ...data });
-      return result;
-    } catch (error) {
-      throw customException.NOTIFICATION_FAILED(null);
-    }
-  }
-
-  async saveNotificationAD(
-    sendNotificationAD: SendNotificationADInput,
-    tx?: OmitTx,
-  ): Promise<NotificationAD> {
-    try {
-      const data = { data: { ...sendNotificationAD } };
-      const result = !tx
-        ? await this.prismaService.notification_AD.create({
-            ...data,
-          })
-        : tx.notification_AD.create({ ...data });
-      return result;
-    } catch (error) {
-      throw customException.NOTIFICATION_FAILED(null);
-    }
-  }
-
-  async sendNotificationInvitationToUser(
-    id_user: string,
-    notification: Notification,
-    notificationT: NotificationInvitation,
-  ) {
-    this.pubSub.publish(id_user, {
-      getNewNotification: {
-        ...notification,
-        ...{
-          notificationInvitation: { ...notificationT },
-          notificationAD: null,
-        },
-      },
-    });
-  }
-
-  async sendNotificationADToUser(
-    id_user: string,
-    notification: Notification,
-    notificationT: NotificationAD,
-  ) {
-    this.pubSub.publish(id_user, {
-      getNewNotification: {
-        ...notification,
-        ...{
-          notificationAD: { ...notificationT },
-          notificationInvitation: null,
-        },
-      },
-    });
   }
 
   async sendNotificationToUser(id_user: string, notification: Notification) {

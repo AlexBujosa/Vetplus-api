@@ -240,16 +240,8 @@ export class EmployeeService {
 
     const { id: id_user } = await this.userService.findByEmail(email);
 
-    const sendNotification: SendNotificationInput = {
-      id_user: id_user,
-      id_entity: my_clinic.id_owner,
-      category: NotificationCategory.INVITE_TO_CLINIC,
-      title: 'Clinic Invitation',
-      subtitle: `${my_clinic.name} has invited you to join of them`,
-    };
-
-    const { notificationCreated, notificationInvitation } =
-      await this.prismaService.$transaction(async (tx: OmitTx) => {
+    const notificationCreated = await this.prismaService.$transaction(
+      async (tx: OmitTx) => {
         const employeeRequest = await tx.clinic_Employee.upsert({
           create: {
             id_employee: id_user,
@@ -265,24 +257,30 @@ export class EmployeeService {
         });
         if (!employeeRequest) throw customException.INVITATION_FAILED(null);
 
+        const sendNotification: SendNotificationInput = {
+          id_user: id_user,
+          id_entity: employeeRequest.id_clinic,
+          category: NotificationCategory.INVITE_TO_CLINIC,
+          title: 'Clinic Invitation',
+          subtitle: `${my_clinic.name} has invited you to join of them`,
+        };
+
         const notificationCreated =
-          await this.notificationService.saveNotification(sendNotification, tx);
-
-        const { id: id_notificationCreated } = notificationCreated;
-
-        const notificationInvitation =
-          await this.notificationService.saveNotificationInvitation(
-            { id: id_notificationCreated, id_clinic, id_owner },
+          await this.notificationService.saveNotification(
+            sendNotification,
             tx,
+            employee_invitation_status,
           );
-        return { notificationCreated, notificationInvitation };
-      });
 
-    await this.notificationService.sendNotificationInvitationToUser(
-      id_user,
-      notificationCreated,
-      notificationInvitation,
+        return notificationCreated;
+      },
     );
+
+    if (notificationCreated != null)
+      await this.notificationService.sendNotificationToUser(
+        id_user,
+        notificationCreated,
+      );
 
     return true;
   }

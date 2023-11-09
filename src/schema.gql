@@ -517,6 +517,7 @@ type Query {
   getMyEmployee(genericByIdInput: GenericByIdInput!): GetMyEmployeesResult!
   getAllCommentByIdClinic(genericByIdInput: GenericByIdInput!): [GetAllCommentByIdClinic!]!
   getMyComments: [GetAllCommentByIdClinic!]!
+  getAppointmentPerPetClinicOwners(filterAppointmentByIdInput: FilterAppointmentByIdInput!): [AppointmentHistory!]!
   getAppointmentPerPet(filterAppointmentByIdInput: FilterAppointmentByIdInput!): [AppointmentHistory!]!
   getAppointmentDetailClinicOwner(filterAppointmentBySSInput: FilterAppointmentBySSInput!): [AppointmentHistory!]!
   getAppointmentDetailAllRoles(filterAppointmentBySSInput: FilterAppointmentBySSInput!): [AppointmentHistory!]!

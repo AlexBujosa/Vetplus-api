@@ -41,15 +41,33 @@ export class AppointmentResolver {
   }
 
   @Query(() => [AppointmentHistory])
+  @Roles(Role.CLINIC_OWNER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getAppointmentPerPetClinicOwners(
+    @Args('filterAppointmentByIdInput')
+    filterAppointmentByIdInput: FilterAppointmentByIdInput,
+    @Context() context,
+  ): Promise<AppointmentHistory[]> {
+    const getAppointmentPerPet =
+      await this.appointmentService.getAppointmentPerPetClinicOwner(
+        filterAppointmentByIdInput,
+        context.req.user.sub,
+      );
+    return getAppointmentPerPet;
+  }
+
+  @Query(() => [AppointmentHistory])
   @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.VETERINARIAN, Role.PET_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getAppointmentPerPet(
     @Args('filterAppointmentByIdInput')
     filterAppointmentByIdInput: FilterAppointmentByIdInput,
+    @Context() context,
   ): Promise<AppointmentHistory[]> {
     const getAppointmentPerPet =
-      await this.appointmentService.getAppointmentPerPet(
+      await this.appointmentService.getAppointmentPerPetByAllRoles(
         filterAppointmentByIdInput,
+        context.req.user.sub,
       );
     return getAppointmentPerPet;
   }

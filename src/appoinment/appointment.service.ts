@@ -44,17 +44,45 @@ export class AppointmentService {
     return appoinmentCreated ? true : false;
   }
 
-  async getAppointmentPerPet(
+  async getAppointmentPerPetClinicOwner(
     filterAppointmentByIdInput: FilterAppointmentByIdInput,
+    id_clinicOwner: string,
+  ): Promise<AppointmentHistory[]> {
+    return await this.getAppointmentPerPet(
+      filterAppointmentByIdInput,
+      null,
+      id_clinicOwner,
+    );
+  }
+
+  async getAppointmentPerPetByAllRoles(
+    filterAppointmentByIdInput: FilterAppointmentByIdInput,
+    id_owner: string,
+  ) {
+    return await this.getAppointmentPerPet(
+      filterAppointmentByIdInput,
+      id_owner,
+    );
+  }
+
+  private async getAppointmentPerPet(
+    filterAppointmentByIdInput: FilterAppointmentByIdInput,
+    id_owner?: string,
+    id_clinicOwner?: string,
   ): Promise<AppointmentHistory[]> {
     const { id: id_pet, state } = filterAppointmentByIdInput;
 
-    const result = state ? { state } : {};
+    const filterState = state ? { state } : {};
+    const filterClinic = id_clinicOwner
+      ? { Clinic: { id_owner: id_clinicOwner } }
+      : {};
+
+    const whereCondition = id_owner
+      ? { id_owner, id_pet, ...filterState }
+      : { id_pet, ...filterState, ...filterClinic };
+
     const getAllAppointment = await this.prismaService.appointment.findMany({
-      where: {
-        id_pet,
-        ...result,
-      },
+      where: whereCondition,
       include: {
         Pet: true,
         Clinic: true,
@@ -223,6 +251,7 @@ export class AppointmentService {
         },
         where: {
           appointment_status: 'ACCEPTED',
+          state: 'PENDING',
           AND: [
             { start_at: { gte: new Date(todayformattedDate) } },
             { end_at: { lte: new Date(tomorrowformattedDate) } },
