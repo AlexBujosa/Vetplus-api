@@ -77,7 +77,7 @@ export class AppointmentResolver {
     @Context() context,
   ): Promise<AppointmentHistory[]> {
     const getAppointmentDetails =
-      await this.appointmentService.getAppointmentDetailClinicOwner(
+      await this.appointmentService.getAppointmentDetailByAllRoles(
         filterAppointmentBySSInput,
         context.req.user.sub,
       );

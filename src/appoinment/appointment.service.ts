@@ -71,6 +71,7 @@ export class AppointmentService {
     filterAppointmentBySSInput: FilterAppointmentBySSInput,
     id_owner: string,
   ): Promise<AppointmentHistory[]> {
+    console.log(id_owner);
     return await this.getAppointmentDetail(
       filterAppointmentBySSInput,
       id_owner,
@@ -78,7 +79,7 @@ export class AppointmentService {
     );
   }
 
-  async getAppointmentDetailByAllRole(
+  async getAppointmentDetailByAllRoles(
     filterAppointmentBySSInput: FilterAppointmentBySSInput,
     id_owner: string,
   ) {
