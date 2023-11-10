@@ -590,7 +590,8 @@ type Mutation {
   registerComment(addCommentInput: AddCommentInput!): CommentResponse!
   deleteComment(deleteCommentInput: DeleteCommentInput!): CommentResponse!
   scheduleAppoinment(scheduleAppointmentInput: ScheduleAppointmentInput!): AppointmentResponse!
-  updateAppointmentDetail(updateAppointmentInput: UpdateAppointmentInput!): AppointmentResponse!
+  respondToAppointment(updateAppointmentInput: UpdateAppointmentInput!): AppointmentResponse!
+  updateAppointmentResumen(updateAppointmentResumenInput: UpdateAppointmentResumenInput!): AppointmentResponse!
 }
 
 input VerificationCodeInput {
@@ -812,6 +813,13 @@ input UpdateAppointmentInput {
   id: String!
   appointment_status: String
   end_at: DateTime
+}
+
+input UpdateAppointmentResumenInput {
+  id: String!
+  id_clinic: String!
+  id_owner: String!
+  observations: String
 }
 
 type Subscription {

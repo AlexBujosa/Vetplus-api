@@ -304,6 +304,9 @@ export class ClinicService {
                 start_at: 'desc',
               },
               take: 1,
+              where: {
+                state: 'FINISHED',
+              },
             },
           },
         },

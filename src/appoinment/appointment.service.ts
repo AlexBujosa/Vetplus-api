@@ -13,6 +13,9 @@ import { Cron } from '@nestjs/schedule';
 import { FilterAppointmentBySSInput } from './graphql/input/filter-appointment-by-ss.input';
 import { tz } from 'moment-timezone';
 import { AppointmentUserFmc } from './graphql/types/appointment-user-fmc.type';
+import { UpdateAppointmentResumenInput } from './graphql/input/update-appointment-resumen.input';
+import { OmitTx } from '@/Employee/constant';
+import { customException } from '@/global/constant/constants';
 
 tz.setDefault('America/Santo_Domingo');
 @Injectable()
@@ -99,7 +102,6 @@ export class AppointmentService {
     filterAppointmentBySSInput: FilterAppointmentBySSInput,
     id_owner: string,
   ): Promise<AppointmentHistory[]> {
-    console.log(id_owner);
     return await this.getAppointmentDetail(
       filterAppointmentBySSInput,
       id_owner,
@@ -174,6 +176,46 @@ export class AppointmentService {
     });
 
     return appointmentUpdated ? true : false;
+  }
+
+  async updateAppointmentResumen(
+    updateAppointmentResumenInput: UpdateAppointmentResumenInput,
+  ) {
+    const { id, id_clinic, id_owner, observations } =
+      updateAppointmentResumenInput;
+
+    await this.prismaService.$transaction(async (tx: OmitTx) => {
+      const appointmentUpdated = await tx.appointment.update({
+        data: {
+          observations,
+          state: 'FINISHED',
+        },
+        where: {
+          id,
+          Clinic: {
+            id: id_clinic,
+          },
+        },
+      });
+      const appointmentAttendance = await tx.clinic_User.upsert({
+        create: {
+          id_clinic,
+          id_user: id_owner,
+          clientAttendance: true,
+        },
+        where: {
+          id_user_id_clinic: { id_user: id_owner, id_clinic },
+        },
+        update: {
+          clientAttendance: true,
+        },
+      });
+
+      if (!appointmentUpdated || !appointmentAttendance)
+        throw customException.APPOINTMENT_RESUMEN_FAILED(null);
+
+      return appointmentUpdated;
+    });
   }
 
   async filterAppointmentDateRange(

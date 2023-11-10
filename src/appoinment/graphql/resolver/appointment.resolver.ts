@@ -17,6 +17,7 @@ import { AppointmentVerified } from '../types/appointment-verified.type';
 import { FilterAppointmentBySSInput } from '../input/filter-appointment-by-ss.input';
 import { YupValidationPipe } from '@/global/pipe/yup-validation.pipe';
 import { FilterAppointmentSSInputSchema } from '@/global/schema/filter-appointment-ss-input.schema';
+import { UpdateAppointmentResumenInput } from '../input/update-appointment-resumen.input';
 
 @Resolver()
 export class AppointmentResolver {
@@ -109,7 +110,7 @@ export class AppointmentResolver {
   @Mutation(() => AppointmentResponse)
   @Roles(Role.CLINIC_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async updateAppointmentDetail(
+  async respondToAppointment(
     @Args('updateAppointmentInput')
     updateAppointmentInput: UpdateAppointmentInput,
     @Context() context,
@@ -122,6 +123,19 @@ export class AppointmentResolver {
     return updateAppointment
       ? { result: Status.COMPLETED }
       : { result: Status.FAILED };
+  }
+
+  @Mutation(() => AppointmentResponse)
+  @Roles(Role.VETERINARIAN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async updateAppointmentResumen(
+    @Args('updateAppointmentResumenInput')
+    updateAppointmentResumenInput: UpdateAppointmentResumenInput,
+  ): Promise<AppointmentResponse> {
+    await this.appointmentService.updateAppointmentResumen(
+      updateAppointmentResumenInput,
+    );
+    return { result: Status.COMPLETED };
   }
 
   @Query(() => [Appointment])
