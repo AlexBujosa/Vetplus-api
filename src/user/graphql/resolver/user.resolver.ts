@@ -32,7 +32,7 @@ export class UserResolver {
   }
 
   @Mutation(() => UpdateUserResponse)
-  @Roles(Role.PET_OWNER, Role.VETERINARIAN)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @UsePipes(new YupValidationPipe(UpdateUserInputSchema))
   async updateUser(
