@@ -124,10 +124,6 @@ export class NotificationService {
 
   async getAllNotification(id_user: string): Promise<Notification[]> {
     return await this.prismaService.notification.findMany({
-      include: {
-        Notification_Invitation: true,
-        Notification_AD: true,
-      },
       where: {
         id_user,
         read: false,

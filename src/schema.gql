@@ -2,17 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type NotificationAD {
-  id: String
-  id_pet: String
-}
-
-type NotificationInvitation {
-  id: String
-  id_owner: String
-  id_clinic: String
-}
-
 type CreatedUserResponse {
   result: String!
   message: String!
@@ -97,6 +86,17 @@ type Notification {
 
 type NotificationResponse {
   result: String!
+}
+
+type NotificationAD {
+  id: String
+  id_pet: String
+}
+
+type NotificationInvitation {
+  id: String
+  id_owner: String
+  id_clinic: String
 }
 
 type AllNotification {

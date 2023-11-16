@@ -49,6 +49,7 @@ enum NotificationCategory {
   APPOINTMENT
   HISTORY_ACCESS
   INVITE_TO_CLINIC
+  INVITE_TO_CLINIC_RESPONSE
   AUTHENTICATION
 }
 
@@ -100,7 +101,6 @@ model User {
   Veterinarian              Veterinarian_PetOwner[] @relation("veterinarian")
   PetOwner                  Veterinarian_PetOwner[] @relation("pet_owner")
   Comment                   Comment[] 
-  Notification_Invitation   Notification_Invitation[]
   User_Fmc                  User_Fmc?
 }
 
@@ -150,9 +150,6 @@ model Pet {
   Owner  User @relation(fields: [id_owner], references: [id]) 
   Specie Specie @relation(fields: [id_specie], references: [id])
   Breed  Breed  @relation(fields: [id_breed], references: [id])
-  Notification_AD Notification_AD[]
-
-
   Appointment Appointment[]
 
   @@index([id_owner])
@@ -202,34 +199,8 @@ model Notification {
   status     Boolean  @default(true)
 
   User User @relation(fields: [id_user], references: [id])
-  Notification_AD Notification_AD?
-  Notification_Invitation Notification_Invitation?
 
   @@index([id_user])
-}
-
-model Notification_Invitation{
-  id String @id 
-  id_owner String 
-  id_clinic String
-  Clinic Clinic @relation(fields: [id_clinic], references: [id]) 
-  User  User @relation(fields: [id_owner], references: [id]) 
-  Notification Notification @relation(fields: [id], references: [id])
-
-  @@index([id])
-  @@index([id_clinic])
-  @@index([id_owner])
-}
-
-
-model Notification_AD{
-  id String @id 
-  id_pet String 
-  Pet  Pet @relation(fields: [id_pet], references: [id]) 
-  Notification Notification @relation(fields: [id], references: [id])
-
-  @@index([id])
-  @@index([id_pet])
 }
 
 model Appointment {
@@ -288,7 +259,6 @@ model Clinic {
   ClinicUsers           Clinic_User[]
   ClinicEmployees       Clinic_Employee[]
   Comment               Comment[] 
-  Notification_Invitation  Notification_Invitation[]
   ClinicSummaryScore    Clinic_Summary_Score?
   // TODO: Read google maps map url
   // TODO: Add Clinic Schedule tables for Days and Hours

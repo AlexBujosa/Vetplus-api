@@ -149,51 +149,92 @@ export class EmployeeService {
     return result ? true : false;
   }
 
+  private async getPotentialEmployeeDetails(
+    id_employee: string,
+    id_clinic: string,
+  ) {
+    const userData = await this.userService.findById(id_employee);
+    const clinicData = await this.clinicService.getClinicById(id_clinic);
+    const { names, surnames } = userData;
+    const { id_owner } = clinicData;
+
+    const fullName = surnames ? `${names} ${surnames}` : names;
+    return { fullName, id_owner };
+  }
+
   async handleEmployeeRequest(
     handleEmployeeRequest: HandleEmployeeRequestInput,
     id_employee: string,
     role: Role,
   ): Promise<{ access_token: string }> {
-    const { employee_invitation_status } = handleEmployeeRequest;
+    const { employee_invitation_status, id } = handleEmployeeRequest;
+    const { fullName, id_owner } = await this.getPotentialEmployeeDetails(
+      id_employee,
+      id,
+    );
     try {
-      const result = await this.prismaService.$transaction(
+      const transactionResult = await this.prismaService.$transaction(
         async (tx: OmitTx) => {
           const upsertClinicEmployee = await this.upsertClinicEmployee(
             id_employee,
-            handleEmployeeRequest,
+            employee_invitation_status,
+            id,
             tx,
           );
+
           if (!upsertClinicEmployee)
             throw Error("Employee response didn't update.");
 
+          const sendNotification: SendNotificationInput = {
+            id_user: id_owner,
+            id_entity: id,
+            category: NotificationCategory.INVITE_TO_CLINIC_RESPONSE,
+            title: "User's response to invitation",
+            subtitle: `${fullName} ${
+              employee_invitation_status == 'ACCEPTED'
+                ? 'has accepted your invitation'
+                : 'has rejected your invitation'
+            }`,
+          };
+
+          await this.notificationService.saveNotification(
+            sendNotification,
+            tx,
+            employee_invitation_status,
+          );
+
           if (
-            role !== Role.PET_OWNER ||
-            employee_invitation_status !== EmployeeInvitationStatus.ACCEPTED
-          )
-            return { token: null };
+            role === Role.PET_OWNER &&
+            employee_invitation_status === EmployeeInvitationStatus.ACCEPTED
+          ) {
+            const updatedUser = await tx.user.update({
+              data: { role: Role.VETERINARIAN },
+              where: { id: id_employee },
+            });
 
-          const user = await tx.user.update({
-            data: { role: Role.VETERINARIAN },
-            where: { id: id_employee },
-          });
+            if (!updatedUser) {
+              throw new Error("User role didn't update.");
+            }
 
-          if (!user) throw Error("User role didn't update.");
+            const score = await tx.veterinarian_Summary_Score.create({
+              data: {
+                id_veterinarian: id_employee,
+              },
+            });
 
-          const score = await tx.veterinarian_Summary_Score.create({
-            data: {
-              id_veterinarian: id_employee,
-            },
-          });
+            if (!score) {
+              throw new Error('Did not create veterinarian score');
+            }
 
-          if (!score) throw Error('Did not create veterinarian score');
+            const token = this.authService.login(updatedUser);
+            return { token: token.access_token };
+          }
 
-          const token = this.authService.login(user);
-
-          return { token: token.access_token };
+          return { token: null };
         },
       );
 
-      return { access_token: result.token };
+      return { access_token: transactionResult.token };
     } catch (error) {
       throw customException.HANDLE_EMPLOYEE_REQUEST_FAILED({
         cause: new Error(),
@@ -204,21 +245,21 @@ export class EmployeeService {
 
   private upsertClinicEmployee(
     id_employee: string,
-    handleEmployeeRequestInput: HandleEmployeeRequestInput,
+    employee_invitation_status: EmployeeInvitationStatus,
+    id_clinic: string,
     tx: OmitTx,
   ) {
-    const { employee_invitation_status, id } = handleEmployeeRequestInput;
     const result = tx.clinic_Employee.upsert({
       create: {
         employee_invitation_status,
-        id_clinic: id,
+        id_clinic,
         id_employee,
       },
       update: {
         employee_invitation_status,
       },
       where: {
-        id_clinic_id_employee: { id_clinic: id, id_employee },
+        id_clinic_id_employee: { id_clinic, id_employee },
       },
     });
     return result;
@@ -242,23 +283,17 @@ export class EmployeeService {
 
     const notificationCreated = await this.prismaService.$transaction(
       async (tx: OmitTx) => {
-        const employeeRequest = await tx.clinic_Employee.upsert({
-          create: {
-            id_employee: id_user,
-            employee_invitation_status,
-            id_clinic,
-          },
-          update: {
-            employee_invitation_status,
-          },
-          where: {
-            id_clinic_id_employee: { id_employee: id_user, id_clinic },
-          },
-        });
+        const employeeRequest = await this.upsertClinicEmployee(
+          id_user,
+          employee_invitation_status,
+          id_clinic,
+          tx,
+        );
+
         if (!employeeRequest) throw customException.INVITATION_FAILED(null);
 
         const sendNotification: SendNotificationInput = {
-          id_user: id_user,
+          id_user,
           id_entity: employeeRequest.id_clinic,
           category: NotificationCategory.INVITE_TO_CLINIC,
           title: 'Clinic Invitation',

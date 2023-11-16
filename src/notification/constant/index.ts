@@ -11,10 +11,6 @@ export enum NotificationKind {
 export type NotificationCategory =
   | 'APPOINTMENT'
   | 'HISTORY_ACCESS'
+  | 'INVITE_TO_CLINIC'
   | 'AUTHENTICATION'
-  | 'INVITE_TO_CLINIC';
-
-export const NotificationT = createUnionType({
-  name: 'NotificationTUnion',
-  types: () => [NotificationAD, NotificationInvitation] as const,
-});
+  | 'INVITE_TO_CLINIC_RESPONSE';
