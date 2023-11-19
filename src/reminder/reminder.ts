@@ -19,6 +19,8 @@ import {
   reminderMessageThreeHourLeft,
   reminderMessageOneDayLeft,
 } from './common/reminder/common/constant';
+import { NotificationService } from '@/notification/notification.service';
+import { SendNotificationInput } from '@/notification/graphql/input/sendNotification.input';
 
 tz.setDefault('America/Santo_Domingo');
 
@@ -26,7 +28,10 @@ tz.setDefault('America/Santo_Domingo');
 export class ReminderAppointment extends BaseReminder<
   Record<TimeSlots, IReminderAppointment[]>
 > {
-  constructor(private readonly messaging: Messaging) {
+  constructor(
+    private readonly messaging: Messaging,
+    private readonly notificationService: NotificationService,
+  ) {
     super();
 
     client.on('error', (err) => console.log('Redis Client Error', err));
@@ -54,7 +59,7 @@ export class ReminderAppointment extends BaseReminder<
 
     appointmentTaskSchedule.map((ap) => {
       const {
-        id: id_appointment,
+        id_pet,
         id_owner: id_user,
         start_at,
         Owner: {
@@ -71,8 +76,8 @@ export class ReminderAppointment extends BaseReminder<
 
       if (day !== this.today) {
         add[`${hourStr}:${minuteStr}`].push({
-          id_appointment,
           id_user,
+          id_pet,
           token_fmc,
           body: reminderMessageOneDayLeft,
         });
@@ -86,8 +91,8 @@ export class ReminderAppointment extends BaseReminder<
         this.getMinuteHourStr(minute_fifteenML, hour_fifteenML);
 
       add[`${hour_fifteenMLStr}:${minute_fifteenMLStr}`].push({
-        id_appointment,
         id_user,
+        id_pet,
         token_fmc,
         body: reminderMessageFifteenMinuteLeft,
       });
@@ -99,8 +104,8 @@ export class ReminderAppointment extends BaseReminder<
         this.getMinuteHourStr(minute_threeHL, hour_threeHL);
 
       add[`${hour_threeHLStr}:${minute_threeHLStr}`].push({
-        id_appointment,
         id_user,
+        id_pet,
         token_fmc,
         body: reminderMessageThreeHourLeft,
       });
@@ -127,9 +132,16 @@ export class ReminderAppointment extends BaseReminder<
 
     if (ReminderAppointment.length == 0) return;
     remindersAppointment.map(async (val) => {
-      const { id_appointment, id_user, body, token_fmc } = val;
-
+      const { id_pet, id_user, body, token_fmc } = val;
       if (!token_fmc) return;
+      const notificationInput: SendNotificationInput = {
+        id_user,
+        id_entity: id_pet,
+        category: 'APPOINTMENT',
+        title: 'INCOMING APPOINTMENT',
+        subtitle: 'Appointment is getting closer to you',
+      };
+      await this.notificationService.saveNotification(notificationInput);
       await this.messaging.sendMessage(token_fmc, body);
     });
 

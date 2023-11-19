@@ -7,9 +7,10 @@ import { PubSub } from 'graphql-subscriptions';
 import { PubSubModule } from '@/pubsub/pubsub.module';
 import { ReminderAppointment } from './reminder';
 import { Messaging } from '@/message/message';
+import { NotificationModule } from '@/notification/notification.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), PubSubModule],
+  imports: [ConfigModule.forRoot(), PubSubModule, NotificationModule],
   providers: [ReminderAppointment, Messaging],
   exports: [ReminderAppointment],
 })
