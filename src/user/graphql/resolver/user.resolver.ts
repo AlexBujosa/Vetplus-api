@@ -18,6 +18,9 @@ import { DeleteUserImageResponse } from '../types/delete-user-image-response.typ
 import { DeleteUserImageInput } from '../input/delete-user-image.input';
 import { YupValidationPipe } from '@/global/pipe/yup-validation.pipe';
 import { UpdateUserInputSchema } from '@/global/schema/update-user-input.schema';
+import { GeneralResponse } from '@/global/graphql/types/general-response.type';
+import { RegisterFmcInput } from '../input/register-fmc.input';
+import { UserProfile } from '../types/user-profile.type';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -83,9 +86,9 @@ export class UserResolver {
     return this.userService.findById(id);
   }
 
-  @Query(() => User)
+  @Query(() => UserProfile)
   @UseGuards(JwtAuthGuard)
-  getMyProfile(@Context() context) {
+  getMyProfile(@Context() context): Promise<UserProfile> {
     return this.userService.findById(context.req.user.sub);
   }
 
@@ -94,5 +97,22 @@ export class UserResolver {
   @UseGuards(JwtAuthGuard, RolesGuard)
   findAll() {
     return this.userService.findAll();
+  }
+
+  @Mutation(() => GeneralResponse)
+  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.VETERINARIAN, Role.PET_OWNER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async registerFMC(
+    @Args('registerFmcInput') registerFmcInput: RegisterFmcInput,
+    @Context() context,
+  ): Promise<GeneralResponse> {
+    const { token_fmc } = registerFmcInput;
+    const registeredFMC = await this.userService.registerTokenFMC(
+      context.req.user.sub,
+      token_fmc,
+    );
+    return registeredFMC
+      ? { result: Status.COMPLETED }
+      : { result: Status.FAILED };
   }
 }

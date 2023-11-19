@@ -277,10 +277,16 @@ export class AppointmentService {
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
-    const nextDay = String(today.getDate() + 1).padStart(2, '0');
+
+    const tomorrow = new Date();
+    tomorrow.setDate(new Date().getDate() + 1);
+
+    const tomorrowYear = tomorrow.getFullYear();
+    const tomorrowMonth = String(tomorrow.getMonth() + 1).padStart(2, '0');
+    const tomorrowDay = String(tomorrow.getDate()).padStart(2, '0');
 
     const todayformattedDate = `${year}-${month}-${day}`;
-    const tomorrowformattedDate = `${year}-${month}-${nextDay}`;
+    const tomorrowformattedDate = `${tomorrowYear}-${tomorrowMonth}-${tomorrowDay}`;
 
     const incomingAppointmentForNotification: AppointmentUserFmc[] =
       await this.prismaService.appointment.findMany({

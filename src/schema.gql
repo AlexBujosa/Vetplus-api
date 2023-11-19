@@ -54,6 +54,32 @@ type DeleteUserImageResponse {
   result: String!
 }
 
+type GeneralResponse {
+  result: String!
+}
+
+type UserFmc {
+  id_user: String!
+  token_fmc: String!
+}
+
+type UserProfile {
+  id: String!
+  names: String!
+  surnames: String
+  email: String!
+  provider: String!
+  document: String
+  address: String
+  telephone_number: String
+  image: String
+  role: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  status: Boolean!
+  User_Fmc: UserFmc
+}
+
 type Credentials {
   id_user: String!
   password: String!
@@ -497,7 +523,7 @@ type Query {
   signInWithEmail(signInInput: SignInInput!): SignInResponse!
   googleLogin: SignInResponse!
   findUserById: User!
-  getMyProfile: User!
+  getMyProfile: UserProfile!
   findAll: [User!]!
   findCredentialsById: Credentials!
   getAllNotification: [Notification!]!
@@ -561,6 +587,7 @@ type Mutation {
   updateUser(updateUserInput: UpdateUserInput!): UpdateUserResponse!
   saveUserImage(saveUserImageInput: SaveUserImageInput!): SaveUserImageResponse!
   deleteUserImage(deleteUserImageInput: DeleteUserImageInput!): DeleteUserImageResponse!
+  registerFMC(registerFmcInput: RegisterFmcInput!): GeneralResponse!
   recoveryPasswordSendVerificationCode(recoveryCredentialsInput: RecoveryCredentialsInput!): VerificationCode!
   recoveryAccount(verificationCodeInput: VerificationCodeInput!): RecoveryAccount!
   updateCredentialsRecoveryAccount(updateCredentialsRecoveryAccountInput: UpdateCredentialsRecoveryAccountInput!): CredentialsResponse!
@@ -634,6 +661,10 @@ scalar Upload
 
 input DeleteUserImageInput {
   image: String!
+}
+
+input RegisterFmcInput {
+  token_fmc: String!
 }
 
 input RecoveryCredentialsInput {

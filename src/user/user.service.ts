@@ -9,6 +9,7 @@ import {
 import { User } from './graphql/types/user.type';
 import { UpdateUserInput } from './graphql/input/update-user.input';
 import { UpdateUserRoleInput } from './graphql/input/update-user-role.input';
+import { UserProfile } from './graphql/types/user-profile.type';
 @Injectable()
 export class UserService {
   constructor(private prismaService: PrismaService) {}
@@ -79,8 +80,11 @@ export class UserService {
     return result;
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<UserProfile> {
     return await this.prismaService.user.findUnique({
+      include: {
+        User_Fmc: true,
+      },
       where: {
         id,
       },
@@ -89,5 +93,15 @@ export class UserService {
 
   async findAll() {
     return await this.prismaService.user.findMany();
+  }
+
+  async registerTokenFMC(id_user: string, token_fmc: string): Promise<boolean> {
+    const tokenRegistered = await this.prismaService.user_Fmc.create({
+      data: {
+        id_user,
+        token_fmc,
+      },
+    });
+    return tokenRegistered ? true : false;
   }
 }

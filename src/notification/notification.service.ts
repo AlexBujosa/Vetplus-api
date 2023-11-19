@@ -131,6 +131,10 @@ export class NotificationService {
     });
   }
 
+  async getNewNotification(id_user: string) {
+    return this.pubSub.asyncIterator(id_user);
+  }
+
   async markNotificationAsRead(
     markNotificationAsReadInput: MarkNotificationAsReadInput,
     id_user: string,
