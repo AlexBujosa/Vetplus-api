@@ -6,12 +6,17 @@ import { AuthGateWay } from '@/auth/auth.gateway';
 import { PubSub } from 'graphql-subscriptions';
 import { PubSubModule } from '@/pubsub/pubsub.module';
 import { ReminderAppointment } from './reminder';
-import { Messaging } from '@/message/message';
 import { NotificationModule } from '@/notification/notification.module';
+import { MessagingModule } from '@/message/messaging.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), PubSubModule, NotificationModule],
-  providers: [ReminderAppointment, Messaging],
+  imports: [
+    ConfigModule.forRoot(),
+    PubSubModule,
+    NotificationModule,
+    MessagingModule,
+  ],
+  providers: [ReminderAppointment],
   exports: [ReminderAppointment],
 })
 export class ReminderModule {}

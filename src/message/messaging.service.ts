@@ -9,7 +9,7 @@ process.env.GOOGLE_APPLICATION_CREDENTIALS;
 firebaseInitializeApp;
 
 @Injectable()
-export class Messaging {
+export class MessagingService {
   async sendMessage(token_fmc: string, body: string): Promise<boolean> {
     const message = {
       notification: {

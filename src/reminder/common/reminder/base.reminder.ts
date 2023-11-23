@@ -21,9 +21,12 @@ export abstract class BaseReminder<T = Record<TimeSlots, any>> {
         hour: today.getHours(),
         day: today.getDate(),
       };
-    const minute = new Date(date).getMinutes();
-    const hour = new Date(date).getHours();
-    const day = new Date(date).getDate();
+    const adjustedDate = new Date(date.toISOString());
+    adjustedDate.setHours(adjustedDate.getHours() + 4);
+
+    const minute = adjustedDate.getMinutes();
+    const hour = adjustedDate.getHours();
+    const day = adjustedDate.getDate();
 
     return { minute, hour, day };
   }

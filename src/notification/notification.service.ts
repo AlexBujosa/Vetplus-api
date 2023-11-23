@@ -14,11 +14,8 @@ import { MarkNotificationAsReadInput } from './graphql/input/markNotificationAsR
 import { SendNotificationInput } from './graphql/input/sendNotification.input';
 import { OmitTx } from '@/Employee/constant';
 import { customException } from '@/global/constant/constants';
-import { SendNotificationInvitationInput } from './graphql/input/sendNotificationInvitation.input';
-import { SendNotificationADInput } from './graphql/input/sendNotificationAD.input';
-import { NotificationInvitation } from './graphql/types/notification-invitation.type';
-import { NotificationAD } from './graphql/types/notification-ad.type';
 import { EmployeeInvitationStatus } from '@prisma/client';
+import { MessagingService } from '@/message/messaging.service';
 
 @Injectable()
 export class NotificationService {

@@ -11,7 +11,7 @@ import {
   reduceThreeHourLess,
 } from '@/global/function/reminder-time';
 import { Cron } from '@nestjs/schedule';
-import { Messaging } from '@/message/message';
+import { MessagingService } from '@/message/messaging.service';
 import { AppointmentUserFmc } from '@/appoinment/graphql/types/appointment-user-fmc.type';
 import {
   timeSlotKeys,
@@ -29,7 +29,7 @@ export class ReminderAppointment extends BaseReminder<
   Record<TimeSlots, IReminderAppointment[]>
 > {
   constructor(
-    private readonly messaging: Messaging,
+    private readonly messagingService: MessagingService,
     private readonly notificationService: NotificationService,
   ) {
     super();
@@ -142,13 +142,13 @@ export class ReminderAppointment extends BaseReminder<
         subtitle: 'Appointment is getting closer to you',
       };
       await this.notificationService.saveNotification(notificationInput);
-      await this.messaging.sendMessage(token_fmc, body);
+      await this.messagingService.sendMessage(token_fmc, body);
     });
 
     console.log(reminderSchedule);
   }
 
-  @Cron('0 0 21 * * *', { timeZone: 'America/Santo_Domingo' })
+  @Cron('0 0 0 * * *', { timeZone: 'America/Santo_Domingo' })
   async clearReminder() {
     const scheduleT: Record<TimeSlots, IReminderAppointment[]> =
       Object.fromEntries(timeSlotKeys.map((key) => [key, []])) as Record<

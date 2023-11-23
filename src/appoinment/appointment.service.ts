@@ -298,11 +298,10 @@ export class AppointmentService {
           },
         },
         where: {
-          appointment_status: 'ACCEPTED',
           state: 'PENDING',
           AND: [
             { start_at: { gte: new Date(todayformattedDate) } },
-            { end_at: { lte: new Date(tomorrowformattedDate) } },
+            { start_at: { lte: new Date(tomorrowformattedDate) } },
           ],
         },
       });
@@ -310,10 +309,9 @@ export class AppointmentService {
     return incomingAppointmentForNotification;
   }
 
-  @Cron('0 0 4 * * *', { timeZone: 'America/Santo_Domingo' })
+  @Cron('0 0 5 * * *', { timeZone: 'America/Santo_Domingo' })
   async handleCron() {
     const appointmentToScheduleTask = await this.getAppointmentToScheduleTask();
-
     await this.reminderAppointment.setScheduleFormat(appointmentToScheduleTask);
   }
 

@@ -6,7 +6,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule } from '@nestjs/config';
 import { CacheModule } from '@nestjs/cache-manager';
 import { AuthGateWay } from '@/auth/auth.gateway';
-import { PubSub } from 'graphql-subscriptions';
 import { PubSubModule } from '@/pubsub/pubsub.module';
 
 @Module({

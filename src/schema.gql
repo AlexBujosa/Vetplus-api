@@ -619,6 +619,7 @@ type Mutation {
   scheduleAppoinment(scheduleAppointmentInput: ScheduleAppointmentInput!): AppointmentResponse!
   respondToAppointment(updateAppointmentInput: UpdateAppointmentInput!): AppointmentResponse!
   updateAppointmentResumen(updateAppointmentResumenInput: UpdateAppointmentResumenInput!): AppointmentResponse!
+  sendMessage(messageInput: MessageInput!): GeneralResponse!
 }
 
 input VerificationCodeInput {
@@ -851,6 +852,11 @@ input UpdateAppointmentResumenInput {
   id_clinic: String!
   id_owner: String!
   observations: String
+}
+
+input MessageInput {
+  token: String!
+  body: String!
 }
 
 type Subscription {

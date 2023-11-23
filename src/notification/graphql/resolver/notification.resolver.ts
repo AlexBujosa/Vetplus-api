@@ -12,12 +12,12 @@ import { RolesGuard } from '@/global/guard/roles.guard';
 import { Roles } from '@/global/decorator/roles.decorator';
 import { Role } from '@prisma/client';
 import { NotificationService } from '@/notification/notification.service';
-import { Notification } from '../types/notification.type';
+import { Notification } from '@/notification/graphql/types/notification.type';
 import { PubSub } from 'graphql-subscriptions';
-import { MarkNotificationAsReadInput } from '../input/markNotificationAsRead.input';
-import { NotificationResponse } from '../types/notification-response.type';
+import { MarkNotificationAsReadInput } from '@/notification/graphql/input/markNotificationAsRead.input';
+import { NotificationResponse } from '@/notification/graphql/types/notification-response.type';
 import { Status } from '@/global/constant/constants';
-import { AllNotification } from '../types/all-notification.type';
+import { AllNotification } from '@/notification/graphql/types/all-notification.type';
 
 @Resolver()
 export class NotificationResolver {
