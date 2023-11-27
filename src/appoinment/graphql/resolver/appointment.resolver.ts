@@ -18,6 +18,7 @@ import { FilterAppointmentBySSInput } from '../input/filter-appointment-by-ss.in
 import { YupValidationPipe } from '@/global/pipe/yup-validation.pipe';
 import { FilterAppointmentSSInputSchema } from '@/global/schema/filter-appointment-ss-input.schema';
 import { UpdateAppointmentResumenInput } from '../input/update-appointment-resumen.input';
+import { FilterAppointmentVerifiedInput } from '../input/filter-appointment-verified.input';
 
 @Resolver()
 export class AppointmentResolver {
@@ -158,13 +159,13 @@ export class AppointmentResolver {
   @Roles(Role.CLINIC_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getAppointmentsVerified(
-    @Args('filterAppointmentByDateRangeInput')
-    filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput,
+    @Args('filterAppointmentVerifiedInput')
+    filterAppointmentVerifiedInput: FilterAppointmentVerifiedInput,
     @Context() context,
   ): Promise<Appointment[]> {
     const getAppointmentsVerified =
       await this.appointmentService.getAppointmentsVerified(
-        filterAppointmentByDateRangeInput,
+        filterAppointmentVerifiedInput,
         context.req.user.sub,
       );
     return getAppointmentsVerified;

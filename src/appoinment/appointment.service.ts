@@ -16,6 +16,7 @@ import { AppointmentUserFmc } from './graphql/types/appointment-user-fmc.type';
 import { UpdateAppointmentResumenInput } from './graphql/input/update-appointment-resumen.input';
 import { OmitTx } from '@/Employee/constant';
 import { customException } from '@/global/constant/constants';
+import { FilterAppointmentVerifiedInput } from '@/appoinment/graphql/input/filter-appointment-verified.input';
 
 tz.setDefault('America/Santo_Domingo');
 @Injectable()
@@ -243,21 +244,22 @@ export class AppointmentService {
   }
 
   async getAppointmentsVerified(
-    filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput,
+    filterAppointmentVerifiedInput: FilterAppointmentVerifiedInput,
     id_owner: string,
   ): Promise<AppointmentVerified[]> {
-    const { start_at, end_at } = filterAppointmentByDateRangeInput;
+    const { start_at, end_at, state } = filterAppointmentVerifiedInput;
     const getAppointmentsVerified: AppointmentVerified[] =
       await this.prismaService.appointment.findMany({
         where: {
           Clinic: {
             id_owner,
           },
+          state,
           OR: [
             { appointment_status: 'ACCEPTED' },
             { appointment_status: 'DENIED' },
           ],
-          AND: [{ start_at: { gte: start_at } }, { end_at: { lte: end_at } }],
+          AND: [{ start_at: { gte: start_at } }, { start_at: { lte: end_at } }],
         },
         include: {
           Owner: true,
@@ -279,7 +281,7 @@ export class AppointmentService {
     const day = String(today.getDate()).padStart(2, '0');
 
     const tomorrow = new Date();
-    tomorrow.setDate(new Date().getDate() + 1);
+    tomorrow.setDate(new Date().getDate() + 2);
 
     const tomorrowYear = tomorrow.getFullYear();
     const tomorrowMonth = String(tomorrow.getMonth() + 1).padStart(2, '0');
@@ -287,7 +289,7 @@ export class AppointmentService {
 
     const todayformattedDate = `${year}-${month}-${day}`;
     const tomorrowformattedDate = `${tomorrowYear}-${tomorrowMonth}-${tomorrowDay}`;
-
+    console.log(todayformattedDate, tomorrowformattedDate);
     const incomingAppointmentForNotification: AppointmentUserFmc[] =
       await this.prismaService.appointment.findMany({
         include: {
@@ -309,9 +311,10 @@ export class AppointmentService {
     return incomingAppointmentForNotification;
   }
 
-  @Cron('0 0 5 * * *', { timeZone: 'America/Santo_Domingo' })
+  @Cron('15 44 18 * * *', { timeZone: 'America/Santo_Domingo' })
   async handleCron() {
     const appointmentToScheduleTask = await this.getAppointmentToScheduleTask();
+    console.log(appointmentToScheduleTask);
     await this.reminderAppointment.setScheduleFormat(appointmentToScheduleTask);
   }
 

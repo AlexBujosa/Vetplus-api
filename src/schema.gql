@@ -548,7 +548,7 @@ type Query {
   getAppointmentDetailClinicOwner(filterAppointmentBySSInput: FilterAppointmentBySSInput!): [AppointmentHistory!]!
   getAppointmentDetailAllRoles(filterAppointmentBySSInput: FilterAppointmentBySSInput!): [AppointmentHistory!]!
   getAppointmentPerRangeDateTime(filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput!): [Appointment!]!
-  getAppointmentsVerified(filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput!): [AppointmentVerified!]!
+  getAppointmentsVerified(filterAppointmentVerifiedInput: FilterAppointmentVerifiedInput!): [AppointmentVerified!]!
 }
 
 input SignInInput {
@@ -577,6 +577,12 @@ input FilterAppointmentBySSInput {
 input FilterAppointmentByDateRangeInput {
   start_at: DateTime
   end_at: DateTime
+}
+
+input FilterAppointmentVerifiedInput {
+  start_at: DateTime
+  end_at: DateTime
+  state: String
 }
 
 type Mutation {

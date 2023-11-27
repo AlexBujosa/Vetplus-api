@@ -114,7 +114,7 @@ export class ReminderAppointment extends BaseReminder<
     return await this.scheduled(add);
   }
 
-  @Cron('0 */15 5-19 * * *', { timeZone: 'America/Santo_Domingo' })
+  @Cron('0 */15 5-23 * * *', { timeZone: 'America/Santo_Domingo' })
   async remindUsers() {
     const reminderSchedule: Record<TimeSlots, IReminderAppointment[]> =
       JSON.parse(await client.get('schedule'));
@@ -148,7 +148,7 @@ export class ReminderAppointment extends BaseReminder<
     console.log(reminderSchedule);
   }
 
-  @Cron('0 0 0 * * *', { timeZone: 'America/Santo_Domingo' })
+  @Cron('0 0 4 * * *', { timeZone: 'America/Santo_Domingo' })
   async clearReminder() {
     const scheduleT: Record<TimeSlots, IReminderAppointment[]> =
       Object.fromEntries(timeSlotKeys.map((key) => [key, []])) as Record<
