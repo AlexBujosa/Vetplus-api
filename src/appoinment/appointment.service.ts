@@ -248,6 +248,11 @@ export class AppointmentService {
     id_owner: string,
   ): Promise<AppointmentVerified[]> {
     const { start_at, end_at, state } = filterAppointmentVerifiedInput;
+    const andFiltering = [];
+
+    if (start_at) andFiltering.push({ start_at: { gte: start_at } });
+    if (end_at) andFiltering.push({ start_at: { lte: end_at } });
+
     const getAppointmentsVerified: AppointmentVerified[] =
       await this.prismaService.appointment.findMany({
         where: {
@@ -259,7 +264,7 @@ export class AppointmentService {
             { appointment_status: 'ACCEPTED' },
             { appointment_status: 'DENIED' },
           ],
-          AND: [{ start_at: { gte: start_at } }, { start_at: { lte: end_at } }],
+          AND: andFiltering,
         },
         include: {
           Owner: true,
@@ -289,7 +294,6 @@ export class AppointmentService {
 
     const todayformattedDate = `${year}-${month}-${day}`;
     const tomorrowformattedDate = `${tomorrowYear}-${tomorrowMonth}-${tomorrowDay}`;
-    console.log(todayformattedDate, tomorrowformattedDate);
     const incomingAppointmentForNotification: AppointmentUserFmc[] =
       await this.prismaService.appointment.findMany({
         include: {
@@ -314,7 +318,6 @@ export class AppointmentService {
   @Cron('15 44 18 * * *', { timeZone: 'America/Santo_Domingo' })
   async handleCron() {
     const appointmentToScheduleTask = await this.getAppointmentToScheduleTask();
-    console.log(appointmentToScheduleTask);
     await this.reminderAppointment.setScheduleFormat(appointmentToScheduleTask);
   }
 
