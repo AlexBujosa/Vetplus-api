@@ -114,7 +114,6 @@ export class AppointmentService {
     filterAppointmentBySSInput: FilterAppointmentBySSInput,
     id_owner: string,
   ) {
-    console.log(filterAppointmentBySSInput);
     return await this.getAppointmentDetail(
       filterAppointmentBySSInput,
       id_owner,
@@ -315,10 +314,9 @@ export class AppointmentService {
     return incomingAppointmentForNotification;
   }
 
-  @Cron('0 0 9 * * *', { timeZone: 'America/Santo_Domingo' })
+  @Cron('0 6 11 * * *', { timeZone: 'America/Santo_Domingo' })
   async handleCron() {
     const appointmentToScheduleTask = await this.getAppointmentToScheduleTask();
-    console.log(appointmentToScheduleTask);
     await this.reminderAppointment.setScheduleFormat(appointmentToScheduleTask);
   }
 

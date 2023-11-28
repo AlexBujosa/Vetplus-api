@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { TimeSlots } from './common/types';
-
+import * as moment from 'moment-timezone';
+import { timeZone } from '@/reminder/common/reminder/common/constant';
 @Injectable()
 export abstract class BaseReminder<T = Record<TimeSlots, any>> {
-  protected today: number = new Date().getDate();
+  constructor() {
+    this.getMinuteHourDay();
+  }
+  protected today = moment.tz(timeZone);
 
   abstract scheduled(scheduleT: T): Promise<boolean>;
   abstract removed(): Promise<boolean>;
@@ -13,21 +17,19 @@ export abstract class BaseReminder<T = Record<TimeSlots, any>> {
     hour: number;
     day: number;
   } {
-    const today = new Date();
-
+    const today = moment.tz(timeZone);
     if (!date)
       return {
-        minute: today.getMinutes(),
-        hour: today.getHours(),
-        day: today.getDate(),
+        minute: today.minutes(),
+        hour: today.hours(),
+        day: today.date(),
       };
-    console.log(date);
-    const adjustedDate = new Date(date.toISOString());
-    adjustedDate.setHours(adjustedDate.getHours() + 4);
 
-    const minute = adjustedDate.getMinutes();
-    const hour = adjustedDate.getHours();
-    const day = adjustedDate.getDate();
+    const adjustedDate = moment(date).tz(timeZone);
+
+    const minute = adjustedDate.minutes();
+    const hour = adjustedDate.hours() + 4;
+    const day = adjustedDate.date();
 
     return { minute, hour, day };
   }

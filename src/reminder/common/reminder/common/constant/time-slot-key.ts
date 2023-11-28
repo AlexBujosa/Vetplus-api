@@ -1,6 +1,10 @@
 import { TimeSlots } from '../types';
 
 export const timeSlotKeys: TimeSlots[] = [
+  '4:00',
+  '4:15',
+  '4:30',
+  '4:45',
   '5:00',
   '5:15',
   '5:30',

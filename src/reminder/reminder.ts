@@ -1,11 +1,8 @@
 import { BaseReminder } from '@/reminder/common';
 import { IReminderAppointment } from '@/reminder/common/reminder/common/interface';
 import { TimeSlots } from '@/reminder/common/reminder/common/types';
-
 import { Injectable } from '@nestjs/common';
 import { client } from './common/config';
-
-import { tz } from 'moment-timezone';
 import {
   reduceFifteenMinutesLess,
   reduceThreeHourLess,
@@ -18,11 +15,11 @@ import {
   reminderMessageFifteenMinuteLeft,
   reminderMessageThreeHourLeft,
   reminderMessageOneDayLeft,
-} from './common/reminder/common/constant';
+  timeZone,
+} from '@/reminder/common/reminder/common/constant';
 import { NotificationService } from '@/notification/notification.service';
 import { SendNotificationInput } from '@/notification/graphql/input/sendNotification.input';
-
-tz.setDefault('America/Santo_Domingo');
+import * as moment from 'moment-timezone';
 
 @Injectable()
 export class ReminderAppointment extends BaseReminder<
@@ -67,14 +64,18 @@ export class ReminderAppointment extends BaseReminder<
         },
       } = ap;
 
-      const { minute, hour, day } = this.getMinuteHourDay(start_at);
+      const { minute, hour } = this.getMinuteHourDay(start_at);
 
       const { minute: minuteStr, hour: hourStr } = this.getMinuteHourStr(
         minute,
         hour,
       );
 
-      if (day !== this.today) {
+      const start_at_Date = moment(start_at).tz(timeZone).toDate();
+      if (
+        start_at_Date.toISOString().substring(0, 10) ===
+        this.today.toISOString().substring(0, 10)
+      ) {
         add[`${hourStr}:${minuteStr}`].push({
           id_user,
           id_pet,
@@ -144,8 +145,6 @@ export class ReminderAppointment extends BaseReminder<
       await this.notificationService.saveNotification(notificationInput);
       await this.messagingService.sendMessage(token_fmc, body);
     });
-
-    console.log(reminderSchedule);
   }
 
   @Cron('0 0 4 * * *', { timeZone: 'America/Santo_Domingo' })
