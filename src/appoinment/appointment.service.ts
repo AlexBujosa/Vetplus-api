@@ -315,7 +315,7 @@ export class AppointmentService {
     return incomingAppointmentForNotification;
   }
 
-  @Cron('0 48 8 * * *', { timeZone: 'America/Santo_Domingo' })
+  @Cron('0 0 9 * * *', { timeZone: 'America/Santo_Domingo' })
   async handleCron() {
     const appointmentToScheduleTask = await this.getAppointmentToScheduleTask();
     console.log(appointmentToScheduleTask);
