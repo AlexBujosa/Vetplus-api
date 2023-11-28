@@ -21,6 +21,7 @@ export abstract class BaseReminder<T = Record<TimeSlots, any>> {
         hour: today.getHours(),
         day: today.getDate(),
       };
+    console.log(date);
     const adjustedDate = new Date(date.toISOString());
     adjustedDate.setHours(adjustedDate.getHours() + 4);
 

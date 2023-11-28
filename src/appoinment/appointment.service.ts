@@ -315,9 +315,10 @@ export class AppointmentService {
     return incomingAppointmentForNotification;
   }
 
-  @Cron('15 44 18 * * *', { timeZone: 'America/Santo_Domingo' })
+  @Cron('0 48 8 * * *', { timeZone: 'America/Santo_Domingo' })
   async handleCron() {
     const appointmentToScheduleTask = await this.getAppointmentToScheduleTask();
+    console.log(appointmentToScheduleTask);
     await this.reminderAppointment.setScheduleFormat(appointmentToScheduleTask);
   }
 
