@@ -73,7 +73,7 @@ export class ReminderAppointment extends BaseReminder<
 
       const start_at_Date = moment(start_at).tz(timeZone).toDate();
       if (
-        start_at_Date.toISOString().substring(0, 10) ===
+        start_at_Date.toISOString().substring(0, 10) !==
         this.today.toISOString().substring(0, 10)
       ) {
         add[`${hourStr}:${minuteStr}`].push({
@@ -146,7 +146,6 @@ export class ReminderAppointment extends BaseReminder<
       await this.messagingService.sendMessage(token_fmc, body);
     });
   }
-
   @Cron('0 0 4 * * *', { timeZone: 'America/Santo_Domingo' })
   async clearReminder() {
     const scheduleT: Record<TimeSlots, IReminderAppointment[]> =
