@@ -146,7 +146,7 @@ export class ReminderAppointment extends BaseReminder<
       await this.messagingService.sendMessage(token_fmc, body);
     });
   }
-  @Cron('0 0 4 * * *', { timeZone: 'America/Santo_Domingo' })
+  @Cron('0 30 4 * * *', { timeZone: 'America/Santo_Domingo' })
   async clearReminder() {
     const scheduleT: Record<TimeSlots, IReminderAppointment[]> =
       Object.fromEntries(timeSlotKeys.map((key) => [key, []])) as Record<
