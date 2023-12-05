@@ -108,6 +108,7 @@ type Notification {
   created_at: DateTime!
   updated_at: DateTime!
   status: Boolean!
+  id_entity: String!
 }
 
 type NotificationResponse {
@@ -135,6 +136,7 @@ type AllNotification {
   created_at: DateTime!
   updated_at: DateTime!
   status: Boolean!
+  id_entity: String!
   notificationInvitation: NotificationInvitation
   notificationAD: NotificationAD
 }

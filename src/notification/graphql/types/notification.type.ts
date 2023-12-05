@@ -29,4 +29,7 @@ export class Notification {
 
   @Field(() => Boolean)
   status: boolean;
+
+  @Field(() => String)
+  id_entity: string;
 }
