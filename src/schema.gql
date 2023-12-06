@@ -63,6 +63,10 @@ type UserFmc {
   token_fmc: String!
 }
 
+type VeterinarianSpecialties {
+  specialties: String
+}
+
 type UserProfile {
   id: String!
   names: String!
@@ -78,6 +82,7 @@ type UserProfile {
   updated_at: DateTime!
   status: Boolean!
   User_Fmc: UserFmc
+  VeterinariaSpecialties: VeterinarianSpecialties
 }
 
 type Credentials {
@@ -383,10 +388,6 @@ type HandleRequestResult {
 type VeterinarianSummaryScore {
   total_points: Int!
   total_users: Int!
-}
-
-type VeterinarianSpecialties {
-  specialties: String
 }
 
 type Employee {

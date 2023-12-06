@@ -84,6 +84,7 @@ export class UserService {
     return await this.prismaService.user.findUnique({
       include: {
         User_Fmc: true,
+        VeterinariaSpecialties: true,
       },
       where: {
         id,
