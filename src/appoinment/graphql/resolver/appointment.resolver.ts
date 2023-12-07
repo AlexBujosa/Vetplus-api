@@ -56,6 +56,7 @@ export class AppointmentResolver {
         reassignAppointmentToVeterinarianInput,
         context.req.user.sub,
       );
+
     return appoinmentReassigned
       ? { result: Status.COMPLETED }
       : { result: Status.FAILED };
