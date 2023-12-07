@@ -626,6 +626,7 @@ type Mutation {
   registerComment(addCommentInput: AddCommentInput!): CommentResponse!
   deleteComment(deleteCommentInput: DeleteCommentInput!): CommentResponse!
   scheduleAppoinment(scheduleAppointmentInput: ScheduleAppointmentInput!): AppointmentResponse!
+  reassignAppoinment(reassignAppointmentToVeterinarianInput: ReassignAppointmentToVeterinarianInput!): AppointmentResponse!
   respondToAppointment(updateAppointmentInput: UpdateAppointmentInput!): AppointmentResponse!
   updateAppointmentResumen(updateAppointmentResumenInput: UpdateAppointmentResumenInput!): AppointmentResponse!
   sendMessage(messageInput: MessageInput!): GeneralResponse!
@@ -848,6 +849,11 @@ input ScheduleAppointmentInput {
   id_clinic: String!
   start_at: DateTime!
   end_at: DateTime
+}
+
+input ReassignAppointmentToVeterinarianInput {
+  id: String!
+  id_veterinarian: String!
 }
 
 input UpdateAppointmentInput {

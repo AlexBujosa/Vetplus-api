@@ -19,6 +19,7 @@ import { YupValidationPipe } from '@/global/pipe/yup-validation.pipe';
 import { FilterAppointmentSSInputSchema } from '@/global/schema/filter-appointment-ss-input.schema';
 import { UpdateAppointmentResumenInput } from '../input/update-appointment-resumen.input';
 import { FilterAppointmentVerifiedInput } from '../input/filter-appointment-verified.input';
+import { ReassignAppointmentToVeterinarianInput } from '../input/reassign-appointment-to-veterinarian.input';
 
 @Resolver()
 export class AppointmentResolver {
@@ -38,6 +39,24 @@ export class AppointmentResolver {
         context.req.user.sub,
       );
     return appoinmentCompleted
+      ? { result: Status.COMPLETED }
+      : { result: Status.FAILED };
+  }
+
+  @Mutation(() => AppointmentResponse)
+  @Roles(Role.CLINIC_OWNER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async reassignAppoinment(
+    @Args('reassignAppointmentToVeterinarianInput')
+    reassignAppointmentToVeterinarianInput: ReassignAppointmentToVeterinarianInput,
+    @Context() context,
+  ): Promise<AppointmentResponse> {
+    const appoinmentReassigned =
+      await this.appointmentService.reassignAppointment(
+        reassignAppointmentToVeterinarianInput,
+        context.req.user.sub,
+      );
+    return appoinmentReassigned
       ? { result: Status.COMPLETED }
       : { result: Status.FAILED };
   }

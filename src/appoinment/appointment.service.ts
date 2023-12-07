@@ -17,6 +17,7 @@ import { UpdateAppointmentResumenInput } from './graphql/input/update-appointmen
 import { OmitTx } from '@/Employee/constant';
 import { customException } from '@/global/constant/constants';
 import { FilterAppointmentVerifiedInput } from '@/appoinment/graphql/input/filter-appointment-verified.input';
+import { ReassignAppointmentToVeterinarianInput } from './graphql/input/reassign-appointment-to-veterinarian.input';
 
 tz.setDefault('America/Santo_Domingo');
 @Injectable()
@@ -46,6 +47,26 @@ export class AppointmentService {
     });
 
     return appoinmentCreated ? true : false;
+  }
+
+  async reassignAppointment(
+    reassignAppointmentToVeterinarianInput: ReassignAppointmentToVeterinarianInput,
+    id_owner: string,
+  ): Promise<boolean> {
+    const { id, id_veterinarian } = reassignAppointmentToVeterinarianInput;
+    const appoinmentReassigned = await this.prismaService.appointment.update({
+      data: {
+        id_veterinarian,
+      },
+      where: {
+        id,
+        Clinic: {
+          id_owner,
+        },
+      },
+    });
+
+    return appoinmentReassigned ? true : false;
   }
 
   async getAppointmentPerPetClinicOwner(
