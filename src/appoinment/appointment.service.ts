@@ -18,6 +18,7 @@ import { OmitTx } from '@/Employee/constant';
 import { customException } from '@/global/constant/constants';
 import { FilterAppointmentVerifiedInput } from '@/appoinment/graphql/input/filter-appointment-verified.input';
 import { ReassignAppointmentToVeterinarianInput } from './graphql/input/reassign-appointment-to-veterinarian.input';
+import { AppointmentObservation } from './graphql/types/appointment-observation.type';
 
 tz.setDefault('America/Santo_Domingo');
 @Injectable()
@@ -96,7 +97,6 @@ export class AppointmentService {
     id_clinicOwner?: string,
   ): Promise<AppointmentHistory[]> {
     const { id: id_pet, state } = filterAppointmentByIdInput;
-
     const filterState = state ? { state } : {};
     const filterClinic = id_clinicOwner
       ? { Clinic: { id_owner: id_clinicOwner } }
@@ -208,7 +208,7 @@ export class AppointmentService {
     await this.prismaService.$transaction(async (tx: OmitTx) => {
       const appointmentUpdated = await tx.appointment.update({
         data: {
-          observations,
+          observations: JSON.stringify(observations),
           state: 'FINISHED',
         },
         where: {
@@ -218,6 +218,7 @@ export class AppointmentService {
           },
         },
       });
+
       const appointmentAttendance = await tx.clinic_User.upsert({
         create: {
           id_clinic,
@@ -245,7 +246,7 @@ export class AppointmentService {
   ): Promise<Appointment[]> {
     const { start_at, end_at } = filterAppointmentByDateRangeInput;
 
-    const getAppointmentsByDateRange: Appointment[] =
+    const getAppointmentsByDateRange =
       await this.prismaService.appointment.findMany({
         where: {
           Clinic: {
@@ -256,9 +257,8 @@ export class AppointmentService {
         },
       });
 
-    const getAppointmentsByDateRangeResult = this.getAllApointment(
-      getAppointmentsByDateRange,
-    );
+    const getAppointmentsByDateRangeResult: Appointment[] =
+      this.getAllApointment(getAppointmentsByDateRange);
 
     return getAppointmentsByDateRangeResult;
   }
@@ -273,7 +273,7 @@ export class AppointmentService {
     if (start_at) andFiltering.push({ start_at: { gte: start_at } });
     if (end_at) andFiltering.push({ start_at: { lte: end_at } });
 
-    const getAppointmentsVerified: AppointmentVerified[] =
+    const getAppointmentsVerified =
       await this.prismaService.appointment.findMany({
         where: {
           Clinic: {
@@ -291,11 +291,10 @@ export class AppointmentService {
         },
       });
 
-    const getAppointmentsByDateRangeResult = this.getAllApointment(
-      getAppointmentsVerified,
-    );
+    const getAppointmentsVerifiedResult: AppointmentVerified[] =
+      this.getAllApointment(getAppointmentsVerified);
 
-    return getAppointmentsByDateRangeResult;
+    return getAppointmentsVerifiedResult;
   }
 
   async getAppointmentToScheduleTask(): Promise<AppointmentUserFmc[]> {
@@ -314,7 +313,7 @@ export class AppointmentService {
 
     const todayformattedDate = `${year}-${month}-${day}`;
     const tomorrowformattedDate = `${tomorrowYear}-${tomorrowMonth}-${tomorrowDay}`;
-    const incomingAppointmentForNotification: AppointmentUserFmc[] =
+    const incomingAppointmentForNotification =
       await this.prismaService.appointment.findMany({
         include: {
           Owner: {
@@ -331,8 +330,10 @@ export class AppointmentService {
           ],
         },
       });
+    const incomingAppointmentForNotificationResult: AppointmentUserFmc[] =
+      this.getAllApointment(incomingAppointmentForNotification);
 
-    return incomingAppointmentForNotification;
+    return incomingAppointmentForNotificationResult;
   }
 
   @Cron('0 30 4 * * *', { timeZone: 'America/Santo_Domingo' })
@@ -343,11 +344,17 @@ export class AppointmentService {
 
   private getAllApointment(getAllApointment: any[]) {
     const getAllAppoinmentResult = getAllApointment.map((row) => {
-      const { services, ...rest } = row;
+      const { services, observations, ...rest } = row;
       const servicesResult = this.getServicesAsStringOrStringArray(services);
+
+      const observationsParser: AppointmentObservation = {
+        ...JSON.parse(observations),
+      };
+
       return {
         ...rest,
         services: servicesResult,
+        observations: observationsParser,
       };
     });
     return getAllAppoinmentResult;

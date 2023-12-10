@@ -1,5 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { AppointmentSchedule } from './appointment-schedule.type';
+import { AppointmentObservation } from './appointment-observation.type';
 
 @ObjectType()
 export class Appointment extends AppointmentSchedule {
@@ -21,8 +22,8 @@ export class Appointment extends AppointmentSchedule {
   @Field(() => String)
   id_clinic: string;
 
-  @Field(() => String, { nullable: true })
-  observations: string;
+  @Field(() => AppointmentObservation, { nullable: true })
+  observations: AppointmentObservation;
 
   @Field(() => String, { nullable: true })
   appointment_status: 'ACCEPTED' | 'DENIED';

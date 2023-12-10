@@ -466,6 +466,32 @@ type AppointmentResponse {
   result: String!
 }
 
+type Deworming {
+  date: DateTime!
+  product: String!
+}
+
+type Vaccines {
+  date: DateTime!
+  vaccineBrand: String!
+  vaccineBatch: String!
+}
+
+type ReproductiveTimeline {
+  reproductiveHistory: String
+  dateLastHeat: DateTime
+  dateLastBirth: DateTime
+}
+
+type AppointmentObservation {
+  suffering: [String!]!
+  treatment: String!
+  feed: String!
+  deworming: Deworming
+  vaccines: Vaccines
+  reproductiveTimeline: ReproductiveTimeline
+}
+
 type Appointment {
   start_at: DateTime!
   end_at: DateTime
@@ -475,7 +501,7 @@ type Appointment {
   id_pet: String!
   services: [String!]!
   id_clinic: String!
-  observations: String
+  observations: AppointmentObservation
   appointment_status: String
   state: String
   created_at: DateTime!
@@ -492,7 +518,7 @@ type AppointmentHistory {
   id_pet: String!
   services: [String!]!
   id_clinic: String!
-  observations: String
+  observations: AppointmentObservation
   appointment_status: String
   state: String
   created_at: DateTime!
@@ -513,7 +539,7 @@ type AppointmentVerified {
   id_pet: String!
   services: [String!]!
   id_clinic: String!
-  observations: String
+  observations: AppointmentObservation
   appointment_status: String
   state: String
   created_at: DateTime!
@@ -866,7 +892,33 @@ input UpdateAppointmentResumenInput {
   id: String!
   id_clinic: String!
   id_owner: String!
-  observations: String
+  observations: AddObservationsInput
+}
+
+input AddObservationsInput {
+  suffering: [String!]!
+  treatment: String!
+  feed: String!
+  deworming: AddDewormingInput
+  vaccines: AddVaccinesInput
+  reproductiveTimeline: AddReproductiveTimelineInput
+}
+
+input AddDewormingInput {
+  date: DateTime
+  product: String
+}
+
+input AddVaccinesInput {
+  date: DateTime
+  vaccineBrand: String
+  vaccineBatch: String
+}
+
+input AddReproductiveTimelineInput {
+  reproductiveHistory: String
+  dateLastHeat: DateTime
+  dateLastBirth: DateTime
 }
 
 input MessageInput {
