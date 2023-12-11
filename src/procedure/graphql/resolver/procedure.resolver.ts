@@ -42,7 +42,6 @@ export class ProcedureResolver {
   }
 
   @Query(() => [Procedure])
-  @Roles(Role.ADMIN, Role.CLINIC_OWNER, Role.VETERINARIAN, Role.PET_OWNER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getAllProcedure(): Promise<Procedure[]> {
     const result = await this.procedureService.getAllProcedure();
