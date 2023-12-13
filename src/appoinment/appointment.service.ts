@@ -170,6 +170,7 @@ export class AppointmentService {
         Pet: true,
         Clinic: true,
         Veterinarian: true,
+        Owner: true,
       },
     });
 
@@ -242,18 +243,27 @@ export class AppointmentService {
 
   async filterAppointmentDateRange(
     filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput,
-    id_owner: string,
+    id_entity: string,
+    role: 'VETERINARIAN' | 'CLINIC_OWNER',
   ): Promise<Appointment[]> {
     const { start_at, end_at } = filterAppointmentByDateRangeInput;
-
+    const andFiltering = [];
+    const entityQuery =
+      role === 'CLINIC_OWNER'
+        ? {
+            Clinic: {
+              id_owner: id_entity,
+            },
+          }
+        : { id_veterinarian: id_entity };
+    if (start_at) andFiltering.push({ start_at: { gte: start_at } });
+    if (end_at) andFiltering.push({ start_at: { lte: end_at } });
     const getAppointmentsByDateRange =
       await this.prismaService.appointment.findMany({
         where: {
-          Clinic: {
-            id_owner,
-          },
+          ...entityQuery,
           appointment_status: 'ACCEPTED',
-          AND: [{ start_at: { gte: start_at } }, { end_at: { lte: end_at } }],
+          AND: andFiltering,
         },
       });
 

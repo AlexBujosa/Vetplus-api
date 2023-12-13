@@ -484,9 +484,9 @@ type ReproductiveTimeline {
 }
 
 type AppointmentObservation {
-  suffering: [String!]!
-  treatment: String!
-  feed: String!
+  suffering: [String!]
+  treatment: String
+  feed: String
   deworming: Deworming
   vaccines: Vaccines
   reproductiveTimeline: ReproductiveTimeline
@@ -576,7 +576,7 @@ type Query {
   getAppointmentPerPet(filterAppointmentByIdInput: FilterAppointmentByIdInput!): [AppointmentHistory!]!
   getAppointmentDetailClinicOwner(filterAppointmentBySSInput: FilterAppointmentBySSInput!): [AppointmentHistory!]!
   getAppointmentDetailAllRoles(filterAppointmentBySSInput: FilterAppointmentBySSInput!): [AppointmentHistory!]!
-  getAppointmentPerRangeDateTime(filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput!): [Appointment!]!
+  getAppointmentPerRangeDateTime(filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput!): [Appointment!]
   getAppointmentsVerified(filterAppointmentVerifiedInput: FilterAppointmentVerifiedInput!): [AppointmentVerified!]!
 }
 

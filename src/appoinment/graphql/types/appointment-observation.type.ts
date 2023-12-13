@@ -5,13 +5,13 @@ import { ReproductiveTimeline } from '@/appoinment/graphql/types/reproductive-ti
 
 @ObjectType()
 export class AppointmentObservation {
-  @Field(() => [String])
+  @Field(() => [String], { nullable: true })
   suffering: string[];
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   treatment: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   feed: string;
 
   @Field(() => Deworming, { nullable: true })

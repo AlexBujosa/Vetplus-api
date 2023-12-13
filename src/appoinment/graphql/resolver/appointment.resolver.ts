@@ -159,8 +159,8 @@ export class AppointmentResolver {
     return { result: Status.COMPLETED };
   }
 
-  @Query(() => [Appointment])
-  @Roles(Role.CLINIC_OWNER)
+  @Query(() => [Appointment], { nullable: true })
+  @Roles(Role.CLINIC_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getAppointmentPerRangeDateTime(
     @Args('filterAppointmentByDateRangeInput')
@@ -171,6 +171,7 @@ export class AppointmentResolver {
       await this.appointmentService.filterAppointmentDateRange(
         filterAppointmentByDateRangeInput,
         context.req.user.sub,
+        context.req.user.role,
       );
     return getAppointmentFilter;
   }
