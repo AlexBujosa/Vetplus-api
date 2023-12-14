@@ -120,32 +120,6 @@ type NotificationResponse {
   result: String!
 }
 
-type NotificationAD {
-  id: String
-  id_pet: String
-}
-
-type NotificationInvitation {
-  id: String
-  id_owner: String
-  id_clinic: String
-}
-
-type AllNotification {
-  id: String!
-  id_user: String!
-  title: String!
-  subtitle: String!
-  category: String!
-  read: Boolean!
-  created_at: DateTime!
-  updated_at: DateTime!
-  status: Boolean!
-  id_entity: String!
-  notificationInvitation: NotificationInvitation
-  notificationAD: NotificationAD
-}
-
 type AddPetResponse {
   result: String!
 }
@@ -870,6 +844,7 @@ input DeleteCommentInput {
 
 input ScheduleAppointmentInput {
   id_veterinarian: String!
+  id_clinicOwner: String!
   id_pet: String!
   services: [String!]!
   id_clinic: String!
@@ -927,5 +902,5 @@ input MessageInput {
 }
 
 type Subscription {
-  getNewNotification: AllNotification!
+  getNewNotification: Notification!
 }

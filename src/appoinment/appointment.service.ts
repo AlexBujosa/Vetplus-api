@@ -19,35 +19,66 @@ import { customException } from '@/global/constant/constants';
 import { FilterAppointmentVerifiedInput } from '@/appoinment/graphql/input/filter-appointment-verified.input';
 import { ReassignAppointmentToVeterinarianInput } from './graphql/input/reassign-appointment-to-veterinarian.input';
 import { AppointmentObservation } from './graphql/types/appointment-observation.type';
-
+import { NotificationService } from '@/notification/notification.service';
+import { Notification } from '@/notification/graphql/types/notification.type';
+import { SendNotificationInput } from '@/notification/graphql/input/sendNotification.input';
 tz.setDefault('America/Santo_Domingo');
 @Injectable()
 export class AppointmentService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly reminderAppointment: ReminderAppointment,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async scheduleAppointment(
     scheduleAppointmentInput: ScheduleAppointmentInput,
     id_owner: string,
+    email: string,
   ): Promise<boolean> {
-    const { services, start_at, ...rest } = scheduleAppointmentInput;
+    const { services, start_at, id_clinicOwner, ...rest } =
+      scheduleAppointmentInput;
+
+    const { id_pet } = rest;
     const serviceResult =
       typeof services == 'string'
         ? services
         : JSON.stringify({ services: services });
 
-    const appoinmentCreated = await this.prismaService.appointment.create({
-      data: {
-        ...rest,
-        start_at,
-        services: serviceResult,
-        id_owner,
-      },
-    });
+    const transactionResult = await this.prismaService.$transaction(
+      async (tx: OmitTx) => {
+        const appoinmentCreated = await tx.appointment.create({
+          data: {
+            ...rest,
+            start_at,
+            services: serviceResult,
+            id_owner,
+          },
+        });
 
-    return appoinmentCreated ? true : false;
+        const scheduleAppointmentNotificationInput: SendNotificationInput = {
+          category: 'APPOINTMENT',
+          id_user: id_clinicOwner,
+          title: 'New Appointment',
+          subtitle: `${email} has requested a new appointment`,
+          id_entity: id_pet,
+        };
+
+        const newNotification = await this.notificationService.saveNotification(
+          scheduleAppointmentNotificationInput,
+          tx,
+        );
+
+        await this.notificationService.sendNotificationToUser(
+          id_clinicOwner,
+          newNotification,
+        );
+
+        return appoinmentCreated ? true : false;
+      },
+    );
+
+    return transactionResult;
   }
 
   async reassignAppointment(
@@ -112,6 +143,7 @@ export class AppointmentService {
         Pet: true,
         Clinic: true,
         Veterinarian: true,
+        Owner: true,
       },
     });
 
@@ -245,7 +277,7 @@ export class AppointmentService {
     filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput,
     id_entity: string,
     role: 'VETERINARIAN' | 'CLINIC_OWNER',
-  ): Promise<Appointment[]> {
+  ): Promise<AppointmentHistory[]> {
     const { start_at, end_at } = filterAppointmentByDateRangeInput;
     const andFiltering = [];
     const entityQuery =
@@ -260,6 +292,12 @@ export class AppointmentService {
     if (end_at) andFiltering.push({ start_at: { lte: end_at } });
     const getAppointmentsByDateRange =
       await this.prismaService.appointment.findMany({
+        include: {
+          Pet: true,
+          Clinic: true,
+          Veterinarian: true,
+          Owner: true,
+        },
         where: {
           ...entityQuery,
           appointment_status: 'ACCEPTED',
@@ -267,7 +305,7 @@ export class AppointmentService {
         },
       });
 
-    const getAppointmentsByDateRangeResult: Appointment[] =
+    const getAppointmentsByDateRangeResult: AppointmentHistory[] =
       this.getAllApointment(getAppointmentsByDateRange);
 
     return getAppointmentsByDateRangeResult;

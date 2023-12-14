@@ -28,9 +28,9 @@ export class NotificationResolver {
 
   @Roles(Role.CLINIC_OWNER, Role.ADMIN, Role.PET_OWNER, Role.VETERINARIAN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Subscription((returns) => AllNotification)
+  @Subscription((returns) => Notification)
   async getNewNotification(@Context() context) {
-    return this.getNewNotification(context.req.user.sub);
+    return this.pubSub.asyncIterator(context.req.user.sub);
   }
 
   @Roles(Role.CLINIC_OWNER, Role.ADMIN, Role.PET_OWNER, Role.VETERINARIAN)

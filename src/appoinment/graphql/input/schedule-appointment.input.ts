@@ -6,6 +6,9 @@ export class ScheduleAppointmentInput {
   id_veterinarian: string;
 
   @Field(() => String)
+  id_clinicOwner: string;
+
+  @Field(() => String)
   id_pet: string;
 
   @Field(() => [String, String])

@@ -37,6 +37,7 @@ export class AppointmentResolver {
       await this.appointmentService.scheduleAppointment(
         scheduleAppoinmentInput,
         context.req.user.sub,
+        context.req.user.username,
       );
     return appoinmentCompleted
       ? { result: Status.COMPLETED }
@@ -166,7 +167,7 @@ export class AppointmentResolver {
     @Args('filterAppointmentByDateRangeInput')
     filterAppointmentByDateRangeInput: FilterAppointmentByDateRangeInput,
     @Context() context,
-  ): Promise<Appointment[]> {
+  ): Promise<AppointmentHistory[]> {
     const getAppointmentFilter =
       await this.appointmentService.filterAppointmentDateRange(
         filterAppointmentByDateRangeInput,
